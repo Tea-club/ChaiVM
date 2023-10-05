@@ -35,8 +35,4 @@ jobs:
 # @todo #2: Add dummy test using gtest and run it on ci.
     - name: Test
       working-directory: ${{github.workspace}}/build
-      run:
-        - pwd
-        - ls
-        - ctest
-#        &&  ctest --test-dir ${{github.workspace}}/build
+      run:  ctest --test-dir ${{github.workspace}}/build/test
