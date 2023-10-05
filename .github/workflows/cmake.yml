@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         ctect_option:
-          - "-DBESM666_TEST_WITH_VALGRIND=OFF"
-          - "-DBESM666_TEST_WITH_VALGRIND=ON"
+          - "-DCHAIVM_TEST_WITH_VALGRIND=OFF"
+          - "-DCHAIVM_TEST_WITH_VALGRIND=ON"
     steps:
     - uses: actions/checkout@v3
       with:
@@ -33,6 +33,6 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
 # @todo #2: Add dummy test using gtest and run it on ci.
-#    - name: Test
-#      working-directory: ${{github.workspace}}/build
-#      run: ctest --test-dir ${{github.workspace}}/build/besm-666
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run:  ctest --test-dir ${{github.workspace}}/build/test
