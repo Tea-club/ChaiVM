@@ -1,8 +1,12 @@
 #ifndef CHAIVM_EXECUTOR_HPP
 #define CHAIVM_EXECUTOR_HPP
 
-class Executor {
+#include "reg-file.hpp"
 
-};
+namespace chai::interpreter {
 
-#endif //CHAIVM_EXECUTOR_HPP
+class Executor {};
+
+} // namespace chai::interpreter
+
+#endif // CHAIVM_EXECUTOR_HPP

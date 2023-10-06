@@ -3,12 +3,14 @@
 
 #include "instruction.hpp"
 
-using namespace chai::interpreter;
+namespace chai::interpreter {
 
 class Decoder {
 
 public:
-    Instruction parse(uint32_t word) ;
+    Instruction parse(uint32_t word);
 };
 
-#endif //CHAIVM_DECODER_HPP
+} // namespace chai::interpreter
+
+#endif // CHAIVM_DECODER_HPP
