@@ -16,7 +16,7 @@ Ldia 8
 Star r3
 Ldra r3
 Mul r2
-Print acc
+Printc acc
 Mov o r0
 Ret;
 ```
