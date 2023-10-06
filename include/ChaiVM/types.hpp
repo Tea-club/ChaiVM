@@ -3,4 +3,4 @@
 
 #include <cstdint>
 
-#endif //CHAIVM_TYPES_HPP
+#endif // CHAIVM_TYPES_HPP
