@@ -11,7 +11,7 @@
 namespace chai::interpreter {
 
 class RegisterFIle {
-    static constexpr const size_t Size = std::numeric_limits<RegisterId>::max();
+    static constexpr size_t Size = std::numeric_limits<RegisterId>::max();
     chsize_t &operator[](int n);
     chsize_t getAcc() const;
     void setAcc(chsize_t value);

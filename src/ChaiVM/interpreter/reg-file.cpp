@@ -1,6 +1,8 @@
 #include "ChaiVM/interpreter/reg-file.hpp"
+#include <cassert>
 
 chai::chsize_t &chai::interpreter::RegisterFIle::operator[](int n) {
+    assert(n <= Size);
     return registers_[n];
 }
 chai::chsize_t chai::interpreter::RegisterFIle::getAcc() const { return acc_; }
