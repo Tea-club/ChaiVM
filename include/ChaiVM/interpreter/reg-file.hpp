@@ -10,13 +10,15 @@
 
 namespace chai::interpreter {
 
-class RegisterFIle {
-    static constexpr size_t Size = std::numeric_limits<RegisterId>::max();
-    chsize_t &operator[](int n);
+class RegisterFile {
+public:
+    chsize_t &operator[](int n) &;
     chsize_t getAcc() const;
     void setAcc(chsize_t value);
     chsize_t getPc() const;
     void setPc(chsize_t value);
+
+    static constexpr size_t Size = std::numeric_limits<RegisterId>::max();
 
 private:
     chsize_t acc_;
