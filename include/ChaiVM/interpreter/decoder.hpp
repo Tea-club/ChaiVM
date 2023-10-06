@@ -8,8 +8,8 @@ namespace chai::interpreter {
 
 class Decoder {
 public:
-    static Instruction parse(uint32_t word);
-    static Instruction parse(chsize_t pc);
+    Instruction parse(uint32_t word);
+    Instruction decode(chsize_t pc);
 };
 
 } // namespace chai::interpreter

@@ -21,6 +21,7 @@ public:
 
 private:
     RegisterFile regFile_;
+    Decoder decoder_;
 };
 
 } // namespace chai::interpreter

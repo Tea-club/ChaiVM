@@ -14,7 +14,7 @@ void chai::interpreter::Executor::advancePc() {
 void chai::interpreter::Executor::nop(
     const chai::interpreter::Instruction &ins) {
     advancePc();
-    Instruction newIns = Decoder::parse(regFile_.getPc());
+    Instruction newIns = decoder_.decode(regFile_.getPc());
     (this->*handlerArr[ins.operation])(newIns);
 }
 void chai::interpreter::Executor::ret(
