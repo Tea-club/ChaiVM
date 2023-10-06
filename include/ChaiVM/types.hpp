@@ -3,4 +3,8 @@
 
 #include <cstdint>
 
-#endif //CHAIVM_TYPES_HPP
+namespace chai {
+using chsize_t = uint64_t;
+}
+
+#endif // CHAIVM_TYPES_HPP

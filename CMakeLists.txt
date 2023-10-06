@@ -2,10 +2,18 @@ cmake_minimum_required(VERSION 3.26)
 project(ChaiVM)
 set(CMAKE_CXX_STANDARD 17)
 
-set(SOURCE_FILES src/main.cpp include/ChaiVM/interpreter/instruction.hpp include/ChaiVM/types.hpp include/ChaiVM/interpreter/executor.hpp include/ChaiVM/utils/non-copyable.hpp include/ChaiVM/interpreter/reg-file.hpp)
-
 add_subdirectory(third_party)
 add_subdirectory(test)
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_subdirectory(src)
+
+add_library(chai_include INTERFACE)
+target_include_directories(chai_include INTERFACE
+    include
+)
 
 include_directories(include)
+
+add_executable(ChaiVM src/main.cpp)
+target_link_libraries(ChaiVM PUBLIC
+    chai_interpreter
+)

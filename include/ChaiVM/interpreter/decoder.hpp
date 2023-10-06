@@ -1,9 +1,9 @@
 #ifndef CHAIVM_DECODER_HPP
 #define CHAIVM_DECODER_HPP
 
-#include <cassert>
 #include "instruction.hpp"
 #include "operations.hpp"
+#include "ChaiVM/types.hpp"
 
 namespace chai::interpreter {
 
@@ -16,13 +16,15 @@ public:
         constexpr uint32_t IMMEDIATE_MASK = 0xFFFFFF00;
         const Opcode opcode = word & OPCODE_MASK;
         return Instruction {
-            .operation = opcodes2operation[opcode],
-            .immediate = word & IMMEDIATE_MASK,
-            .r1 = static_cast<Register>(word & R1_MASK),
-            .r2 = static_cast<Register>(word & R2_MASK)
+                .operation = opcodes2operation[opcode],
+                .immediate = word & IMMEDIATE_MASK,
+                .r1 = static_cast<RegisterId>(word & R1_MASK),
+                .r2 = static_cast<RegisterId>(word & R2_MASK)
         };
     }
-};
 
-}
-#endif //CHAIVM_DECODER_HPP
+    Instruction decode(chsize_t pc);
+
+} // namespace chai::interpreter
+
+#endif // CHAIVM_DECODER_HPP
