@@ -16,8 +16,8 @@ enum Operation {
 struct Instruction {
     Operation operation;
     Immediate immediate;
-    RegisterId src;
-    RegisterId dst;
+    RegisterId r1;
+    RegisterId r2;
 };
 
 } // namespace chai::interpreter
