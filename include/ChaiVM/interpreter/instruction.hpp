@@ -1,18 +1,18 @@
 #ifndef CHAIVM_INSTRUCTION_HPP
 #define CHAIVM_INSTRUCTION_HPP
 
-#include <cstdint>
 #include "operations.hpp"
+#include <cstdint>
 
 namespace chai::interpreter {
 
 using Opcode = uint8_t;
 using RegisterId = uint8_t;
-using Immediate = uint32_t;
+using Immidiate = uint32_t;
 
 struct Instruction {
     Operation operation;
-    Immediate immediate;
+    Immidiate immidiate;
     RegisterId r1;
     RegisterId r2;
 };

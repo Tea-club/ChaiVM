@@ -20,8 +20,28 @@ enum Operation {
     Divi,
 };
 
-Operation opcodes2operation[] = { Inv, Nop, Mov, Ldia, Ldra, Star, Add, Addi, Sub, Subi, Mul, Muli, Div, Divi, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, Inv, }
+constexpr Operation opcodes2operation[] = {
+    Inv, Nop, Mov, Ldia, Ldra, Star, Add, Addi, Sub, Subi, Mul, Muli, Div, Divi,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
+    Inv, Inv, Inv,
+};
 
-}
+} // namespace chai::interpreter
 
-#endif //CHAIVM_OPERATIONS_HPP
+#endif // CHAIVM_OPERATIONS_HPP
