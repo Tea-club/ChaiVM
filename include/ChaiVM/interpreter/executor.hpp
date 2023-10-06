@@ -8,14 +8,14 @@ namespace chai::interpreter {
 
 class Executor {
 public:
-    using Handler = void (Executor::*)(const Instruction &);
+    using Handler = void (Executor::*)(Instruction);
 
-    void execute(const Instruction &ins);
+    void execute(Instruction ins);
     const RegisterFile &getState() const &;
     void advancePc();
 
-    void nop(const Instruction &ins);
-    void ret(const Instruction &ins);
+    void nop(Instruction ins);
+    void ret(Instruction ins);
 
     static constexpr Handler handlerArr[] = {&Executor::nop, &Executor::ret};
 
