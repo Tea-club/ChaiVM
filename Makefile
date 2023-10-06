@@ -8,6 +8,11 @@ JOBS ?= 4
 .PHONY: all
 all: test
 
+.PHONY: init
+init:
+	git submodule init
+	git submodule update
+
 .PHONY: format
 .SILENT: format
 format:
@@ -16,12 +21,12 @@ format:
 	./tools/clang-format.sh $(PWD)/$(TEST_DIR)
 
 .PHONY: build
-build:
+build: init
 	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR)
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
 .PHONY: build-val
-build-val:
+build-val: init
 	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DBESM666_TEST_WITH_VALGRIND=ON
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 

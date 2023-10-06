@@ -5,7 +5,6 @@
 
 namespace chai::interpreter {
 
-
 using Opcode = uint8_t;
 using Register = uint8_t;
 using Immediate = uint32_t;
@@ -21,7 +20,6 @@ struct Instruction {
     Register dst;
 };
 
+} // namespace chai::interpreter
 
-}
-
-#endif //CHAIVM_INSTRUCTION_HPP
+#endif // CHAIVM_INSTRUCTION_HPP
