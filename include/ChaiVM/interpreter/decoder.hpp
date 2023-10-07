@@ -8,7 +8,7 @@ namespace chai::interpreter {
 
 class Decoder {
 public:
-    Instruction parse(uint32_t word);
+    [[nodiscard]] Instruction parse(uint32_t word) const;
     Instruction decode(chsize_t pc);
 };
 

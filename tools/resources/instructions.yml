@@ -1,0 +1,65 @@
+---
+fields:
+  r1:
+    name: r1
+    location: {bits: [{msb: 15, lsb: 8, from: 7, to: 0}], mask: 65280, debug_hex_mask: ff00}
+  r2:
+    name: r2
+    location: {bits: [{msb: 23, lsb: 16, from: 7, to: 0}], mask: 16711680, debug_hex_mask: ff0000}
+  imm24:
+    name: imm
+    location: {bits: [{msb: 31, lsb: 8, from: 23, to: 0}], mask: 4293918720, debug_hex_mask: ffffff00}
+
+instructions:
+  - &1
+    fixedvalue: 1
+    mnemonic: Nop
+    format: N
+  - &2
+    fixedvalue: 2
+    mnemonic: Mov
+    format: RR
+  - &3
+    fixedvalue: 3
+    mnemonic: Ldia
+    format: R
+  - &4
+    fixedvalue: 4
+    mnemonic: Ldra
+    format: R
+  - &5
+    fixedvalue: 5
+    mnemonic: Star
+    format: R
+  - &6
+    fixedvalue: 6
+    mnemonic: Add
+    format: R
+  - &7
+    fixedvalue: 7
+    mnemonic: Addi
+    format: I
+  - &8
+    fixedvalue: 8
+    mnemonic: Sub
+    format: R
+  - &9
+    fixedvalue: 9
+    mnemonic: Subi
+    format: I
+  - &10
+    fixedvalue: 10
+    mnemonic: Mul
+    format: R
+  - &11
+    fixedvalue: 11
+    mnemonic: Muli
+    format: I
+  - &12
+    fixedvalue: 12
+    mnemonic: Div
+    format: R
+  - &13
+    fixedvalue: 13
+    mnemonic: Divi
+    format: I
