@@ -7,8 +7,6 @@ using chai::interpreter::Instruction;
 
 class DecoderCommon : public ::testing::Test {
 protected:
-    const Decoder decoder{};
-
     [[nodiscard]] virtual bool equal(Instruction lhs, Instruction rhs) = 0;
     void SetUp() override {}
 
@@ -62,29 +60,29 @@ protected:
 
 TEST_F(Decoder_I, Addi) {
     const auto instance = buildInstr(Addi, 0xAB2C3D);
-    Instruction parsed = decoder.parse(0xAB2C3D07);
+    Instruction parsed = decoder::parse(0xAB2C3D08);
     EXPECT_TRUE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_R, Add) {
     const auto instance = buildInstr(Add, 12);
-    Instruction parsed = decoder.parse(0xABCD0C06);
+    Instruction parsed = decoder::parse(0xABCD0C07);
     EXPECT_TRUE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_RR, Mov) {
     const auto instance = buildInstr(Mov, 12, 0x43);
-    Instruction parsed = decoder.parse(0xAB430C02);
+    Instruction parsed = decoder::parse(0xAB430C03);
     EXPECT_TRUE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_RR, NOT_MOV) {
     const auto instance = buildInstr(Mov, 12, 0x43);
-    Instruction parsed = decoder.parse(0xAB340C02);
+    Instruction parsed = decoder::parse(0xAB340C03);
     EXPECT_FALSE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_RR, INVALID_OPERATION) {
-    Instruction parsed = decoder.parse(0xAB430CFA);
+    Instruction parsed = decoder::parse(0xAB430CFA);
     EXPECT_EQ(parsed.operation, Inv);
 }

@@ -1,5 +1,4 @@
-#ifndef CHAIVM_REG_FILE_HPP
-#define CHAIVM_REG_FILE_HPP
+#pragma once
 
 #include <array>
 #include <cstdlib>
@@ -12,20 +11,19 @@ namespace chai::interpreter {
 
 class RegisterFile {
 public:
+    RegisterFile(chsize_t pc);
     chsize_t &operator[](int n) &;
-    chsize_t getAcc() const;
-    void setAcc(chsize_t value);
-    chsize_t getPc() const;
-    void setPc(chsize_t value);
+    chsize_t &pc();
+    chsize_t pc() const;
+    chsize_t &acc();
+    chsize_t acc() const;
 
     static constexpr size_t Size = std::numeric_limits<RegisterId>::max();
 
 private:
     chsize_t acc_;
-    chsize_t pc_ = 0;
+    chsize_t pc_;
     std::array<chsize_t, Size> registers_;
 };
 
 } // namespace chai::interpreter
-
-#endif // CHAIVM_REG_FILE_HPP

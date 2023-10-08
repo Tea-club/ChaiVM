@@ -4,21 +4,20 @@
 
 using namespace chai::interpreter;
 
-TEST(ExecutorTest, advancePc) {
+class ExecutorTest : public ::testing::Test {
+protected:
     Executor exec;
-    exec.advancePc();
-    EXPECT_EQ(exec.getState().getPc(), 4);
+};
+
+TEST_F(ExecutorTest, inv) {
+    Instruction invIns = {Inv, 0, 0, 0};
+    EXPECT_THROW(exec.execute(invIns), InvalidInstruction);
 }
 
-TEST(ExecutorTest, ret) {
-    Executor exec;
-    /**
-     * @todo #8:5m>/DEV fix this instruction generation after implemented
-     * decoder
-     */
-    Instruction retIns = {static_cast<Operation>(1), 0, 0, 0};
+TEST_F(ExecutorTest, ret) {
+    Instruction retIns = {Ret, 0, 0, 0};
     exec.execute(retIns);
-    EXPECT_EQ(exec.getState().getPc(), 4);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t));
 }
 
 /**

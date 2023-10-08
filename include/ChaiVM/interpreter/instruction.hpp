@@ -1,5 +1,4 @@
-#ifndef CHAIVM_INSTRUCTION_HPP
-#define CHAIVM_INSTRUCTION_HPP
+#pragma once
 
 #include "operations.hpp"
 #include <cstdint>
@@ -18,5 +17,3 @@ struct Instruction {
 };
 
 } // namespace chai::interpreter
-
-#endif // CHAIVM_INSTRUCTION_HPP
