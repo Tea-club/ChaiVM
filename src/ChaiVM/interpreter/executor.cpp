@@ -107,12 +107,11 @@ void Executor::divi(Instruction ins) {
     (this->*handlerArr[newIns.operation])(newIns);
 }
 
-InvalidInstruction::InvalidInstruction(const char *msg)
-    : runtime_error(msg) {}
+InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)
     : runtime_error(msg) {}
 const char *InvalidInstruction::what() const noexcept {
     return runtime_error::what();
 }
 
-}
+} // namespace chai::interpreter

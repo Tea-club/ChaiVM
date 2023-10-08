@@ -13,4 +13,4 @@ chai::chsize_t &RegisterFile::acc() { return acc_; }
 chai::chsize_t RegisterFile::acc() const { return acc_; }
 RegisterFile::RegisterFile(chsize_t pc) : pc_(pc) {}
 
-}
+} // namespace chai::interpreter

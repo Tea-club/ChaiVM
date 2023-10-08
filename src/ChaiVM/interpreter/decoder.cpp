@@ -13,4 +13,4 @@ Instruction parse(bytecode_t word) {
     };
 }
 
-}
+} // namespace chai::interpreter::decoder

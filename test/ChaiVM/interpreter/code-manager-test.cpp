@@ -1,14 +1,18 @@
-#include <gtest/gtest.h>
 #include "ChaiVM/interpreter/code-manager.hpp"
+#include <gtest/gtest.h>
 
 using namespace chai::interpreter;
 
-//  TEST(CodeManager, returnsBytecodes) {
-//      CodeManager manager{};
-//      constexpr Operation seq[] = {Mov, Mul, Addi, Add};
-//      constexpr char arr[] = {Mov,0, 0, 0, Mul, 0, 0, 0, Addi, 0, 0, 0, Add, 0, 0, 0};
-//      const std::string str{arr};
-//      std::istringstream istream(str);
-//      manager.load(istream);
-//      EXPECT_EQ(manager.getBytecode(0), Mov);
-//  }
+TEST(CodeManager, returnsBytecodes) {
+    CodeManager manager{};
+    std::vector<Operation> seq = {Mov, Mul, Addi, Add};
+    for (const auto &op : seq) {
+        manager.load(static_cast<chai::bytecode_t>(op));
+    }
+
+    const chai::chsize_t initial_pc = manager.startPC();
+    for (int i = 0; i < seq.size(); ++i) {
+        chai::chsize_t pc = initial_pc + i * 4;
+        EXPECT_EQ(manager.getBytecode(pc), seq[i]);
+    }
+}

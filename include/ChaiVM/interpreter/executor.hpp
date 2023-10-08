@@ -34,10 +34,11 @@ private:
     void div(Instruction ins);
     void divi(Instruction ins);
 
-    static constexpr Handler handlerArr[] = {&Executor::inv, &Executor::nop, &Executor::ret,
-    &Executor::mov, &Executor::ldia, &Executor::ldra, &Executor::star, &Executor::add,
-    &Executor::addi, &Executor::sub, &Executor::subi, &Executor::mul, &Executor::muli,
-    &Executor::div, &Executor::divi};
+    static constexpr Handler handlerArr[] = {
+        &Executor::inv,  &Executor::nop,  &Executor::ret,  &Executor::mov,
+        &Executor::ldia, &Executor::ldra, &Executor::star, &Executor::add,
+        &Executor::addi, &Executor::sub,  &Executor::subi, &Executor::mul,
+        &Executor::muli, &Executor::div,  &Executor::divi};
 
 private:
     RegisterFile regFile_;
