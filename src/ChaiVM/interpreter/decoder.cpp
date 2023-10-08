@@ -13,8 +13,6 @@ Instruction Decoder::parse(const uint32_t word) const {
     };
 }
 
-// @todo #8:90m Implement decode method. It should firstly fetch instruction and
-//  then parse it.
-Instruction Decoder::decode(const chsize_t pc) {
-    return Instruction{Operation::Inv};
+Instruction Decoder::decode(const chsize_t pc) const {
+    return parse(*((chword_t *)pc));
 }

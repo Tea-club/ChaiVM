@@ -9,7 +9,7 @@ namespace chai::interpreter {
 class Decoder {
 public:
     [[nodiscard]] Instruction parse(uint32_t word) const;
-    Instruction decode(chsize_t pc);
+    [[nodiscard]] Instruction decode(chsize_t pc) const;
 };
 
 } // namespace chai::interpreter

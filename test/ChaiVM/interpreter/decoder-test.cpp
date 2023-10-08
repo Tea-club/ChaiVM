@@ -4,6 +4,7 @@
 
 using namespace chai::interpreter;
 using chai::interpreter::Instruction;
+using namespace chai;
 
 class DecoderCommon : public ::testing::Test {
 protected:
@@ -87,4 +88,32 @@ TEST_F(Decoder_RR, NOT_MOV) {
 TEST_F(Decoder_RR, INVALID_OPERATION) {
     Instruction parsed = decoder.parse(0xAB430CFA);
     EXPECT_EQ(parsed.operation, Inv);
+}
+
+TEST(Decoder, fetch_decode) {
+    Decoder decoder{};
+    constexpr int num_words = 5;
+    assert(sizeof(chword_t) == 4);
+    char *raw = new char[num_words * 4];
+    auto *words = (chword_t *)raw;
+    // Write words with opcodes to raw.
+    Operation operations_seq[num_words] = {Mov, Add, Addi, Sub, Subi};
+    for (int i = 0; i < num_words; ++i) {
+        words[i] = operations_seq[i];
+    }
+    for (int i = 0; i < num_words; ++i) {
+        assert(raw[i * 4 + 0] != 0);
+        assert(raw[i * 4 + 1] == 0);
+        assert(raw[i * 4 + 2] == 0);
+        assert(raw[i * 4 + 0] != 0);
+    }
+    chsize_t pc = reinterpret_cast<chsize_t>(raw);
+    for (auto &operation : operations_seq) {
+        Instruction decoded = decoder.decode(pc);
+        EXPECT_EQ(decoded.operation, operation);
+        EXPECT_EQ(decoded.r1, 0);
+        EXPECT_EQ(decoded.r2, 0);
+        EXPECT_EQ(decoded.immidiate, 0);
+        pc += 4;
+    }
 }
