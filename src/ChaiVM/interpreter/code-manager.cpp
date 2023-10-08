@@ -1,5 +1,5 @@
 #include "ChaiVM/interpreter/code-manager.hpp"
-
+#include "ChaiVM/interpreter/decoder.hpp"
 using namespace chai::interpreter;
 
 void CodeManager::load(chai::bytecode_t bytecode) { raw_.push_back(bytecode); }

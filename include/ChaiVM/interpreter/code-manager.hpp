@@ -9,12 +9,20 @@
 
 namespace chai::interpreter {
 
+/**
+ * Class to manage bytecode. Similar to ClassLoader.
+ */
 class CodeManager {
 public:
     void load(bytecode_t bytecode);
 
     void load(std::istream &istream);
 
+    /**
+     * Parses file by path and loads its code.
+     * @param path Path of file to load.
+     * @todo #8:90min Implement the method below.
+     */
     void load(const std::filesystem::path &path);
 
     bytecode_t getBytecode(chsize_t pc);

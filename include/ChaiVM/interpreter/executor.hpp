@@ -10,7 +10,7 @@ class Executor {
 public:
     using Handler = void (Executor::*)(Instruction);
 
-    Executor();
+    Executor(CodeManager *manager);
     void run();
     void execute(Instruction ins);
     const RegisterFile &getState() const &;
@@ -42,7 +42,7 @@ private:
 
 private:
     RegisterFile regFile_;
-    CodeManager codeManager_;
+    CodeManager *codeManager_;
 };
 
 /**

@@ -1,6 +1,8 @@
 #include "ChaiVM/interpreter/decoder.hpp"
 #include "ChaiVM/utils/bit-magic.hpp"
 
+#include <cstdio>
+
 namespace chai::interpreter::decoder {
 
 Instruction parse(bytecode_t word) {
