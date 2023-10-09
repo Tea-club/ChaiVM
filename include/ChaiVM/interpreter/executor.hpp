@@ -41,8 +41,8 @@ private:
         &Executor::muli, &Executor::div,  &Executor::divi};
 
 private:
-    RegisterFile regFile_;
     CodeManager *codeManager_;
+    RegisterFile regFile_;
 };
 
 /**
