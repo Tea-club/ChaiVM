@@ -1,11 +1,11 @@
-#ifndef CHAIVM_OPERATIONS_HPP
-#define CHAIVM_OPERATIONS_HPP
+#pragma once
 
 namespace chai::interpreter {
 
 enum Operation {
     Inv,
     Nop,
+    Ret,
     Mov,
     Ldia,
     Ldra,
@@ -21,27 +21,25 @@ enum Operation {
 };
 
 constexpr Operation opcodes2operation[] = {
-    Inv, Nop, Mov, Ldia, Ldra, Star, Add, Addi, Sub, Subi, Mul, Muli, Div, Divi,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,
-    Inv, Inv, Inv,
+    Inv,  Nop, Ret, Mov, Ldia, Ldra, Star, Add, Addi, Sub, Subi, Mul, Muli, Div,
+    Divi, Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv, Inv, Inv,  Inv,  Inv,  Inv, Inv,  Inv, Inv,  Inv, Inv,  Inv,
+    Inv,  Inv, Inv,
 };
 
 } // namespace chai::interpreter
-
-#endif // CHAIVM_OPERATIONS_HPP

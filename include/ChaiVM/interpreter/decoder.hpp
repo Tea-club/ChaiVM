@@ -1,17 +1,10 @@
-#ifndef CHAIVM_DECODER_HPP
-#define CHAIVM_DECODER_HPP
+#pragma once
 
 #include "ChaiVM/types.hpp"
 #include "instruction.hpp"
 
-namespace chai::interpreter {
+namespace chai::interpreter::decoder {
 
-class Decoder {
-public:
-    [[nodiscard]] Instruction parse(uint32_t word) const;
-    Instruction decode(chsize_t pc);
-};
+Instruction parse(bytecode_t bytecode);
 
-} // namespace chai::interpreter
-
-#endif // CHAIVM_DECODER_HPP
+} // namespace chai::interpreter::decoder

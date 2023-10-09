@@ -1,10 +1,10 @@
-#ifndef CHAIVM_TYPES_HPP
-#define CHAIVM_TYPES_HPP
+#pragma once
 
 #include <cstdint>
 
 namespace chai {
-using chsize_t = uint64_t;
-}
 
-#endif // CHAIVM_TYPES_HPP
+using bytecode_t = uint32_t;
+using chsize_t = uint64_t;
+
+} // namespace chai

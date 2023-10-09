@@ -1,9 +1,11 @@
 #include "ChaiVM/interpreter/decoder.hpp"
 #include "ChaiVM/utils/bit-magic.hpp"
 
-using namespace chai::interpreter;
+#include <cstdio>
 
-Instruction Decoder::parse(const uint32_t word) const {
+namespace chai::interpreter::decoder {
+
+Instruction parse(bytecode_t word) {
     const Opcode opcode = utils::ExtractBits<uint32_t, 8, 0>(word);
     return Instruction{
         .operation = opcodes2operation[opcode],
@@ -13,8 +15,4 @@ Instruction Decoder::parse(const uint32_t word) const {
     };
 }
 
-// @todo #8:90m Implement decode method. It should firstly fetch instruction and
-//  then parse it.
-Instruction Decoder::decode(const chsize_t pc) {
-    return Instruction{Operation::Inv};
-}
+} // namespace chai::interpreter::decoder

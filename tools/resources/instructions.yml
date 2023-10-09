@@ -17,49 +17,53 @@ instructions:
     format: N
   - &2
     fixedvalue: 2
-    mnemonic: Mov
-    format: RR
+    mnemonic: Ret
+    format: N
   - &3
     fixedvalue: 3
-    mnemonic: Ldia
-    format: R
+    mnemonic: Mov
+    format: RR
   - &4
     fixedvalue: 4
-    mnemonic: Ldra
+    mnemonic: Ldia
     format: R
   - &5
     fixedvalue: 5
-    mnemonic: Star
+    mnemonic: Ldra
     format: R
   - &6
     fixedvalue: 6
-    mnemonic: Add
+    mnemonic: Star
     format: R
   - &7
     fixedvalue: 7
-    mnemonic: Addi
-    format: I
+    mnemonic: Add
+    format: R
   - &8
     fixedvalue: 8
-    mnemonic: Sub
-    format: R
+    mnemonic: Addi
+    format: I
   - &9
     fixedvalue: 9
-    mnemonic: Subi
-    format: I
+    mnemonic: Sub
+    format: R
   - &10
     fixedvalue: 10
-    mnemonic: Mul
-    format: R
+    mnemonic: Subi
+    format: I
   - &11
     fixedvalue: 11
-    mnemonic: Muli
-    format: I
+    mnemonic: Mul
+    format: R
   - &12
     fixedvalue: 12
-    mnemonic: Div
-    format: R
+    mnemonic: Muli
+    format: I
   - &13
     fixedvalue: 13
+    mnemonic: Div
+    format: R
+  - &14
+    fixedvalue: 14
     mnemonic: Divi
     format: I
