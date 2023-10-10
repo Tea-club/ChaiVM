@@ -245,7 +245,3 @@ TEST_F(ExecutorTest, divi) {
               static_cast<int>(val2 / val1));
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
-
-/**
- * @todo #8:5m>/DEV add other tests after implemented decoder
- */
