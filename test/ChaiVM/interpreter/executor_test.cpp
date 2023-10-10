@@ -61,7 +61,7 @@ TEST_F(ExecutorTest, run) {
     codeManager.load(Instr2Raw(Ret, 0, 0));
     exec.run();
 
-    EXPECT_EQ(exec.getState().pc(), 28);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 7);
     EXPECT_EQ(exec.getState().acc(), 48);
 }
 
