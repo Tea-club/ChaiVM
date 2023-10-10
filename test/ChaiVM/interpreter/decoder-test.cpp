@@ -58,9 +58,16 @@ protected:
     }
 };
 
+TEST_F(Decoder_I, imm) {
+    const auto instance = buildInstr(Addi, -3); // FFFFFFFD
+    Instruction parsed = decoder::parse(0x000000FFFFFFFD08);
+    EXPECT_TRUE(equal(parsed, instance));
+    EXPECT_EQ(parsed.immidiate, instance.immidiate);
+}
+
 TEST_F(Decoder_I, Addi) {
-    const auto instance = buildInstr(Addi, 0x00AB2C3D);
-    Instruction parsed = decoder::parse(0xD0000000AB2C3D08);
+    const auto instance = buildInstr(Addi, 0xFAAB2C3D);
+    Instruction parsed = decoder::parse(0xD00000FAAB2C3D08);
     EXPECT_TRUE(equal(parsed, instance));
 }
 

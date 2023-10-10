@@ -33,4 +33,11 @@ private:
     std::vector<bytecode_t> raw_;
 };
 
+class BeyondCodeBoundaries : public std::runtime_error {
+public:
+    BeyondCodeBoundaries(char const *msg);
+    BeyondCodeBoundaries(const std::string &msg);
+    const char *what() const noexcept override;
+};
+
 } // namespace chai::interpreter

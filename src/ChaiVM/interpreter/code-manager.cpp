@@ -23,11 +23,22 @@ void CodeManager::load(const std::filesystem::path &path) {
 }
 
 chai::bytecode_t CodeManager::getBytecode(chai::chsize_t pc) {
-    if (pc / sizeof(bytecode_t) > raw_.size() || pc % sizeof(bytecode_t) != 0) {
-        return Inv;
+    if (pc / sizeof(bytecode_t) >= raw_.size() ||
+        pc % sizeof(bytecode_t) != 0) {
+        throw BeyondCodeBoundaries(
+            "Going beyond the boundaries of the code at pc: " +
+            std::to_string(pc));
     } else {
         return raw_[pc / sizeof(bytecode_t)];
     }
 }
 
 chai::chsize_t CodeManager::startPC() { return 0; }
+
+BeyondCodeBoundaries::BeyondCodeBoundaries(const char *msg)
+    : runtime_error(msg) {}
+BeyondCodeBoundaries::BeyondCodeBoundaries(const std::string &msg)
+    : runtime_error(msg) {}
+const char *BeyondCodeBoundaries::what() const noexcept {
+    return runtime_error::what();
+}
