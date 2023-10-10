@@ -1,5 +1,3 @@
-find_package(benchmark REQUIRED)
-
 add_library(chai_benchif INTERFACE)
 target_link_libraries(chai_benchif INTERFACE
     chai_include
