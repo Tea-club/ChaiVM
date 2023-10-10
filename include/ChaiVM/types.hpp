@@ -4,7 +4,7 @@
 
 namespace chai {
 
-using bytecode_t = uint32_t;
+using bytecode_t = uint64_t;
 using chsize_t = uint64_t;
 
 } // namespace chai

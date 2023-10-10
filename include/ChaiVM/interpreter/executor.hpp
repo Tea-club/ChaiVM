@@ -12,7 +12,6 @@ public:
 
     Executor(CodeManager *manager);
     void run();
-    void execute(Instruction ins);
     const RegisterFile &getState() const &;
 
 private:

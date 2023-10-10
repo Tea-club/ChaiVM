@@ -12,7 +12,7 @@ TEST(CodeManager, returnsBytecodes) {
 
     const chai::chsize_t initial_pc = manager.startPC();
     for (int i = 0; i < seq.size(); ++i) {
-        chai::chsize_t pc = initial_pc + i * 4;
+        chai::chsize_t pc = initial_pc + i * sizeof(chai::bytecode_t);
         EXPECT_EQ(manager.getBytecode(pc), seq[i]);
     }
 }

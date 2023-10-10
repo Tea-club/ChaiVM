@@ -7,6 +7,10 @@ chai::chsize_t &RegisterFile::operator[](int n) & {
     assert(n <= Size);
     return registers_[n];
 }
+const chsize_t &RegisterFile::operator[](int n) const & {
+    assert(n <= Size);
+    return registers_[n];
+}
 chai::chsize_t &RegisterFile::pc() { return pc_; }
 chai::chsize_t RegisterFile::pc() const { return pc_; }
 chai::chsize_t &RegisterFile::acc() { return acc_; }

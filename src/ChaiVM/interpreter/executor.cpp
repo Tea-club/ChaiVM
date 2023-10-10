@@ -4,8 +4,10 @@ namespace chai::interpreter {
 
 Executor::Executor(CodeManager *manager)
     : codeManager_(manager), regFile_(codeManager_->startPC()) {}
-void Executor::execute(Instruction ins) {
-    (this->*handlerArr[ins.operation])(ins);
+void Executor::run() {
+    const Instruction first =
+        decoder::parse(codeManager_->getBytecode(regFile_.pc()));
+    (this->*handlerArr[first.operation])(first);
 }
 const RegisterFile &Executor::getState() const & { return regFile_; }
 void Executor::advancePc() { regFile_.pc() += sizeof(bytecode_t); }
@@ -106,13 +108,6 @@ void Executor::divi(Instruction ins) {
     Instruction newIns =
         decoder::parse(codeManager_->getBytecode(regFile_.pc()));
     (this->*handlerArr[newIns.operation])(newIns);
-}
-
-void Executor::run() {
-    const Instruction first =
-        decoder::parse(codeManager_->getBytecode(regFile_.pc()));
-    (this->*handlerArr[first.operation])(first);
-    regFile_.~RegisterFile();
 }
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
