@@ -38,6 +38,10 @@ test: build
 test-val: build-val
 	ctest --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
 
+.PHONY: bench
+bench: build-val
+	cd $(PWD)/$(BUILD_DIR) && make run_bench && cd $(PWD)
+
 .PHONY: clean
 .SILENT: clean
 clean:
