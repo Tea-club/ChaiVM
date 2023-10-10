@@ -2,6 +2,7 @@ BUILD_DIR := build
 SRC_DIR := src
 INC_DIR := include
 TEST_DIR := test
+BENCH_DIR := bench
 
 JOBS ?= 4
 
@@ -19,7 +20,7 @@ format:
 	./tools/clang-format.sh $(PWD)/$(SRC_DIR)
 	./tools/clang-format.sh $(PWD)/$(INC_DIR)
 	./tools/clang-format.sh $(PWD)/$(TEST_DIR)
-
+	./tools/clang-format.sh $(PWD)/$(BENCH_DIR)
 .PHONY: build
 build: init
 	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR)
