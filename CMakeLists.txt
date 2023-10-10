@@ -5,7 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(third_party)
 add_subdirectory(test)
 add_subdirectory(src)
-add_subdirectory(bench)
+if (CHAI_BENCH)
+    add_subdirectory(bench)
+endif ()
 
 add_library(chai_include INTERFACE)
 target_include_directories(chai_include INTERFACE

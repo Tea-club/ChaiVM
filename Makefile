@@ -39,7 +39,9 @@ test-val: build-val
 	ctest --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
 
 .PHONY: bench
-bench: build-val
+bench: init
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAI_BENCH=1
+	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 	cd $(PWD)/$(BUILD_DIR) && make run_bench && cd $(PWD)
 
 .PHONY: clean
