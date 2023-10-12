@@ -18,7 +18,7 @@ class CodeManager {
 public:
     void load(bytecode_t bytecode);
 
-    void load(std::ifstream &istream);
+    void load(std::istream &istream);
 
     /**
      * Parses file by path and loads its code.

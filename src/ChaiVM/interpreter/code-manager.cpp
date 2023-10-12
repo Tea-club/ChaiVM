@@ -4,10 +4,13 @@ namespace chai::interpreter {
 
 void CodeManager::load(bytecode_t bytecode) { raw_.push_back(bytecode); }
 
-void CodeManager::load(std::ifstream &istream) {
+void CodeManager::load(std::istream &istream) {
+    if (!istream.good()) {
+        throw std::invalid_argument(std::string{"Bad input stream"});
+    }
     bytecode_t bytecode = 0;
     while (
-        istream.read(reinterpret_cast<char *>(bytecode), sizeof(bytecode_t))) {
+        istream.read(reinterpret_cast<char *>(&bytecode), sizeof(bytecode_t))) {
         raw_.push_back(bytecode);
     }
 }
