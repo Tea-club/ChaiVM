@@ -1,19 +1,20 @@
 #include "ChaiVM/interpreter/code-manager.hpp"
-#include "ChaiVM/interpreter/decoder.hpp"
-using namespace chai::interpreter;
 
-void CodeManager::load(chai::bytecode_t bytecode) { raw_.push_back(bytecode); }
+namespace chai::interpreter {
 
-void CodeManager::load(std::istream &istream) {
-    bytecode_t bytecode;
-    while (istream >> bytecode) {
+void CodeManager::load(bytecode_t bytecode) { raw_.push_back(bytecode); }
+
+void CodeManager::load(std::ifstream &istream) {
+    bytecode_t bytecode = 0;
+    while (
+        istream.read(reinterpret_cast<char *>(bytecode), sizeof(bytecode_t))) {
         raw_.push_back(bytecode);
     }
 }
 
 void CodeManager::load(const std::filesystem::path &path) {
-    std::ifstream inputFile(path);
-    if (inputFile.is_open()) {
+    std::ifstream inputFile(path, std::ios::binary | std::ios::in);
+    if (inputFile.good() && inputFile.is_open()) {
         load(inputFile);
         inputFile.close();
     } else {
@@ -22,7 +23,7 @@ void CodeManager::load(const std::filesystem::path &path) {
     }
 }
 
-chai::bytecode_t CodeManager::getBytecode(chai::chsize_t pc) {
+bytecode_t CodeManager::getBytecode(chsize_t pc) {
     if (pc / sizeof(bytecode_t) >= raw_.size() ||
         pc % sizeof(bytecode_t) != 0) {
         throw BeyondCodeBoundaries(
@@ -33,7 +34,7 @@ chai::bytecode_t CodeManager::getBytecode(chai::chsize_t pc) {
     }
 }
 
-chai::chsize_t CodeManager::startPC() { return 0; }
+chsize_t CodeManager::startPC() { return 0; }
 
 BeyondCodeBoundaries::BeyondCodeBoundaries(const char *msg)
     : runtime_error(msg) {}
@@ -42,3 +43,5 @@ BeyondCodeBoundaries::BeyondCodeBoundaries(const std::string &msg)
 const char *BeyondCodeBoundaries::what() const noexcept {
     return runtime_error::what();
 }
+
+} // namespace chai::interpreter

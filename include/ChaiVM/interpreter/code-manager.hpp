@@ -1,11 +1,13 @@
 #pragma once
-#include "ChaiVM/types.hpp"
-#include "instruction.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <istream>
 #include <vector>
+
+#include "ChaiVM/types.hpp"
+#include "instruction.hpp"
 
 namespace chai::interpreter {
 
@@ -16,7 +18,7 @@ class CodeManager {
 public:
     void load(bytecode_t bytecode);
 
-    void load(std::istream &istream);
+    void load(std::ifstream &istream);
 
     /**
      * Parses file by path and loads its code.
