@@ -67,3 +67,39 @@ instructions:
     fixedvalue: 14
     mnemonic: Divi
     format: I
+  - &15
+    fixedvalue: 15
+    mnemonic: Ldiaf
+    format: R
+  - &16
+    fixedvalue: 16
+    mnemonic: Addf
+    format: R
+  - &17
+    fixedvalue: 17
+    mnemonic: Addif
+    format: I
+  - &18
+    fixedvalue: 18
+    mnemonic: Subf
+    format: R
+  - &19
+    fixedvalue: 19
+    mnemonic: Subif
+    format: I
+  - &20
+    fixedvalue: 20
+    mnemonic: Mulf
+    format: R
+  - &21
+    fixedvalue: 21
+    mnemonic: Mulif
+    format: I
+  - &22
+    fixedvalue: 22
+    mnemonic: Divf
+    format: R
+  - &23
+    fixedvalue: 23
+    mnemonic: Divif
+    format: I
