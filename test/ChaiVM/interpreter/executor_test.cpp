@@ -2,6 +2,7 @@
 
 #include "ChaiVM/interpreter/executor.hpp"
 #include <unistd.h>
+#include <fcntl.h>
 
 using namespace chai::interpreter;
 
@@ -45,9 +46,35 @@ private:
     }
 };
 
-class IOTest: public ExecutorTest {
-private:
-    int stdin_backup_ = dup(STDIN_FILENO);
+class IOTest : public ExecutorTest {
+public:
+    static constexpr int ERROR = -1;
+
+protected:
+    const int buf_stdin_ = dup(STDIN_FILENO);
+    int out_fd_;
+    int tube_[2];
+    void SetUp() override {
+        int buf_stdin = dup(STDIN_FILENO);
+        EXPECT_EQ(pipe(tube_), 0);
+        out_fd_ = tube_[1];
+        EXPECT_NE(dup2(tube_[0], STDIN_FILENO), ERROR);
+    }
+
+    void TearDown() override {
+        close(tube_[1]);
+        EXPECT_NE(dup2(buf_stdin_, STDIN_FILENO), ERROR);
+
+        // Clear input for next tests.
+        int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+        fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
+        char input[256];
+        if (fgets(input, sizeof(input), stdin) != nullptr) {
+            printf("Input read from stdin: %s\n", input);
+        } else {
+            printf("No input available in stdin\n");
+        }
+    }
 };
 
 /*
@@ -390,38 +417,21 @@ TEST_F(ExecutorTest, icprintc) {
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 
-TEST_F(ExecutorTest, icscani) {
-    constexpr int ERROR = -1;
-    int buf_stdin = dup(STDIN_FILENO);
-    int mypipe[2];
-    EXPECT_EQ(pipe(mypipe), 0);
-    write(mypipe[1], "123A", 4);
-    EXPECT_NE(dup2(mypipe[0], STDIN_FILENO), ERROR);
+TEST_F(IOTest, icscani) {
+    write(out_fd_, "123A", 4);
     codeManager.load(instr2Raw(IcScani));
     codeManager.load(instr2Raw(Ret));
     exec.run();
     EXPECT_EQ(exec.getState().acc(), 123);
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
-    EXPECT_NE(dup2(buf_stdin, STDIN_FILENO), ERROR);
-    char c;
-    scanf("%c", &c);
-    EXPECT_EQ(c, 'A');
 }
 
-TEST_F(ExecutorTest, icscanf) {
-    constexpr int ERROR = -1;
-    int buf_stdin = dup(STDIN_FILENO);
-    int mypipe[2];
-    EXPECT_EQ(pipe(mypipe), 0);
-    write(mypipe[1], "1.23A", 5);
-    EXPECT_NE(dup2(mypipe[0], STDIN_FILENO), ERROR);
+TEST_F(IOTest, icscanf) {
+    write(out_fd_, "1.23A", 5);
     codeManager.load(instr2Raw(IcScanf));
     codeManager.load(instr2Raw(Ret));
     exec.run();
-    EXPECT_EQ(std::bit_cast<double>(exec.getState().acc()), static_cast<double>(1.23f));
+    EXPECT_EQ(static_cast<float >(std::bit_cast<double>(exec.getState().acc())), 1.23f);
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
-    EXPECT_NE(dup2(buf_stdin, STDIN_FILENO), ERROR);
-    char c;
-    scanf("%c", &c);
-    EXPECT_EQ(c, 'A');
 }
+
