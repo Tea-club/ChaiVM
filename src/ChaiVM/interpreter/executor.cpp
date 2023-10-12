@@ -111,7 +111,6 @@ void Executor::div(Instruction ins) {
 }
 void Executor::divi(Instruction ins) {
     regFile_.acc() = ins.immidiate / regFile_.acc();
-    advancePc();
     DO_NEXT_INS()
 }
 
