@@ -1,4 +1,3 @@
-#include "ChaiVM/interpreter/decoder.hpp"
-#include <iostream>
+#include "ChaiVM/interpreter/code-manager.hpp"
 
 int main() { std::cout << "Hello world" << std::endl; }
