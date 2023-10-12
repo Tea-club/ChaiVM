@@ -160,8 +160,8 @@ TEST_F(ExecutorTest, addNeg) {
 TEST_F(ExecutorTest, addi) {
     Immidiate val1 = std::numeric_limits<RegisterId>::min();
     Immidiate val2 = std::numeric_limits<RegisterId>::min();
-    codeManager.load(instr2Raw(Ldia, val1));
-    codeManager.load(instr2Raw(Addi, val2));
+    codeManager.load(instr2Raw(Ldia, val2));
+    codeManager.load(instr2Raw(Addi, val1));
     codeManager.load(instr2Raw(Ret));
     exec.run();
     EXPECT_EQ(static_cast<int>(exec.getState().acc()),
@@ -186,12 +186,12 @@ TEST_F(ExecutorTest, sub) {
 TEST_F(ExecutorTest, subi) {
     Immidiate val1 = 102;
     Immidiate val2 = -1028;
-    codeManager.load(instr2Raw(Ldia, val1));
-    codeManager.load(instr2Raw(Subi, val2));
+    codeManager.load(instr2Raw(Ldia, val2));
+    codeManager.load(instr2Raw(Subi, val1));
     codeManager.load(instr2Raw(Ret));
     exec.run();
     EXPECT_EQ(static_cast<int>(exec.getState().acc()),
-              static_cast<int>(val2 - val1));
+              static_cast<int>(val1 - val2));
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, mul) {
@@ -212,8 +212,8 @@ TEST_F(ExecutorTest, mul) {
 TEST_F(ExecutorTest, muli) {
     Immidiate val1 = 124;
     Immidiate val2 = 345;
-    codeManager.load(instr2Raw(Ldia, val1));
-    codeManager.load(instr2Raw(Muli, val2));
+    codeManager.load(instr2Raw(Ldia, val2));
+    codeManager.load(instr2Raw(Muli, val1));
     codeManager.load(instr2Raw(Ret));
     exec.run();
     EXPECT_EQ(static_cast<int>(exec.getState().acc()),
@@ -238,12 +238,142 @@ TEST_F(ExecutorTest, div) {
 TEST_F(ExecutorTest, divi) {
     Immidiate val1 = 2;
     Immidiate val2 = 4;
-    codeManager.load(instr2Raw(Ldia, val1));
-    codeManager.load(instr2Raw(Divi, val2));
+    codeManager.load(instr2Raw(Ldia, val2));
+    codeManager.load(instr2Raw(Divi, val1));
     codeManager.load(instr2Raw(Ret));
     exec.run();
     EXPECT_EQ(static_cast<int>(exec.getState().acc()),
-              static_cast<int>(val2 / val1));
+              static_cast<int>(val1 / val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+TEST_F(ExecutorTest, ldiaf) {
+    Immidiate val = std::bit_cast<Immidiate>(3.14f);
+    codeManager.load(instr2Raw(Ldiaf, val));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
+}
+TEST_F(ExecutorTest, addf) {
+    Immidiate val1 = std::bit_cast<Immidiate>(3.14f);
+    Immidiate val2 = std::bit_cast<Immidiate>(2.71f);
+    RegisterId r1 = 0;
+    codeManager.load(instr2Raw(Ldiaf, val1));
+    codeManager.load(instr2Raw(Star, r1));
+    codeManager.load(instr2Raw(Ldiaf, val2));
+    codeManager.load(instr2Raw(Addf, r1));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState()[r1])),
+        std::bit_cast<float>(val1));
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val1) + std::bit_cast<float>(val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 5);
+}
+TEST_F(ExecutorTest, addif) {
+    Immidiate val1 = std::bit_cast<Immidiate>(3.14f);
+    Immidiate val2 = std::bit_cast<Immidiate>(-2.71f);
+    codeManager.load(instr2Raw(Ldiaf, val2));
+    codeManager.load(instr2Raw(Addif, val1));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val1) + std::bit_cast<float>(val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+TEST_F(ExecutorTest, subf) {
+    Immidiate val1 = std::bit_cast<Immidiate>(3.14f);
+    Immidiate val2 = std::bit_cast<Immidiate>(2.71f);
+    RegisterId r1 = 0;
+    codeManager.load(instr2Raw(Ldiaf, val1));
+    codeManager.load(instr2Raw(Star, r1));
+    codeManager.load(instr2Raw(Ldiaf, val2));
+    codeManager.load(instr2Raw(Subf, r1));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState()[r1])),
+        std::bit_cast<float>(val1));
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val1) - std::bit_cast<float>(val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 5);
+}
+TEST_F(ExecutorTest, subif) {
+    Immidiate val1 = std::bit_cast<Immidiate>(3.14f);
+    Immidiate val2 = std::bit_cast<Immidiate>(2.71f);
+    codeManager.load(instr2Raw(Ldiaf, val2));
+    codeManager.load(instr2Raw(Subif, val1));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val1) - std::bit_cast<float>(val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+TEST_F(ExecutorTest, mulf) {
+    Immidiate val1 = std::bit_cast<Immidiate>(3.14f);
+    Immidiate val2 = std::bit_cast<Immidiate>(2.71f);
+    RegisterId r1 = 0;
+    codeManager.load(instr2Raw(Ldiaf, val1));
+    codeManager.load(instr2Raw(Star, r1));
+    codeManager.load(instr2Raw(Ldiaf, val2));
+    codeManager.load(instr2Raw(Mulf, r1));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState()[r1])),
+        std::bit_cast<float>(val1));
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val1) * std::bit_cast<float>(val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 5);
+}
+TEST_F(ExecutorTest, mulif) {
+    Immidiate val1 = std::bit_cast<Immidiate>(3.14f);
+    Immidiate val2 = std::bit_cast<Immidiate>(2.71f);
+    codeManager.load(instr2Raw(Ldiaf, val2));
+    codeManager.load(instr2Raw(Mulif, val1));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val1) * std::bit_cast<float>(val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+TEST_F(ExecutorTest, divf) {
+    Immidiate val1 = std::bit_cast<Immidiate>(3.14f);
+    Immidiate val2 = std::bit_cast<Immidiate>(2.71f);
+    RegisterId r1 = 0;
+    codeManager.load(instr2Raw(Ldiaf, val1));
+    codeManager.load(instr2Raw(Star, r1));
+    codeManager.load(instr2Raw(Ldiaf, val2));
+    codeManager.load(instr2Raw(Divf, r1));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState()[r1])),
+        std::bit_cast<float>(val1));
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val1) / std::bit_cast<float>(val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 5);
+}
+TEST_F(ExecutorTest, divif) {
+    Immidiate val1 = std::bit_cast<Immidiate>(3.14f);
+    Immidiate val2 = std::bit_cast<Immidiate>(2.71f);
+    codeManager.load(instr2Raw(Ldiaf, val2));
+    codeManager.load(instr2Raw(Divif, val1));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+        std::bit_cast<float>(val1) / std::bit_cast<float>(val2));
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 

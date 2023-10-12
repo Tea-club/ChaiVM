@@ -5,13 +5,17 @@ with open("resources/instructions.yml") as file:
     full = yaml.safe_load(file)
 
 instructions = full["instructions"]
-opcodes = list()
+opcodes = set()
 print(instructions)
 opcodes_arr = ["Inv"] * 255
 
 for instruction in instructions:
     print(instruction)
-    opcodes.append(instruction["fixedvalue"])
+    old_len = len(opcodes)
+    opcodes.add(instruction["fixedvalue"])
+    new_len = len(opcodes)
+    if(new_len == old_len):
+        raise RuntimeError("opcode " + string(instruction["fixedvalue"]) + " repeats")
     opcodes_arr[instruction["fixedvalue"]] = instruction["mnemonic"]
 print(max(opcodes))
 

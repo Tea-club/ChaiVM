@@ -1,7 +1,8 @@
 #pragma once
 
-#include "operations.hpp"
 #include <cstdint>
+
+#include "operations.hpp"
 
 namespace chai::interpreter {
 
