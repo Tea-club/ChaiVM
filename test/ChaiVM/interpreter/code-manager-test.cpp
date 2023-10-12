@@ -42,7 +42,7 @@ private:
     uint8_t operation2opcode(Operation operation) { return (uint8_t)operation; }
 };
 
-TEST_F(CodeManagerTest, returnsBytecodes) {
+TEST(CodeManager, returnsBytecodes) {
     CodeManager manager{};
     std::vector<Operation> seq = {Mov, Mul, Addi, Add};
     for (const auto &op : seq) {
