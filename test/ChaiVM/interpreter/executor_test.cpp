@@ -45,6 +45,11 @@ private:
     }
 };
 
+class IOTest: public ExecutorTest {
+private:
+    int stdin_backup_ = dup(STDIN_FILENO);
+};
+
 /*
     Ldia 6
     Star r2
@@ -391,12 +396,29 @@ TEST_F(ExecutorTest, icscani) {
     int mypipe[2];
     EXPECT_EQ(pipe(mypipe), 0);
     write(mypipe[1], "123A", 4);
-    char arr[2] = {0};
     EXPECT_NE(dup2(mypipe[0], STDIN_FILENO), ERROR);
     codeManager.load(instr2Raw(IcScani));
     codeManager.load(instr2Raw(Ret));
     exec.run();
     EXPECT_EQ(exec.getState().acc(), 123);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
+    EXPECT_NE(dup2(buf_stdin, STDIN_FILENO), ERROR);
+    char c;
+    scanf("%c", &c);
+    EXPECT_EQ(c, 'A');
+}
+
+TEST_F(ExecutorTest, icscanf) {
+    constexpr int ERROR = -1;
+    int buf_stdin = dup(STDIN_FILENO);
+    int mypipe[2];
+    EXPECT_EQ(pipe(mypipe), 0);
+    write(mypipe[1], "1.23A", 5);
+    EXPECT_NE(dup2(mypipe[0], STDIN_FILENO), ERROR);
+    codeManager.load(instr2Raw(IcScanf));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_EQ(std::bit_cast<double>(exec.getState().acc()), static_cast<double>(1.23f));
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
     EXPECT_NE(dup2(buf_stdin, STDIN_FILENO), ERROR);
     char c;

@@ -161,10 +161,18 @@ void Executor::icscani(Instruction ins) {
     advancePc();
     DO_NEXT_INS()
 }
-void icscanf(Instruction ins);
-void icsqrt(Instruction ins);
-void icsin(Instruction ins);
-void iccos(Instruction ins);
+
+void Executor::icscanf(Instruction ins) {
+    float data;
+    std::cin >> data;
+    regFile_.acc() = std::bit_cast<chsize_t>(static_cast<double>(data));
+    advancePc();
+    DO_NEXT_INS()
+}
+
+void Executor::icsqrt(Instruction ins) {}
+void Executor::icsin(Instruction ins) {}
+void Executor::iccos(Instruction ins) {}
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)
