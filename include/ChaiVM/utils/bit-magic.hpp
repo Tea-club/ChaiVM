@@ -1,8 +1,7 @@
+#pragma once
+
 #include <cstddef>
 #include <type_traits>
-
-#ifndef CHAIVM_BIT_MAGIC_HPP
-#define CHAIVM_BIT_MAGIC_HPP
 
 namespace chai::utils {
 
@@ -21,5 +20,3 @@ RetT ExtractBits(PassT value) {
 }
 
 } // namespace chai::utils
-
-#endif // CHAIVM_BIT_MAGIC_HPP

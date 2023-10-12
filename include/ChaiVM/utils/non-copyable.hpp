@@ -1,5 +1,4 @@
-#ifndef CHAIVM_NON_COPYABLE_HPP
-#define CHAIVM_NON_COPYABLE_HPP
+#pragma once
 
 class INonCopyable {
 public:
@@ -7,5 +6,3 @@ public:
     INonCopyable &operator=(const INonCopyable &rhs) = delete;
     virtual ~INonCopyable() = 0;
 };
-
-#endif // CHAIVM_NON_COPYABLE_HPP

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bit>
+
 #include "code-manager.hpp"
 #include "decoder.hpp"
 #include "reg-file.hpp"
