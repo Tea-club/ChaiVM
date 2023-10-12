@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "ChaiVM/interpreter/executor.hpp"
+#include <unistd.h>
 
 using namespace chai::interpreter;
 
@@ -244,4 +245,35 @@ TEST_F(ExecutorTest, divi) {
     EXPECT_EQ(static_cast<int>(exec.getState().acc()),
               static_cast<int>(val2 / val1));
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(ExecutorTest, icprintc) {
+    codeManager.load(instr2Raw(Ldia, '0'));
+    codeManager.load(instr2Raw(IcPrint));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(ExecutorTest, icscani) {
+    constexpr int ERROR = -1;
+    int buf_stdin = dup(STDIN_FILENO);
+    int mypipe[2];
+    EXPECT_EQ(pipe(mypipe), 0);
+    write(mypipe[1], "123", 4);
+    char arr[2] = {0};
+    EXPECT_NE(dup2(mypipe[0], STDIN_FILENO), ERROR);
+    //read(STDIN_FILENO, arr, 1);
+    //printf("%s\n", arr);
+    //dup2(STDIN_FILENO, STDOUT_FILENO);
+    codeManager.load(instr2Raw(IcScani));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_EQ(exec.getState().acc(), 123);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
+    EXPECT_NE(dup2(STDIN_FILENO, buf_stdin), ERROR);
+    scanf("%c", arr);
+    int c;
+    //while ((c = getchar()) != '\n' && c != EOF) { }
+    //EXPECT_EQ(arr[0], '3');
 }

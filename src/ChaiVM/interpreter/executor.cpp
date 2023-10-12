@@ -1,6 +1,13 @@
+#include <cassert>
 #include "ChaiVM/interpreter/executor.hpp"
 
 namespace chai::interpreter {
+
+#define DO_NEXT_INS() \
+    advancePc(); \
+    Instruction newIns = \
+        decoder::parse(codeManager_->getBytecode(regFile_.pc())); \
+    (this->*handlerArr[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager)
     : codeManager_(manager), regFile_(codeManager_->startPC()) {}
@@ -105,10 +112,25 @@ void Executor::div(Instruction ins) {
 void Executor::divi(Instruction ins) {
     regFile_.acc() = ins.immidiate / regFile_.acc();
     advancePc();
-    Instruction newIns =
-        decoder::parse(codeManager_->getBytecode(regFile_.pc()));
-    (this->*handlerArr[newIns.operation])(newIns);
+    DO_NEXT_INS()
 }
+
+void Executor::icprint(Instruction ins) {
+    assert(regFile_.acc() <= 0xFF);
+    printf("%c", static_cast<char> (regFile_.acc()));
+    DO_NEXT_INS()
+}
+
+void Executor::icscani(Instruction ins) {
+    int data;
+    std:std::cin >> data;
+    regFile_.acc() = data;
+    DO_NEXT_INS()
+}
+void icscanf(Instruction ins);
+void icsqrt(Instruction ins);
+void icsin(Instruction ins);
+void iccos(Instruction ins);
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)

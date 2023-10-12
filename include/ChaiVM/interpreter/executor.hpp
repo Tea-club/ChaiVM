@@ -32,12 +32,18 @@ private:
     void muli(Instruction ins);
     void div(Instruction ins);
     void divi(Instruction ins);
+    void icprint(Instruction ins);
+    void icscani(Instruction ins);
+    void icscanf(Instruction ins);
+    void icsqrt(Instruction ins);
+    void icsin(Instruction ins);
+    void iccos(Instruction ins);
 
     static constexpr Handler handlerArr[] = {
         &Executor::inv,  &Executor::nop,  &Executor::ret,  &Executor::mov,
         &Executor::ldia, &Executor::ldra, &Executor::star, &Executor::add,
         &Executor::addi, &Executor::sub,  &Executor::subi, &Executor::mul,
-        &Executor::muli, &Executor::div,  &Executor::divi};
+        &Executor::muli, &Executor::div,  &Executor::divi, &Executor::icprint, &Executor::icscani /*, &Executor::icscanf, &Executor::icsqrt, &Executor::icsin, &Executor::iccos */};
 
 private:
     CodeManager *codeManager_;

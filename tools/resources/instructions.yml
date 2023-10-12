@@ -67,3 +67,28 @@ instructions:
     fixedvalue: 14
     mnemonic: Divi
     format: I
+  - &15
+    fixedvalue: 15
+    mnemonic: IcPrint
+    format: N
+  - &16
+    fixedvalue: 16
+    mnemonic: IcScani
+    format: N
+  - &17
+    fixedvalue: 17
+    mnemonic: IcScanf
+    format: N
+  - &18
+    fixedvalue: 18
+    mnemonic: IcSqrt
+    format: N
+  - &19
+    fixedvalue: 19
+    mnemonic: IcSin
+    format: N
+  - &20
+    fixedvalue: 20
+    mnemonic: IcCos
+    format: N
+
