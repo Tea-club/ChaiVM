@@ -1,11 +1,13 @@
 #pragma once
-#include "ChaiVM/types.hpp"
-#include "instruction.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <istream>
 #include <vector>
+
+#include "ChaiVM/types.hpp"
+#include "instruction.hpp"
 
 namespace chai::interpreter {
 
