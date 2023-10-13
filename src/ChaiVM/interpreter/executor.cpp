@@ -173,37 +173,22 @@ void Executor::icscanf(Instruction ins) {
 }
 
 void Executor::icsqrt(Instruction ins) {
-    regFile_.acc() =std::bit_cast<chsize_t> (
-        sqrt (
-            std::bit_cast<double>(
-                regFile_.acc()
-            )
-        )
-    );
+    regFile_.acc() =
+        std::bit_cast<chsize_t>(sqrt(std::bit_cast<double>(regFile_.acc())));
     advancePc();
     DO_NEXT_INS()
 }
 
 void Executor::icsin(Instruction ins) {
-    regFile_.acc() =std::bit_cast<chsize_t> (
-        sin (
-            std::bit_cast<double>(
-                regFile_.acc()
-            )
-        )
-    );
+    regFile_.acc() =
+        std::bit_cast<chsize_t>(sin(std::bit_cast<double>(regFile_.acc())));
     advancePc();
     DO_NEXT_INS()
 }
 
 void Executor::iccos(Instruction ins) {
-    regFile_.acc() =std::bit_cast<chsize_t> (
-        cos (
-            std::bit_cast<double>(
-                regFile_.acc()
-            )
-        )
-    );
+    regFile_.acc() =
+        std::bit_cast<chsize_t>(cos(std::bit_cast<double>(regFile_.acc())));
     advancePc();
     DO_NEXT_INS()
 }
