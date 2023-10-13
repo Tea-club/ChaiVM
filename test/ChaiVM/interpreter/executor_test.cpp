@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-
-#include "ChaiVM/interpreter/executor.hpp"
 #include <cmath>
 #include <fcntl.h>
 #include <unistd.h>
+
+#include "ChaiVM/interpreter/executor.hpp"
 
 using namespace chai::interpreter;
 
