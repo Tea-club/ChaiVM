@@ -3,6 +3,7 @@
 #include "ChaiVM/interpreter/executor.hpp"
 #include <unistd.h>
 #include <fcntl.h>
+#include <cmath>
 
 using namespace chai::interpreter;
 
@@ -55,7 +56,6 @@ protected:
     int out_fd_;
     int tube_[2];
     void SetUp() override {
-        int buf_stdin = dup(STDIN_FILENO);
         EXPECT_EQ(pipe(tube_), 0);
         out_fd_ = tube_[1];
         EXPECT_NE(dup2(tube_[0], STDIN_FILENO), ERROR);
@@ -75,6 +75,10 @@ protected:
             printf("No input available in stdin\n");
         }
     }
+};
+
+class MathTest : public ExecutorTest {
+
 };
 
 /*
@@ -435,3 +439,29 @@ TEST_F(IOTest, icscanf) {
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
 }
 
+TEST_F(MathTest, icsqrt) {
+    codeManager.load(instr2Raw(Ldiaf, std::bit_cast<Immidiate>(4.0f)));
+    codeManager.load(instr2Raw(IcSqrt));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_EQ(static_cast<float >(std::bit_cast<double>(exec.getState().acc())), 2.0f);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(MathTest, icsin) {
+    codeManager.load(instr2Raw(Ldiaf, std::bit_cast<Immidiate>(30 * M_PIf / 180)));
+    codeManager.load(instr2Raw(IcSin));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(static_cast<float >(std::bit_cast<double>(exec.getState().acc())), 0.5f);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(MathTest, iccos) {
+    codeManager.load(instr2Raw(Ldiaf, std::bit_cast<Immidiate>(60 * M_PIf / 180)));
+    codeManager.load(instr2Raw(IcCos));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(static_cast<float >(std::bit_cast<double>(exec.getState().acc())), 0.5f);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}

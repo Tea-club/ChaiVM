@@ -1,5 +1,6 @@
 #include "ChaiVM/interpreter/executor.hpp"
 #include <cassert>
+#include <valarray>
 
 namespace chai::interpreter {
 
@@ -85,11 +86,12 @@ void Executor::divi(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::ldiaf(Instruction ins) {
-    double immd = static_cast<double>(std::bit_cast<float>(ins.immidiate));
+    auto immd = static_cast<double>(std::bit_cast<float>(ins.immidiate));
     regFile_.acc() = std::bit_cast<chsize_t>(immd);
     advancePc();
     DO_NEXT_INS()
 }
+
 void Executor::addf(Instruction ins) {
     double sum = std::bit_cast<double>(regFile_[ins.r1]) +
                  std::bit_cast<double>(regFile_.acc());
@@ -170,9 +172,41 @@ void Executor::icscanf(Instruction ins) {
     DO_NEXT_INS()
 }
 
-void Executor::icsqrt(Instruction ins) {}
-void Executor::icsin(Instruction ins) {}
-void Executor::iccos(Instruction ins) {}
+void Executor::icsqrt(Instruction ins) {
+    regFile_.acc() =std::bit_cast<chsize_t> (
+        sqrt (
+            std::bit_cast<double>(
+                regFile_.acc()
+            )
+        )
+    );
+    advancePc();
+    DO_NEXT_INS()
+}
+
+void Executor::icsin(Instruction ins) {
+    regFile_.acc() =std::bit_cast<chsize_t> (
+        sin (
+            std::bit_cast<double>(
+                regFile_.acc()
+            )
+        )
+    );
+    advancePc();
+    DO_NEXT_INS()
+}
+
+void Executor::iccos(Instruction ins) {
+    regFile_.acc() =std::bit_cast<chsize_t> (
+        cos (
+            std::bit_cast<double>(
+                regFile_.acc()
+            )
+        )
+    );
+    advancePc();
+    DO_NEXT_INS()
+}
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)

@@ -33,11 +33,11 @@ build-val: init
 
 .PHONY: test
 test: build
-	ctest --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
+	export GTEST_COLOR=1 && ctest  --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
 
 .PHONY: test-val
 test-val: build-val
-	ctest --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
+	export GTEST_COLOR=1 && ctest --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
 
 .PHONY: bench
 bench: init
