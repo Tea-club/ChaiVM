@@ -1,5 +1,5 @@
 #include <cassert>
-#include <valarray>
+#include <cmath>
 
 #include "ChaiVM/interpreter/executor.hpp"
 
@@ -156,16 +156,16 @@ void Executor::icprint(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::icscani(Instruction ins) {
-    int data;
+    int64_t data;
     std::cin >> data;
     regFile_.acc() = data;
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::icscanf(Instruction ins) {
-    float data;
+    double data;
     std::cin >> data;
-    regFile_.acc() = std::bit_cast<chsize_t>(static_cast<double>(data));
+    regFile_.acc() = std::bit_cast<chsize_t>(data);
     advancePc();
     DO_NEXT_INS()
 }
