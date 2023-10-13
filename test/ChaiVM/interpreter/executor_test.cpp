@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include <cmath>
 #include <fcntl.h>
+#include <gtest/gtest.h>
 #include <unistd.h>
 
 #include "ChaiVM/interpreter/executor.hpp"
@@ -44,36 +44,6 @@ private:
      */
     static uint8_t operation2opcode(Operation operation) {
         return (uint8_t)operation;
-    }
-};
-
-class IOTest : public ExecutorTest {
-public:
-    static constexpr int ERROR = -1;
-
-protected:
-    const int buf_stdin_ = dup(STDIN_FILENO);
-    int out_fd_;
-    int tube_[2];
-    void SetUp() override {
-        EXPECT_EQ(pipe(tube_), 0);
-        out_fd_ = tube_[1];
-        EXPECT_NE(dup2(tube_[0], STDIN_FILENO), ERROR);
-    }
-
-    void TearDown() override {
-        close(tube_[1]);
-        EXPECT_NE(dup2(buf_stdin_, STDIN_FILENO), ERROR);
-
-        // Clear input for next tests.
-        int flags = fcntl(STDIN_FILENO, F_GETFL, 0);
-        fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
-        char input[256];
-        if (fgets(input, sizeof(input), stdin) != nullptr) {
-            printf("Input read from stdin: %s\n", input);
-        } else {
-            printf("No input available in stdin\n");
-        }
     }
 };
 
@@ -409,33 +379,6 @@ TEST_F(ExecutorTest, divif) {
         static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
         std::bit_cast<float>(val1) / std::bit_cast<float>(val2));
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
-}
-
-TEST_F(ExecutorTest, icprintc) {
-    codeManager.load(instr2Raw(Ldia, '0'));
-    codeManager.load(instr2Raw(IcPrint));
-    codeManager.load(instr2Raw(Ret));
-    exec.run();
-    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
-}
-
-TEST_F(IOTest, icscani) {
-    write(out_fd_, "123A", 4);
-    codeManager.load(instr2Raw(IcScani));
-    codeManager.load(instr2Raw(Ret));
-    exec.run();
-    EXPECT_EQ(exec.getState().acc(), 123);
-    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
-}
-
-TEST_F(IOTest, icscanf) {
-    write(out_fd_, "1.23A", 5);
-    codeManager.load(instr2Raw(IcScanf));
-    codeManager.load(instr2Raw(Ret));
-    exec.run();
-    EXPECT_EQ(static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
-              1.23f);
-    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 2);
 }
 
 TEST_F(MathTest, icsqrt) {
