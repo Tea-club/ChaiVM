@@ -11,95 +11,119 @@ fields:
     location: {bits: [{msb: 31, lsb: 8, from: 23, to: 0}], mask: 4293918720, debug_hex_mask: ffffff00}
 
 instructions:
-  - &1
+  -
     fixedvalue: 1
     mnemonic: Nop
     format: N
-  - &2
+  -
     fixedvalue: 2
     mnemonic: Ret
     format: N
-  - &3
+  -
     fixedvalue: 3
     mnemonic: Mov
     format: RR
-  - &4
+  -
     fixedvalue: 4
     mnemonic: Ldia
     format: R
-  - &5
+  -
     fixedvalue: 5
     mnemonic: Ldra
     format: R
-  - &6
+  -
     fixedvalue: 6
     mnemonic: Star
     format: R
-  - &7
+  -
     fixedvalue: 7
     mnemonic: Add
     format: R
-  - &8
+  -
     fixedvalue: 8
     mnemonic: Addi
     format: I
-  - &9
+  -
     fixedvalue: 9
     mnemonic: Sub
     format: R
-  - &10
+  -
     fixedvalue: 10
     mnemonic: Subi
     format: I
-  - &11
+  -
     fixedvalue: 11
     mnemonic: Mul
     format: R
-  - &12
+  -
     fixedvalue: 12
     mnemonic: Muli
     format: I
-  - &13
+  -
     fixedvalue: 13
     mnemonic: Div
     format: R
-  - &14
+  -
     fixedvalue: 14
     mnemonic: Divi
     format: I
-  - &15
+  -
     fixedvalue: 15
     mnemonic: Ldiaf
     format: R
-  - &16
+  -
     fixedvalue: 16
     mnemonic: Addf
     format: R
-  - &17
+  -
     fixedvalue: 17
     mnemonic: Addif
     format: I
-  - &18
+  -
     fixedvalue: 18
     mnemonic: Subf
     format: R
-  - &19
+  -
     fixedvalue: 19
     mnemonic: Subif
     format: I
-  - &20
+  -
     fixedvalue: 20
     mnemonic: Mulf
     format: R
-  - &21
+  -
     fixedvalue: 21
     mnemonic: Mulif
     format: I
-  - &22
+  -
     fixedvalue: 22
     mnemonic: Divf
     format: R
-  - &23
+  -
     fixedvalue: 23
     mnemonic: Divif
     format: I
+  -
+    fixedvalue: 24
+    mnemonic: IcPrint
+    format: N
+  -
+    fixedvalue: 25
+    mnemonic: IcScani
+    format: N
+  -
+    fixedvalue: 26
+    mnemonic: IcScanf
+    format: N
+  -
+    fixedvalue: 27
+    mnemonic: IcSqrt
+    format: N
+  -
+    fixedvalue: 28
+    mnemonic: IcSin
+    format: N
+  -
+    fixedvalue: 29
+    mnemonic: IcCos
+    format: N

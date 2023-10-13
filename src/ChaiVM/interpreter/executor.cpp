@@ -1,3 +1,6 @@
+#include <cassert>
+#include <cmath>
+
 #include "ChaiVM/interpreter/executor.hpp"
 
 namespace chai::interpreter {
@@ -89,6 +92,7 @@ void Executor::ldiaf(Instruction ins) {
     advancePc();
     DO_NEXT_INS()
 }
+
 void Executor::addf(Instruction ins) {
     double sum = std::bit_cast<double>(regFile_[ins.r1]) +
                  std::bit_cast<double>(regFile_.acc());
@@ -142,6 +146,44 @@ void Executor::divif(Instruction ins) {
     double dif = static_cast<double>(std::bit_cast<float>(ins.immidiate)) /
                  std::bit_cast<double>(regFile_.acc());
     regFile_.acc() = std::bit_cast<chsize_t>(dif);
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::icprint(Instruction ins) {
+    assert(regFile_.acc() <= 0xFF);
+    printf("%c", static_cast<char>(regFile_.acc()));
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::icscani(Instruction ins) {
+    int64_t data;
+    std::cin >> data;
+    regFile_.acc() = data;
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::icscanf(Instruction ins) {
+    double data;
+    std::cin >> data;
+    regFile_.acc() = std::bit_cast<chsize_t>(data);
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::icsqrt(Instruction ins) {
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::sqrt(std::bit_cast<double>(regFile_.acc())));
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::icsin(Instruction ins) {
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::sin(std::bit_cast<double>(regFile_.acc())));
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::iccos(Instruction ins) {
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::cos(std::bit_cast<double>(regFile_.acc())));
     advancePc();
     DO_NEXT_INS()
 }

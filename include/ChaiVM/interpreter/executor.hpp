@@ -43,14 +43,24 @@ private:
     void mulif(Instruction ins);
     void divf(Instruction ins);
     void divif(Instruction ins);
+    void icprint(Instruction ins);
+    void icscani(Instruction ins);
+    void icscanf(Instruction ins);
+    void icsqrt(Instruction ins);
+    void icsin(Instruction ins);
+    void iccos(Instruction ins);
 
     static constexpr Handler handlerArr[] = {
-        &Executor::inv,  &Executor::nop,   &Executor::ret,  &Executor::mov,
-        &Executor::ldia, &Executor::ldra,  &Executor::star, &Executor::add,
-        &Executor::addi, &Executor::sub,   &Executor::subi, &Executor::mul,
-        &Executor::muli, &Executor::div,   &Executor::divi, &Executor::ldiaf,
-        &Executor::addf, &Executor::addif, &Executor::subf, &Executor::subif,
-        &Executor::mulf, &Executor::mulif, &Executor::divf, &Executor::divif};
+        &Executor::inv,     &Executor::nop,     &Executor::ret,
+        &Executor::mov,     &Executor::ldia,    &Executor::ldra,
+        &Executor::star,    &Executor::add,     &Executor::addi,
+        &Executor::sub,     &Executor::subi,    &Executor::mul,
+        &Executor::muli,    &Executor::div,     &Executor::divi,
+        &Executor::ldiaf,   &Executor::addf,    &Executor::addif,
+        &Executor::subf,    &Executor::subif,   &Executor::mulf,
+        &Executor::mulif,   &Executor::divf,    &Executor::divif,
+        &Executor::icprint, &Executor::icscani, &Executor::icscanf,
+        &Executor::icsqrt,  &Executor::icsin,   &Executor::iccos};
 
 private:
     CodeManager *codeManager_;

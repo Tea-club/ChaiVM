@@ -1,4 +1,7 @@
+#include <cmath>
+#include <fcntl.h>
 #include <gtest/gtest.h>
+#include <unistd.h>
 
 #include "ChaiVM/interpreter/executor.hpp"
 
@@ -43,6 +46,8 @@ private:
         return (uint8_t)operation;
     }
 };
+
+class MathTest : public ExecutorTest {};
 
 /*
     Ldia 6
@@ -373,5 +378,37 @@ TEST_F(ExecutorTest, divif) {
     EXPECT_FLOAT_EQ(
         static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
         std::bit_cast<float>(val1) / std::bit_cast<float>(val2));
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(MathTest, icsqrt) {
+    codeManager.load(instr2Raw(Ldiaf, std::bit_cast<Immidiate>(4.0f)));
+    codeManager.load(instr2Raw(IcSqrt));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_EQ(static_cast<float>(std::bit_cast<double>(exec.getState().acc())),
+              2.0f);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(MathTest, icsin) {
+    codeManager.load(
+        instr2Raw(Ldiaf, std::bit_cast<Immidiate>(30 * M_PIf / 180)));
+    codeManager.load(instr2Raw(IcSin));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())), 0.5f);
+    EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(MathTest, iccos) {
+    codeManager.load(
+        instr2Raw(Ldiaf, std::bit_cast<Immidiate>(60 * M_PIf / 180)));
+    codeManager.load(instr2Raw(IcCos));
+    codeManager.load(instr2Raw(Ret));
+    exec.run();
+    EXPECT_FLOAT_EQ(
+        static_cast<float>(std::bit_cast<double>(exec.getState().acc())), 0.5f);
     EXPECT_EQ(exec.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
