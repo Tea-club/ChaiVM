@@ -4,7 +4,7 @@
 
 using namespace chai::interpreter;
 
-static void initCode(CodeManWrapper& codeman) ;
+static void initCode(CodeManWrapper &codeman);
 
 static void BM_SquareEquation(benchmark::State &state) {
     // Perform setup here
@@ -18,8 +18,7 @@ static void BM_SquareEquation(benchmark::State &state) {
 // Register the function as a benchmark
 BENCHMARK(BM_SquareEquation);
 
-
-static void initCode(CodeManWrapper& codeman) {
+static void initCode(CodeManWrapper &codeman) {
     const RegisterId r1 = 1;
     const RegisterId r2 = 2;
     const RegisterId r3 = 3;
