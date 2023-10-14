@@ -57,12 +57,12 @@ void Executor::addi(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::sub(Instruction ins) {
-    regFile_.acc() = regFile_[ins.r1] - regFile_.acc();
+    regFile_.acc() -= regFile_[ins.r1];
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::subi(Instruction ins) {
-    regFile_.acc() = ins.immidiate - regFile_.acc();
+    regFile_.acc() -= ins.immidiate;
     advancePc();
     DO_NEXT_INS()
 }
@@ -77,12 +77,12 @@ void Executor::muli(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::div(Instruction ins) {
-    regFile_.acc() = regFile_[ins.r1] / regFile_.acc();
+    regFile_.acc() /= regFile_[ins.r1];
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::divi(Instruction ins) {
-    regFile_.acc() = ins.immidiate / regFile_.acc();
+    regFile_.acc() /= ins.immidiate;
     advancePc();
     DO_NEXT_INS()
 }
@@ -108,14 +108,14 @@ void Executor::addif(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::subf(Instruction ins) {
-    double dif = std::bit_cast<double>(regFile_[ins.r1]) -
+    double dif = -std::bit_cast<double>(regFile_[ins.r1]) +
                  std::bit_cast<double>(regFile_.acc());
     regFile_.acc() = std::bit_cast<chsize_t>(dif);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::subif(Instruction ins) {
-    double dif = static_cast<double>(std::bit_cast<float>(ins.immidiate)) -
+    double dif = -static_cast<double>(std::bit_cast<float>(ins.immidiate)) +
                  std::bit_cast<double>(regFile_.acc());
     regFile_.acc() = std::bit_cast<chsize_t>(dif);
     advancePc();
@@ -136,15 +136,17 @@ void Executor::mulif(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::divf(Instruction ins) {
-    double sum = std::bit_cast<double>(regFile_[ins.r1]) /
-                 std::bit_cast<double>(regFile_.acc());
+    double sum =
+
+        std::bit_cast<double>(regFile_.acc()) /
+        std::bit_cast<double>(regFile_[ins.r1]);
     regFile_.acc() = std::bit_cast<chsize_t>(sum);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::divif(Instruction ins) {
-    double dif = static_cast<double>(std::bit_cast<float>(ins.immidiate)) /
-                 std::bit_cast<double>(regFile_.acc());
+    double dif = std::bit_cast<double>(regFile_.acc()) /
+                 static_cast<double>(std::bit_cast<float>(ins.immidiate));
     regFile_.acc() = std::bit_cast<chsize_t>(dif);
     advancePc();
     DO_NEXT_INS()

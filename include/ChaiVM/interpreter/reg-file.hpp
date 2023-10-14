@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdio>
 
 #include <array>
 #include <cstdlib>
@@ -20,6 +21,8 @@ public:
     chsize_t acc() const;
 
     static constexpr size_t Size = std::numeric_limits<RegisterId>::max();
+
+    void dump();
 
 private:
     chsize_t acc_;
