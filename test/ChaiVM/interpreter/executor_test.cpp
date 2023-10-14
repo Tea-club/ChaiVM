@@ -402,8 +402,8 @@ TEST_F(MathTest, icsqrt) {
 }
 
 TEST_F(MathTest, icsin) {
-    codeManager.load(
-        instr2Raw(Ldiaf, std::bit_cast<Immidiate>(30 * M_PIf / 180)));
+    codeManager.load(instr2Raw(
+        Ldiaf, std::bit_cast<Immidiate>(30 * static_cast<float>(M_PI) / 180)));
     codeManager.load(instr2Raw(IcSin));
     codeManager.load(instr2Raw(Ret));
     exec.run();
@@ -413,8 +413,8 @@ TEST_F(MathTest, icsin) {
 }
 
 TEST_F(MathTest, iccos) {
-    codeManager.load(
-        instr2Raw(Ldiaf, std::bit_cast<Immidiate>(60 * M_PIf / 180)));
+    codeManager.load(instr2Raw(
+        Ldiaf, std::bit_cast<Immidiate>(60 * static_cast<float>(M_PI) / 180)));
     codeManager.load(instr2Raw(IcCos));
     codeManager.load(instr2Raw(Ret));
     exec.run();
