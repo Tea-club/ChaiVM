@@ -2,6 +2,7 @@ add_library(chai_benchif INTERFACE)
 target_link_libraries(chai_benchif INTERFACE
     chai_include
     chai_interpreter
+    chai_utils
     benchmark
 )
 
@@ -12,7 +13,8 @@ function(chai_bench SOURCE_NAME)
 endfunction(chai_bench)
 
 chai_bench(dummy_bench.cpp)
-chai_bench(interpreter_bench.cpp)
+chai_bench(square_equation_bench.cpp)
+chai_bench(sin_plus_cos_bench.cpp)
 target_link_libraries(bench PRIVATE chai_benchif)
 
 add_custom_target(run_bench

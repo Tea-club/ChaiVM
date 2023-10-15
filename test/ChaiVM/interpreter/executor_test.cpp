@@ -1,11 +1,11 @@
 #include <cmath>
-#include <fcntl.h>
 #include <gtest/gtest.h>
-#include <unistd.h>
 
 #include "ChaiVM/interpreter/executor.hpp"
+#include "ChaiVM/utils/instr2Raw.hpp"
 
 using namespace chai::interpreter;
+using namespace chai::utils;
 
 class ExecutorTest : public ::testing::Test {
 protected:
@@ -13,26 +13,7 @@ protected:
      * Calculate raw bytecode of {@link Instruction}.
      * @param instr Instruction.
      * @return Bytecode.
-     * @todo #8:90min Now this method processes R and RR formats only.
-     *  It should also work with I type. We need smth like Instr2Format
-     *  for it.
      */
-    static chai::bytecode_t instr2Raw(Instruction instr) {
-        return (operation2opcode(instr.operation)) | (instr.r1 << 8) |
-               (instr.r2 << 16);
-    }
-
-    static chai::bytecode_t instr2Raw(Operation op, RegisterId r1,
-                                      RegisterId r2) {
-        return (operation2opcode(op)) | (r1 << 8) | (r2 << 16);
-    }
-    static chai::bytecode_t instr2Raw(Operation op, Immidiate imm) {
-        return (operation2opcode(op)) |
-               (static_cast<chai::bytecode_t>(imm) << 8);
-    }
-    static chai::bytecode_t instr2Raw(Operation op) {
-        return (operation2opcode(op));
-    }
 
     void load(Operation op, RegisterId r1, RegisterId r2) {
         codeManager.load(instr2Raw(op, r1, r2));
@@ -46,15 +27,6 @@ protected:
 
     CodeManager codeManager;
     Executor exec{&codeManager};
-
-private:
-    /*
-     * @todo #8:90min Implement this method clearer. Now it use the trick that
-     *  opcodes and enum values of corresponding operations are the same.
-     */
-    static uint8_t operation2opcode(Operation operation) {
-        return (uint8_t)operation;
-    }
 };
 
 class MathTest : public ExecutorTest {};
