@@ -20,15 +20,16 @@ chai::chsize_t RegisterFile::acc() const { return acc_; }
 RegisterFile::RegisterFile(chsize_t pc) : pc_(pc), acc_(0), registers_{} {}
 
 void RegisterFile::dump() {
-    printf("pc = %lu, acc = %ld = %lf\n", pc_, std::bit_cast<int64_t>(acc_),
-           std::bit_cast<double>(acc_));
+    std::cout << "pc = " << pc_ << ", acc = " << std::bit_cast<int64_t>(acc_)
+              << " = " << std::bit_cast<double>(acc_) << std::endl;
     for (int i = 0; i < Size; ++i) {
         if (registers_[i] != 0) {
-            printf("rf[%i] = %ld = %lf\n", i,
-                   std::bit_cast<int64_t>(registers_[i]),
-                   std::bit_cast<double>(registers_[i]));
+            std::cout << "rf[" << i
+                      << "] = " << std::bit_cast<int64_t>(registers_[i])
+                      << " = " << std::bit_cast<double>(registers_[i])
+                      << std::endl;
         }
     }
-    printf("\n\n");
+    std::cout << std::endl;
 }
 } // namespace chai::interpreter
