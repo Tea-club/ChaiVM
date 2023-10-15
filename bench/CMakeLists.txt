@@ -1,9 +1,8 @@
-find_package(benchmark)
 add_library(chai_benchif INTERFACE)
 target_link_libraries(chai_benchif INTERFACE
     chai_include
     chai_interpreter
-    benchmark::benchmark
+    benchmark
 )
 
 add_executable(bench main_bench.cpp)

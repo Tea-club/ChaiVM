@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(third_party)
 add_subdirectory(test)
 add_subdirectory(src)
-if (CHAI_BENCH)
+if (1)
     add_subdirectory(bench)
 endif ()
 

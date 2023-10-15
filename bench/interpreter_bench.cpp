@@ -8,15 +8,16 @@ static void initCode(CodeManWrapper &codeman);
 
 static void BM_SquareEquation(benchmark::State &state) {
     // Perform setup here
-    CodeManWrapper manager{};
-    initCode(manager);
-    Executor executor{&manager};
+    CodeManWrapper wrapper{};
+    initCode(wrapper);
+    Executor executor{&wrapper.manager_};
     for (auto _ : state) {
         executor.run();
         executor.restart();
     }
 }
 // Register the function as a benchmark
+// @todo #32:60min Measure mips here
 BENCHMARK(BM_SquareEquation);
 
 static void initCode(CodeManWrapper &codeman) {
