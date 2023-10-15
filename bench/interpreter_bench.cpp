@@ -13,6 +13,7 @@ static void BM_SquareEquation(benchmark::State &state) {
     Executor executor{&manager};
     for (auto _ : state) {
         executor.run();
+        executor.restart();
     }
 }
 // Register the function as a benchmark

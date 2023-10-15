@@ -12,10 +12,8 @@ namespace chai::interpreter {
 
 Executor::Executor(CodeManager *manager)
     : codeManager_(manager), regFile_(codeManager_->startPC()) {}
-void Executor::run() {
-    DO_NEXT_INS()
-    regFile_.pc() = codeManager_->startPC();
-}
+void Executor::run() { DO_NEXT_INS() }
+void Executor::restart() { regFile_.pc() = codeManager_->startPC(); }
 const RegisterFile &Executor::getState() const & { return regFile_; }
 void Executor::inv(Instruction ins) {
     throw InvalidInstruction("Invalid operation at pc: " +
