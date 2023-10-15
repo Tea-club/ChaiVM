@@ -1,12 +1,14 @@
-#pragma once
-
 #include "ChaiVM/utils/instr2Raw.hpp"
 
 using namespace chai::interpreter;
 
 namespace chai::utils {
 
-chai::bytecode_t instr2Raw(Operation op, RegisterId r1, RegisterId r2) {
+static uint8_t operation2opcode(Operation operation) {
+    return (uint8_t)operation;
+}
+
+    chai::bytecode_t instr2Raw(Operation op, RegisterId r1, RegisterId r2) {
     return (operation2opcode(op)) | (r1 << 8) | (r2 << 16);
 }
 
