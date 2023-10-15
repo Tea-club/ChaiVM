@@ -7,7 +7,8 @@ using namespace chai::interpreter;
 class CodeManWrapper {
 public:
     /*
-     * @todo #32:60min Make the methods "instr2Raw" implemented only once. For example in utils.
+     * @todo #32:60min Make the methods "instr2Raw" implemented only once. For
+     * example in utils.
      */
     static chai::bytecode_t instr2Raw(Operation op, RegisterId r1,
                                       RegisterId r2) {
