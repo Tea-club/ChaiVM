@@ -31,7 +31,8 @@ bytecode_t CodeManager::getBytecode(chsize_t pc) {
         pc % sizeof(bytecode_t) != 0) {
         throw BeyondCodeBoundaries(
             "Going beyond the boundaries of the code at pc: " +
-            std::to_string(pc));
+            std::to_string(pc) + " / " +
+            std::to_string(raw_.size() * sizeof(bytecode_t)));
     } else {
         return raw_[pc / sizeof(bytecode_t)];
     }

@@ -14,6 +14,7 @@ public:
 
     Executor(CodeManager *manager);
     void run();
+    void restart();
     const RegisterFile &getState() const &;
 
 private:
