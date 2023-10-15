@@ -95,60 +95,58 @@ void Executor::ldiaf(Instruction ins) {
 }
 
 void Executor::addf(Instruction ins) {
-    double sum = std::bit_cast<double>(regFile_[ins.r1]) +
+    double res = std::bit_cast<double>(regFile_[ins.r1]) +
                  std::bit_cast<double>(regFile_.acc());
-    regFile_.acc() = std::bit_cast<chsize_t>(sum);
+    regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::addif(Instruction ins) {
-    double sum = static_cast<double>(std::bit_cast<float>(ins.immidiate)) +
+    double res = static_cast<double>(std::bit_cast<float>(ins.immidiate)) +
                  std::bit_cast<double>(regFile_.acc());
-    regFile_.acc() = std::bit_cast<chsize_t>(sum);
+    regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::subf(Instruction ins) {
-    double dif = -std::bit_cast<double>(regFile_[ins.r1]) +
-                 std::bit_cast<double>(regFile_.acc());
-    regFile_.acc() = std::bit_cast<chsize_t>(dif);
+    double res = std::bit_cast<double>(regFile_.acc()) -
+                 std::bit_cast<double>(regFile_[ins.r1]);
+    regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::subif(Instruction ins) {
-    double dif = -static_cast<double>(std::bit_cast<float>(ins.immidiate)) +
-                 std::bit_cast<double>(regFile_.acc());
-    regFile_.acc() = std::bit_cast<chsize_t>(dif);
+    double res = std::bit_cast<double>(regFile_.acc()) -
+                 static_cast<double>(std::bit_cast<float>(ins.immidiate));
+    regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::mulf(Instruction ins) {
-    double sum = std::bit_cast<double>(regFile_[ins.r1]) *
+    double res = std::bit_cast<double>(regFile_[ins.r1]) *
                  std::bit_cast<double>(regFile_.acc());
-    regFile_.acc() = std::bit_cast<chsize_t>(sum);
+    regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::mulif(Instruction ins) {
-    double dif = static_cast<double>(std::bit_cast<float>(ins.immidiate)) *
+    double res = static_cast<double>(std::bit_cast<float>(ins.immidiate)) *
                  std::bit_cast<double>(regFile_.acc());
-    regFile_.acc() = std::bit_cast<chsize_t>(dif);
+    regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::divf(Instruction ins) {
-    double sum =
-
-        std::bit_cast<double>(regFile_.acc()) /
-        std::bit_cast<double>(regFile_[ins.r1]);
-    regFile_.acc() = std::bit_cast<chsize_t>(sum);
+    double res = std::bit_cast<double>(regFile_.acc()) /
+                 std::bit_cast<double>(regFile_[ins.r1]);
+    regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::divif(Instruction ins) {
-    double dif = std::bit_cast<double>(regFile_.acc()) /
+    double res = std::bit_cast<double>(regFile_.acc()) /
                  static_cast<double>(std::bit_cast<float>(ins.immidiate));
-    regFile_.acc() = std::bit_cast<chsize_t>(dif);
+    regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
