@@ -3,6 +3,7 @@ add_library(chai_testif INTERFACE)
 target_link_libraries(chai_testif INTERFACE
     chai_include
     chai_interpreter
+    chai_utils
     gmock_main
     gmock
     gtest

@@ -1,7 +1,9 @@
 #include "ChaiVM/interpreter/code-manager.hpp"
+#include "ChaiVM/utils/instr2Raw.hpp"
 #include <gtest/gtest.h>
 
 using namespace chai::interpreter;
+using namespace chai::utils;
 
 class CodeManagerTest : public ::testing::Test {
 protected:
@@ -20,14 +22,6 @@ protected:
                                         path.string());
         }
     }
-    chai::bytecode_t instr2Raw(Operation op, RegisterId r1, RegisterId r2) {
-        return (operation2opcode(op)) | (r1 << 8) | (r2 << 16);
-    }
-    chai::bytecode_t instr2Raw(Operation op, Immidiate imm) {
-        return (operation2opcode(op)) |
-               (static_cast<chai::bytecode_t>(imm) << 8);
-    }
-    chai::bytecode_t instr2Raw(Operation op) { return (operation2opcode(op)); }
 
     void TearDown() override { std::remove(filepath_.c_str()); }
 
