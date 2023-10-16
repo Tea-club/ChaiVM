@@ -28,7 +28,7 @@ build: init
 
 .PHONY: build-val
 build-val: init
-	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DBESM666_TEST_WITH_VALGRIND=ON
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DADD_SANITIZERS=ON
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
 .PHONY: test
