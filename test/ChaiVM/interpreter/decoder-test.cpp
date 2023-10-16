@@ -61,7 +61,6 @@ protected:
 TEST_F(Decoder_I, imm) {
     const auto instance = buildInstr(Addi, -3); // FFFFFFFD
     Instruction parsed = decoder::parse(0x000000FFFFFFFD08);
-    char * arr = (char *)malloc(10);
     EXPECT_TRUE(equal(parsed, instance));
     EXPECT_EQ(parsed.immidiate, instance.immidiate);
 }
