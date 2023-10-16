@@ -1,6 +1,4 @@
-name: CMake build
-
-run-name: Test with ${{matrix.ctect_option}}
+name: CMake build with ${{matrix.ctect_option}}
 
 on:
   push:
