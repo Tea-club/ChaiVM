@@ -1,5 +1,7 @@
 name: CMake build
 
+run-name: Test with ${{matrix.ctect_option}}
+
 on:
   push:
     branches: [ "master" ]
@@ -8,8 +10,6 @@ on:
 
 env:
   BUILD_TYPE: DEBUG
-
-run-name: Test with ${{matrix.ctect_option}}
 
 jobs:
   build:
