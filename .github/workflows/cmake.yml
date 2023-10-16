@@ -1,4 +1,4 @@
-name: CMake build with ${{matrix.ctect_option}}
+name: CMake build
 
 on:
   push:
@@ -32,3 +32,5 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run:  ctest --test-dir ${{github.workspace}}/build/test
+
+run-name: Test with ${{matrix.ctect_option}}
