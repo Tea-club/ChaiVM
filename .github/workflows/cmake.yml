@@ -33,4 +33,4 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run:  ctest --test-dir ${{github.workspace}}/build/test
 
-run-name: Test with ${{matrix.ctect_option}}
+run-name: Test with ${{jobs.strategy.matrix.ctect_option}}
