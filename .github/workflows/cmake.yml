@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         ctect_option:
-          - "-DCHAIVM_TEST_WITH_VALGRIND=OFF"
-          - "-DCHAIVM_TEST_WITH_VALGRIND=ON"
+          - "-DCHAIVM_ADD_SANITIZERS=OFF"
+          - "-DCHAIVM_ADD_SANITIZERS=ON"
     steps:
     - uses: actions/checkout@v3
       with:

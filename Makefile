@@ -23,12 +23,12 @@ format:
 	./tools/clang-format.sh $(PWD)/$(BENCH_DIR)
 .PHONY: build
 build: init
-	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR)
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_SANITIZERS=OFF
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
 .PHONY: build-val
 build-val: init
-	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DADD_SANITIZERS=ON
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_SANITIZERS=ON
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
 .PHONY: test
