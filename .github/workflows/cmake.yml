@@ -11,7 +11,6 @@ env:
 
 jobs:
   build:
-    name: Running unit tests with ${{strategy.matrix.ctest_option}} option
     runs-on: ubuntu-latest
     strategy:
       matrix:
