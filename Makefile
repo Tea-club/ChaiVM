@@ -26,8 +26,8 @@ build: init
 	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_SANITIZERS=OFF
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
-.PHONY: build-val
-build-val: init
+.PHONY: build-memcheck
+build-memcheck: init
 	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_SANITIZERS=ON
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
@@ -35,8 +35,8 @@ build-val: init
 test: build
 	export GTEST_COLOR=1 && ctest  --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
 
-.PHONY: test-val
-test-val: build-val
+.PHONY: test-memcheck
+test-memcheck: build-memcheck
 	export GTEST_COLOR=1 && ctest --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
 
 .PHONY: bench
