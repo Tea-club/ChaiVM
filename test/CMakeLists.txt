@@ -15,6 +15,7 @@ function(chai_test SOURCE_NAME)
     target_sources(${TARGET_NAME} PRIVATE ${SOURCE_NAME})
     target_link_libraries(${TARGET_NAME} PRIVATE chai_testif)
     if (CHAIVM_ADD_SANITIZERS)
+        # @todo #37:60min Make address sanitizer work on MacOS with ARM
         target_compile_options(${TARGET_NAME} PRIVATE -fsanitize=address)
         target_link_options(${TARGET_NAME} PRIVATE -fsanitize=address)
     endif ()
