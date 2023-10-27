@@ -26,18 +26,22 @@ build: init
 	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_SANITIZERS=OFF
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
-.PHONY: build-memcheck
-build-memcheck: init
-	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_SANITIZERS=ON
-	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
-
 .PHONY: test
 test: build
 	export GTEST_COLOR=1 && ctest  --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
 
-.PHONY: test-memcheck
-test-memcheck: build-memcheck
+.PHONY: execute-tests-inside-make
+execute-tests-inside-make:
+	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 	export GTEST_COLOR=1 && ctest --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
+
+
+.PHONY: test-extended
+test-extended: init
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_MEM_SANITIZER=OFF -DCHAIVM_ADD_THREAD_SANITIZER=ON
+	$(MAKE) execute-tests-inside-make
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_MEM_SANITIZER=ON -DCHAIVM_ADD_THREAD_SANITIZER=OFF
+	$(MAKE) execute-tests-inside-make
 
 .PHONY: bench
 bench: init
