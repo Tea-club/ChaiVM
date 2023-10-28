@@ -15,8 +15,9 @@ jobs:
     strategy:
       matrix:
         ctect_option:
-          - "-DCHAIVM_ADD_SANITIZERS=OFF"
-          - "-DCHAIVM_ADD_SANITIZERS=ON"
+          - "-DCHAIVM_ADD_MEM_SANITIZER=OFF -DCHAIVM_ADD_THREAD_SANITIZER=OFF"
+          - "-DCHAIVM_ADD_MEM_SANITIZER=OFF -DCHAIVM_ADD_THREAD_SANITIZER=ON"
+          - "-DCHAIVM_ADD_MEM_SANITIZER=ON -DCHAIVM_ADD_THREAD_SANITIZER=OFF"
     steps:
     - uses: actions/checkout@v3
       with:
