@@ -52,9 +52,9 @@ class MathTest : public ExecutorTest {};
     Ret
  */
 TEST_F(ExecutorTest, run) {
-    loadWithConst(Ldia, 6L);
+    loadWithConst(Ldia, static_cast<int64_t>(6));
     load(Star, 2, 0);
-    loadWithConst(Ldia, 8L);
+    loadWithConst(Ldia, static_cast<int64_t>(8));
     load(Star, 3, 0);
     load(Ldra, 3, 0);
     load(Mul, 2, 0);
