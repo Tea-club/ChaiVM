@@ -34,10 +34,10 @@ public:
         addInstr(chai::utils::instr2Raw(op, id));
     }
 
-    void toFIle(const std::filesystem::path &path) {
+    void toFile(const std::filesystem::path &path) {
         std::ofstream ofs(path, std::ios::binary | std::ios::out);
         if (ofs.good() && ofs.is_open()) {
-            uint16_t constants = pool_.size();
+            Immidiate constants = pool_.size();
             ofs.write(reinterpret_cast<const char *>(&constants),
                       sizeof(constants));
             for (const std::unique_ptr<Constant> &cnst : pool_) {

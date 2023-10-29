@@ -29,7 +29,7 @@ public:
     void load(Operation op) { chaiFile_.addInstr(instr2Raw(op)); }
 
     void update() {
-        chaiFile_.toFIle(PATH);
+        chaiFile_.toFile(PATH);
         manager_.load(PATH);
     }
 

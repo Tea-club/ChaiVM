@@ -13,7 +13,7 @@ protected:
                           std::vector<std::unique_ptr<Constant>> &&raw_pool,
                           std::vector<chai::bytecode_t> &&instructions) {
         ChaiFile chai_file{std::move(instructions), std::move(raw_pool)};
-        chai_file.toFIle(path);
+        chai_file.toFile(path);
     }
 
     void TearDown() override { std::remove(filepath_.c_str()); }

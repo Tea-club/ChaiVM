@@ -80,7 +80,7 @@ void Executor::muli(Instruction ins) {
 void Executor::div(Instruction ins) {
     regFile_.acc() =
         static_cast<chsize_t>(std::bit_cast<int64_t>(regFile_.acc()) /
-                                static_cast<int64_t>(regFile_[ins.r1]));
+                              static_cast<int64_t>(regFile_[ins.r1]));
     advancePc();
     DO_NEXT_INS()
 }
