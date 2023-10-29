@@ -16,7 +16,6 @@ namespace chai::interpreter {
  */
 class CodeManager final {
 public:
-
     static constexpr int8_t CNST_I64 = 'l';
     static constexpr int8_t CNST_F64 = 'd';
 
@@ -37,7 +36,6 @@ public:
      * @param path Path to the .chai file.
      */
     void load(const std::filesystem::path &path);
-
 
     void loadPool(std::istream &istream);
 

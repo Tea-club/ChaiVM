@@ -3,8 +3,8 @@
 
 #include "ChaiVM/interpreter/executor.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
-#include "constant.hpp"
 #include "chai-file.hpp"
+#include "constant.hpp"
 
 using namespace chai::interpreter;
 using namespace chai::utils;
@@ -14,18 +14,12 @@ protected:
     const std::filesystem::path PATH{"./exec-testing.chai"};
 
     chai::chsize_t addConst(int64_t data) {
-        return chaiFile_.addConst(
-            std::make_unique<ConstI64>(data)
-        );
+        return chaiFile_.addConst(std::make_unique<ConstI64>(data));
     }
 
     Immidiate addConst(double data) {
-        return chaiFile_.addConst(
-            std::make_unique<ConstF64>(data)
-        );
+        return chaiFile_.addConst(std::make_unique<ConstF64>(data));
     }
-
-
 
     void load(Operation op, RegisterId r1, RegisterId r2) {
         chaiFile_.addInstr(instr2Raw(op, r1, r2));
@@ -33,21 +27,15 @@ protected:
 
     void loadWithConst(Operation op, int64_t data) {
         chai::chsize_t id = addConst(data);
-        chaiFile_.addInstr(
-            instr2Raw(op, id)
-        );
+        chaiFile_.addInstr(instr2Raw(op, id));
     }
 
     void loadWithConst(Operation op, double data) {
         chai::chsize_t id = addConst(data);
-        chaiFile_.addInstr(
-            instr2Raw(op, id)
-        );
+        chaiFile_.addInstr(instr2Raw(op, id));
     }
 
-    void load(Operation op) {
-        chaiFile_.addInstr(instr2Raw(op));
-    }
+    void load(Operation op) { chaiFile_.addInstr(instr2Raw(op)); }
 
     void update() {
         chaiFile_.toFIle(PATH);
@@ -138,7 +126,8 @@ TEST_F(ExecutorTest, ldra) {
     update();
     exec_.run();
     EXPECT_EQ(exec_.getState()[r1], exec_.getState().acc());
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), static_cast<int64_t>(val));
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
+              static_cast<int64_t>(val));
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 4);
 }
 TEST_F(ExecutorTest, star) {
@@ -165,8 +154,7 @@ TEST_F(ExecutorTest, add) {
     update();
     exec_.run();
     EXPECT_EQ(exec_.getState()[r1], val1);
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val1 + val2);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val1 + val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, addNeg) {
@@ -181,8 +169,7 @@ TEST_F(ExecutorTest, addNeg) {
     update();
     exec_.run();
     EXPECT_EQ(exec_.getState()[r1], val1);
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val1 + val2);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val1 + val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, addi) {
@@ -193,8 +180,7 @@ TEST_F(ExecutorTest, addi) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val1 + val2);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val1 + val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, sub) {
@@ -209,8 +195,7 @@ TEST_F(ExecutorTest, sub) {
     update();
     exec_.run();
     EXPECT_EQ(exec_.getState()[r1], val1);
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val2 - val1);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val2 - val1);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, subi) {
@@ -221,8 +206,7 @@ TEST_F(ExecutorTest, subi) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val2 - val1);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val2 - val1);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, mul) {
@@ -237,8 +221,7 @@ TEST_F(ExecutorTest, mul) {
     update();
     exec_.run();
     EXPECT_EQ(exec_.getState()[r1], val1);
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val1 * val2);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val1 * val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, muli) {
@@ -249,8 +232,7 @@ TEST_F(ExecutorTest, muli) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val1 * val2);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val1 * val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, div) {
@@ -265,8 +247,7 @@ TEST_F(ExecutorTest, div) {
     update();
     exec_.run();
     EXPECT_EQ(exec_.getState()[r1], val1);
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val2 / val1);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val2 / val1);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, divi) {
@@ -277,8 +258,7 @@ TEST_F(ExecutorTest, divi) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()),
-              val2 / val1);
+    EXPECT_EQ(static_cast<int64_t>(exec_.getState().acc()), val2 / val1);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, ldiaf) {
@@ -287,9 +267,7 @@ TEST_F(ExecutorTest, ldiaf) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 2);
 }
 TEST_F(ExecutorTest, addf) {
@@ -303,12 +281,8 @@ TEST_F(ExecutorTest, addf) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState()[r1]),
-        val1);
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val1 + val2);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState()[r1]), val1);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val1 + val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, addif) {
@@ -319,9 +293,7 @@ TEST_F(ExecutorTest, addif) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val1 + val2);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val1 + val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, subf) {
@@ -335,12 +307,8 @@ TEST_F(ExecutorTest, subf) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState()[r]),
-        val1);
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val2 - val1);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState()[r]), val1);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val2 - val1);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, subif) {
@@ -351,9 +319,7 @@ TEST_F(ExecutorTest, subif) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val2 - val1);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val2 - val1);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, mulf) {
@@ -367,12 +333,8 @@ TEST_F(ExecutorTest, mulf) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState()[r1]),
-        val1);
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val1 * val2);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState()[r1]), val1);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val1 * val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, mulif) {
@@ -383,9 +345,7 @@ TEST_F(ExecutorTest, mulif) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val1 * val2);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val1 * val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, divf) {
@@ -399,12 +359,8 @@ TEST_F(ExecutorTest, divf) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState()[r]),
-        val2);
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val1 / val2);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState()[r]), val2);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val1 / val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
 TEST_F(ExecutorTest, divif) {
@@ -415,9 +371,7 @@ TEST_F(ExecutorTest, divif) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()),
-        val1 / val2);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), val1 / val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 
@@ -427,32 +381,27 @@ TEST_F(MathTest, icsqrt) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_EQ(std::bit_cast<double>(exec_.getState().acc()),
-              2.0);
+    EXPECT_EQ(std::bit_cast<double>(exec_.getState().acc()), 2.0);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 
 TEST_F(MathTest, icsin) {
-    loadWithConst(
-        Ldiaf, 30.0 * static_cast<double >(M_PI) / 180);
+    loadWithConst(Ldiaf, 30.0 * static_cast<double>(M_PI) / 180);
     load(IcSin);
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()), 0.5);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), 0.5);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 
 TEST_F(MathTest, iccos) {
-    loadWithConst(
-        Ldiaf, 60.0 * (M_PI) / 180);
+    loadWithConst(Ldiaf, 60.0 * (M_PI) / 180);
     load(IcCos);
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()), 0.5);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), 0.5);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 
@@ -522,10 +471,7 @@ TEST_F(ExecutorTest, SquareEquation) {
     load(Ret);
     update();
     exec_.run();
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState()[r9]), 3.0);
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState()[r11]), 2.0);
-    EXPECT_FLOAT_EQ(
-        std::bit_cast<double>(exec_.getState().acc()), 2.0);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState()[r9]), 3.0);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState()[r11]), 2.0);
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.getState().acc()), 2.0);
 }

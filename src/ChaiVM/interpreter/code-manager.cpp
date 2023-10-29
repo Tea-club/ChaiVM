@@ -1,5 +1,5 @@
-#include <cassert>
 #include <bit>
+#include <cassert>
 
 #include "ChaiVM/interpreter/code-manager.hpp"
 
@@ -30,19 +30,21 @@ void CodeManager::loadPool(std::istream &istream) {
         char type;
         istream.read(&type, sizeof type);
         switch (type) {
-            case 'l':
-                int64_t next_long;
-                istream.read(reinterpret_cast<char *>(&next_long), sizeof next_long);
-                constantPool_.push_back(next_long);
-                break;
-            case 'd':
-                double next_d;
-                istream.read(reinterpret_cast<char *>(&next_d), sizeof next_d);
-                constantPool_.push_back(std::bit_cast<chsize_t>(next_d));
-                break;
-            default:
-                throw std::invalid_argument(std::string{"Type cannot be "} + std::to_string(type));
-                break;
+        case 'l':
+            int64_t next_long;
+            istream.read(reinterpret_cast<char *>(&next_long),
+                         sizeof next_long);
+            constantPool_.push_back(next_long);
+            break;
+        case 'd':
+            double next_d;
+            istream.read(reinterpret_cast<char *>(&next_d), sizeof next_d);
+            constantPool_.push_back(std::bit_cast<chsize_t>(next_d));
+            break;
+        default:
+            throw std::invalid_argument(std::string{"Type cannot be "} +
+                                        std::to_string(type));
+            break;
         }
     }
 }
@@ -57,7 +59,6 @@ void CodeManager::load(const std::filesystem::path &path) {
         throw std::invalid_argument(std::string{"Invalid path "} +
                                     path.string());
     }
-    printf("codeman len = %zu, %zu\n", constantPool_.size(), raw_.size());
 }
 
 chsize_t CodeManager::getCnst(chsize_t id) {

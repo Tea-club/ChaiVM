@@ -34,8 +34,6 @@ void Executor::mov(Instruction ins) {
 }
 void Executor::ldia(Instruction ins) {
     regFile_.acc() = codeManager_->getCnst(ins.immidiate);
-    printf("in ldia imm = %i, cnst = %lu i64\n", ins.immidiate, regFile_.acc());
-    printf("acc = %li i64\n", std::bit_cast<int64_t>( regFile_.acc()));
     advancePc();
     DO_NEXT_INS()
 }
@@ -50,79 +48,64 @@ void Executor::star(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::add(Instruction ins) {
-    regFile_.acc() = std::bit_cast<chsize_t>(
-        std::bit_cast<int64_t>(regFile_.acc())
-        +
-        std::bit_cast<int64_t>(regFile_[ins.r1])
-    );    advancePc();
+    regFile_.acc() =
+        std::bit_cast<chsize_t>(std::bit_cast<int64_t>(regFile_.acc()) +
+                                std::bit_cast<int64_t>(regFile_[ins.r1]));
+    advancePc();
     DO_NEXT_INS()
 }
 void Executor::addi(Instruction ins) {
     regFile_.acc() = std::bit_cast<chsize_t>(
-        std::bit_cast<int64_t>(regFile_.acc())
-        +
-        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate))
-    );
+        std::bit_cast<int64_t>(regFile_.acc()) +
+        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::sub(Instruction ins) {
-    regFile_.acc() = std::bit_cast<chsize_t>(
-        std::bit_cast<int64_t>(regFile_.acc())
-        -
-        std::bit_cast<int64_t>(regFile_[ins.r1])
-    );
+    regFile_.acc() =
+        std::bit_cast<chsize_t>(std::bit_cast<int64_t>(regFile_.acc()) -
+                                std::bit_cast<int64_t>(regFile_[ins.r1]));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::subi(Instruction ins) {
     regFile_.acc() = std::bit_cast<chsize_t>(
-        std::bit_cast<int64_t>(regFile_.acc())
-        -
-        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate))
-    );
+        std::bit_cast<int64_t>(regFile_.acc()) -
+        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::mul(Instruction ins) {
-    regFile_.acc() = std::bit_cast<chsize_t>(
-        std::bit_cast<int64_t>(regFile_.acc())
-        *
-        std::bit_cast<int64_t>(regFile_[ins.r1])
-    );    advancePc();
+    regFile_.acc() =
+        std::bit_cast<chsize_t>(std::bit_cast<int64_t>(regFile_.acc()) *
+                                std::bit_cast<int64_t>(regFile_[ins.r1]));
+    advancePc();
     DO_NEXT_INS()
 }
 void Executor::muli(Instruction ins) {
     regFile_.acc() = std::bit_cast<chsize_t>(
-        std::bit_cast<int64_t>(regFile_.acc())
-        *
-        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate))
-    );
+        std::bit_cast<int64_t>(regFile_.acc()) *
+        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::div(Instruction ins) {
-    regFile_.acc() = std::bit_cast<chsize_t>(
-        std::bit_cast<int64_t>(regFile_.acc())
-        /
-        std::bit_cast<int64_t>(regFile_[ins.r1])
-    );
+    regFile_.acc() =
+        std::bit_cast<chsize_t>(std::bit_cast<int64_t>(regFile_.acc()) /
+                                std::bit_cast<int64_t>(regFile_[ins.r1]));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::divi(Instruction ins) {
     regFile_.acc() = std::bit_cast<chsize_t>(
-        std::bit_cast<int64_t>(regFile_.acc())
-            /
-        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate))
-    );
+        std::bit_cast<int64_t>(regFile_.acc()) /
+        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::ldiaf(Instruction ins) {
     double immd = std::bit_cast<double>(codeManager_->getCnst(ins.immidiate));
     regFile_.acc() = std::bit_cast<chsize_t>(immd);
-    printf("acc = %lf d", std::bit_cast<double>( regFile_.acc()));
     advancePc();
     DO_NEXT_INS()
 }
@@ -185,7 +168,6 @@ void Executor::divif(Instruction ins) {
 }
 void Executor::icprint(Instruction ins) {
     assert(regFile_.acc() <= 0xFF);
-    printf("%c", static_cast<char>(regFile_.acc()));
     advancePc();
     DO_NEXT_INS()
 }

@@ -9,13 +9,10 @@ using namespace chai::utils;
 
 class CodeManagerTest : public ::testing::Test {
 protected:
-    void
-    fillFileWithCode(const std::filesystem::path &path,
-                     std::vector<std::unique_ptr<Constant>> &&raw_pool,
-                     std::vector<chai::bytecode_t> &&instructions) {
-        ChaiFile chai_file{
-            std::move(instructions), std::move(raw_pool)
-        };
+    void fillFileWithCode(const std::filesystem::path &path,
+                          std::vector<std::unique_ptr<Constant>> &&raw_pool,
+                          std::vector<chai::bytecode_t> &&instructions) {
+        ChaiFile chai_file{std::move(instructions), std::move(raw_pool)};
         chai_file.toFIle(path);
     }
 
@@ -51,11 +48,8 @@ TEST_F(CodeManagerTest, loadFBadFile) {
 }
 
 TEST_F(CodeManagerTest, loadFileDefault) {
-    fillFileWithCode(
-        filepath_,
-        std::vector<std::unique_ptr<Constant>>{},
-        std::vector<chai::bytecode_t>{defaultInstructions_}
-    );
+    fillFileWithCode(filepath_, std::vector<std::unique_ptr<Constant>>{},
+                     std::vector<chai::bytecode_t>{defaultInstructions_});
     codeManager_.load(filepath_);
     chai::chsize_t pc = codeManager_.startPC();
     for (const auto &ins : defaultInstructions_) {

@@ -4,23 +4,21 @@
 
 class ChaiFile {
 public:
-    ChaiFile(std::vector<chai::bytecode_t>&& instrs, std::vector<std::unique_ptr<Constant>>&& pool)
+    ChaiFile(std::vector<chai::bytecode_t> &&instrs,
+             std::vector<std::unique_ptr<Constant>> &&pool)
         : rawInstrs_(instrs), pool_(std::move(pool)) {}
 
-    ChaiFile(): ChaiFile(
-        std::vector<chai::bytecode_t>{},
-        std::vector<std::unique_ptr<Constant>>{}
-    ) {}
+    ChaiFile()
+        : ChaiFile(std::vector<chai::bytecode_t>{},
+                   std::vector<std::unique_ptr<Constant>>{}) {}
 
     Immidiate addInstr(chai::bytecode_t raw) {
         rawInstrs_.push_back(raw);
         return rawInstrs_.size() - 1;
     }
 
-    Immidiate addConst(std::unique_ptr<Constant>&& constant) {
-        pool_.push_back(
-            std::move(constant)
-        );
+    Immidiate addConst(std::unique_ptr<Constant> &&constant) {
+        pool_.push_back(std::move(constant));
         return pool_.size() - 1;
     }
 
@@ -28,7 +26,8 @@ public:
         std::ofstream ofs(path, std::ios::binary | std::ios::out);
         if (ofs.good() && ofs.is_open()) {
             uint16_t constants = pool_.size();
-            ofs.write(reinterpret_cast<const char *>(&constants), sizeof(constants));
+            ofs.write(reinterpret_cast<const char *>(&constants),
+                      sizeof(constants));
             for (const std::unique_ptr<Constant> &cnst : pool_) {
                 cnst->putType(ofs);
                 cnst->write(ofs);
