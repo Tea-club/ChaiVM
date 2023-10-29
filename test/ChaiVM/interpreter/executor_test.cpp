@@ -389,137 +389,143 @@ TEST_F(ExecutorTest, mulif) {
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
 }
 TEST_F(ExecutorTest, divf) {
-    auto val1 = std::bit_cast<Immidiate>(3.14f);
-    auto val2 = std::bit_cast<Immidiate>(2.71f);
+    auto val1 = 3.14;
+    auto val2 = 2.71;
     RegisterId r = 0;
-    load(Ldiaf, val2));
-    load(Star, r, 0));
-    load(Ldiaf, val1));
-    load(Divf, r, 0));
-    load(Ret));
+    loadWithConst(Ldiaf, val2);
+    load(Star, r, 0);
+    loadWithConst(Ldiaf, val1);
+    load(Divf, r, 0);
+    load(Ret);
+    update();
     exec_.run();
     EXPECT_FLOAT_EQ(
-        static_cast<float>(std::bit_cast<double>(exec_.getState()[r])),
-        std::bit_cast<float>(val2));
+        std::bit_cast<double>(exec_.getState()[r]),
+        val2);
     EXPECT_FLOAT_EQ(
-        static_cast<float>(std::bit_cast<double>(exec_.getState().acc())),
-        std::bit_cast<float>(val1) / std::bit_cast<float>(val2));
+        std::bit_cast<double>(exec_.getState().acc()),
+        val1 / val2);
     EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 5);
 }
-//TEST_F(ExecutorTest, divif) {
-//    auto val1 = std::bit_cast<Immidiate>(3.14f);
-//    auto val2 = std::bit_cast<Immidiate>(2.71f);
-//    load(Ldiaf, val1));
-//    load(Divif, val2));
-//    load(Ret));
-//    exec_.run();
-//    EXPECT_FLOAT_EQ(
-//        static_cast<float>(std::bit_cast<double>(exec_.getState().acc())),
-//        std::bit_cast<float>(val1) / std::bit_cast<float>(val2));
-//    EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
-//}
-//
-//TEST_F(MathTest, icsqrt) {
-//    load(Ldiaf, std::bit_cast<Immidiate>(4.0f)));
-//    load(IcSqrt));
-//    load(Ret));
-//    exec_.run();
-//    EXPECT_EQ(static_cast<float>(std::bit_cast<double>(exec_.getState().acc())),
-//              2.0f);
-//    EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
-//}
-//
-//TEST_F(MathTest, icsin) {
-//    load(
-//        Ldiaf, std::bit_cast<Immidiate>(30 * static_cast<float>(M_PI) / 180)));
-//    load(IcSin));
-//    load(Ret));
-//    exec_.run();
-//    EXPECT_FLOAT_EQ(
-//        static_cast<float>(std::bit_cast<double>(exec_.getState().acc())), 0.5f);
-//    EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
-//}
-//
-//TEST_F(MathTest, iccos) {
-//    load(
-//        Ldiaf, std::bit_cast<Immidiate>(60 * static_cast<float>(M_PI) / 180)));
-//    load(IcCos));
-//    load(Ret));
-//    exec_.run();
-//    EXPECT_FLOAT_EQ(
-//        static_cast<float>(std::bit_cast<double>(exec_.getState().acc())), 0.5f);
-//    EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
-//}
-//
-//TEST_F(ExecutorTest, SquareEquation) {
-//    const RegisterId r1 = 1;
-//    const RegisterId r2 = 2;
-//    const RegisterId r3 = 3;
-//    const RegisterId r4 = 4;
-//    const RegisterId r5 = 5;
-//    const RegisterId r6 = 6;
-//    const RegisterId r7 = 7;
-//    const RegisterId r8 = 8;
-//    const RegisterId r9 = 9;
-//    const RegisterId r10 = 10;
-//    const RegisterId r11 = 11;
-//    // r1 = 1.0, r2 = -5.0, r3 = 6.0
-//    load(Ldiaf, std::bit_cast<Immidiate>(1.0f));
-//    load(Star, r1, 0);
-//    load(Ldiaf, std::bit_cast<Immidiate>(-5.0f));
-//    load(Star, r2, 0);
-//    load(Ldiaf, std::bit_cast<Immidiate>(+6.0f));
-//    load(Star, r3, 0);
-//
-//    // r4 = -4*r1*r3
-//    load(Ldiaf, std::bit_cast<Immidiate>(-4.0f));
-//    load(Mulf, r1, 0);
-//    load(Mulf, r3, 0);
-//    load(Star, r4, 0);
-//
-//    // r5 = b * b
-//    load(Ldra, r2, 0);
-//    load(Mulf, r2, 0);
-//    load(Star, r5, 0);
-//
-//    // r6 = r5 + r4
-//    load(Ldra, r5, 0);
-//    load(Addf, r4, 0);
-//    load(Star, r6, 0);
-//
-//    // r6 = sqrt(r6)
-//    load(Ldra, r6, 0);
-//    load(IcSqrt);
-//    load(Star, r6, 0);
-//
-//    // r7 = 2a
-//    load(Ldra, r1, 0);
-//    load(chai::interpreter::Mulif, std::bit_cast<Immidiate>(2.0f));
-//    load(Star, r7);
-//
-//    // r8 = r6 - r2
-//    load(Ldra, r6, 0);
-//    load(Subf, r2, 0);
-//    load(Star, r8, 0);
-//
-//    // X1 = r9 = r8 / r7
-//    load(Ldra, r8, 0);
-//    load(Divf, r7, 0);
-//    load(Star, r9, 0);
-//
-//    // acc = -r2 - r6
-//    // r11 = acc / r7
-//    load(Ldiaf, std::bit_cast<Immidiate>(0.0f));
-//    load(Subf, r2, 0);
-//    load(Subf, r6, 0);
-//    load(Divf, r7, 0);
-//    load(Star, r11, 0);
-//    load(Ret);
-//    exec_.run();
-//    EXPECT_FLOAT_EQ(
-//        static_cast<float>(std::bit_cast<double>(exec_.getState()[r9])), 3.0f);
-//    EXPECT_FLOAT_EQ(
-//        static_cast<float>(std::bit_cast<double>(exec_.getState()[r11])), 2.0f);
-//    EXPECT_FLOAT_EQ(
-//        static_cast<float>(std::bit_cast<double>(exec_.getState().acc())), 2.0f);
-//}
+TEST_F(ExecutorTest, divif) {
+    auto val1 = 3.14;
+    auto val2 = 2.71;
+    loadWithConst(Ldiaf, val1);
+    loadWithConst(Divif, val2);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_FLOAT_EQ(
+        std::bit_cast<double>(exec_.getState().acc()),
+        val1 / val2);
+    EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(MathTest, icsqrt) {
+    loadWithConst(Ldiaf, 4.0);
+    load(IcSqrt);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(std::bit_cast<double>(exec_.getState().acc()),
+              2.0);
+    EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(MathTest, icsin) {
+    loadWithConst(
+        Ldiaf, 30.0 * static_cast<double >(M_PI) / 180);
+    load(IcSin);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_FLOAT_EQ(
+        std::bit_cast<double>(exec_.getState().acc()), 0.5);
+    EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(MathTest, iccos) {
+    loadWithConst(
+        Ldiaf, 60.0 * (M_PI) / 180);
+    load(IcCos);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_FLOAT_EQ(
+        std::bit_cast<double>(exec_.getState().acc()), 0.5);
+    EXPECT_EQ(exec_.getState().pc(), sizeof(chai::bytecode_t) * 3);
+}
+
+TEST_F(ExecutorTest, SquareEquation) {
+    const RegisterId r1 = 1;
+    const RegisterId r2 = 2;
+    const RegisterId r3 = 3;
+    const RegisterId r4 = 4;
+    const RegisterId r5 = 5;
+    const RegisterId r6 = 6;
+    const RegisterId r7 = 7;
+    const RegisterId r8 = 8;
+    const RegisterId r9 = 9;
+    const RegisterId r10 = 10;
+    const RegisterId r11 = 11;
+    // r1 = 1.0, r2 = -5.0, r3 = 6.0
+    loadWithConst(Ldiaf, 1.0);
+    load(Star, r1, 0);
+    loadWithConst(Ldiaf, -5.0);
+    load(Star, r2, 0);
+    loadWithConst(Ldiaf, +6.0);
+    load(Star, r3, 0);
+
+    // r4 = -4*r1*r3
+    loadWithConst(Ldiaf, -4.0);
+    load(Mulf, r1, 0);
+    load(Mulf, r3, 0);
+    load(Star, r4, 0);
+
+    // r5 = b * b
+    load(Ldra, r2, 0);
+    load(Mulf, r2, 0);
+    load(Star, r5, 0);
+
+    // r6 = r5 + r4
+    load(Ldra, r5, 0);
+    load(Addf, r4, 0);
+    load(Star, r6, 0);
+
+    // r6 = sqrt(r6)
+    load(Ldra, r6, 0);
+    load(IcSqrt);
+    load(Star, r6, 0);
+
+    // r7 = 2a
+    load(Ldra, r1, 0);
+    loadWithConst(Mulif, 2.0);
+    load(Star, r7, 0);
+
+    // r8 = r6 - r2
+    load(Ldra, r6, 0);
+    load(Subf, r2, 0);
+    load(Star, r8, 0);
+
+    // X1 = r9 = r8 / r7
+    load(Ldra, r8, 0);
+    load(Divf, r7, 0);
+    load(Star, r9, 0);
+
+    // acc = -r2 - r6
+    // r11 = acc / r7
+    loadWithConst(Ldiaf, 0.0);
+    load(Subf, r2, 0);
+    load(Subf, r6, 0);
+    load(Divf, r7, 0);
+    load(Star, r11, 0);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_FLOAT_EQ(
+        std::bit_cast<double>(exec_.getState()[r9]), 3.0);
+    EXPECT_FLOAT_EQ(
+        std::bit_cast<double>(exec_.getState()[r11]), 2.0);
+    EXPECT_FLOAT_EQ(
+        std::bit_cast<double>(exec_.getState().acc()), 2.0);
+}
