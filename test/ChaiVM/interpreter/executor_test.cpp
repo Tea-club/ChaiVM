@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 
 #include "ChaiVM/interpreter/executor.hpp"
-#include "ChaiVM/utils/instr2Raw.hpp"
 #include "ChaiVM/utils/chai-file.hpp"
 #include "ChaiVM/utils/constant.hpp"
+#include "ChaiVM/utils/instr2Raw.hpp"
 
 using namespace chai::interpreter;
 using namespace chai::utils;

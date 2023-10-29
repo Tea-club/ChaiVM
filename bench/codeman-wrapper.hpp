@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ChaiVM/utils/chai-file.hpp"
 #include "ChaiVM/interpreter/executor.hpp"
+#include "ChaiVM/utils/chai-file.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
 
 using namespace chai::interpreter;

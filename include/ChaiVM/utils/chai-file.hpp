@@ -17,7 +17,8 @@ public:
         return rawInstrs_.size() - 1;
     }
 
-    chai::interpreter::Immidiate addConst(std::unique_ptr<Constant> &&constant) {
+    chai::interpreter::Immidiate
+    addConst(std::unique_ptr<Constant> &&constant) {
         pool_.push_back(std::move(constant));
         return pool_.size() - 1;
     }
