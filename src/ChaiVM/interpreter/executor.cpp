@@ -33,7 +33,9 @@ void Executor::mov(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::ldia(Instruction ins) {
-    regFile_.acc() = ins.immidiate;
+    regFile_.acc() = codeManager_->getCnst(ins.immidiate);
+    printf("in ldia imm = %i, cnst = %lu i64\n", ins.immidiate, regFile_.acc());
+    printf("acc = %li i64\n", std::bit_cast<int64_t>( regFile_.acc()));
     advancePc();
     DO_NEXT_INS()
 }
@@ -48,48 +50,79 @@ void Executor::star(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::add(Instruction ins) {
-    regFile_.acc() += regFile_[ins.r1];
-    advancePc();
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::bit_cast<int64_t>(regFile_.acc())
+        +
+        std::bit_cast<int64_t>(regFile_[ins.r1])
+    );    advancePc();
     DO_NEXT_INS()
 }
 void Executor::addi(Instruction ins) {
-    regFile_.acc() += ins.immidiate;
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::bit_cast<int64_t>(regFile_.acc())
+        +
+        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate))
+    );
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::sub(Instruction ins) {
-    regFile_.acc() -= regFile_[ins.r1];
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::bit_cast<int64_t>(regFile_.acc())
+        -
+        std::bit_cast<int64_t>(regFile_[ins.r1])
+    );
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::subi(Instruction ins) {
-    regFile_.acc() -= ins.immidiate;
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::bit_cast<int64_t>(regFile_.acc())
+        -
+        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate))
+    );
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::mul(Instruction ins) {
-    regFile_.acc() *= regFile_[ins.r1];
-    advancePc();
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::bit_cast<int64_t>(regFile_.acc())
+        *
+        std::bit_cast<int64_t>(regFile_[ins.r1])
+    );    advancePc();
     DO_NEXT_INS()
 }
 void Executor::muli(Instruction ins) {
-    regFile_.acc() *= ins.immidiate;
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::bit_cast<int64_t>(regFile_.acc())
+        *
+        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate))
+    );
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::div(Instruction ins) {
-    regFile_.acc() /= regFile_[ins.r1];
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::bit_cast<int64_t>(regFile_.acc())
+        /
+        std::bit_cast<int64_t>(regFile_[ins.r1])
+    );
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::divi(Instruction ins) {
-    regFile_.acc() /= ins.immidiate;
+    regFile_.acc() = std::bit_cast<chsize_t>(
+        std::bit_cast<int64_t>(regFile_.acc())
+            /
+        std::bit_cast<int64_t>(codeManager_->getCnst(ins.immidiate))
+    );
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::ldiaf(Instruction ins) {
-    double immd = static_cast<double>(std::bit_cast<float>(ins.immidiate));
+    double immd = std::bit_cast<double>(codeManager_->getCnst(ins.immidiate));
     regFile_.acc() = std::bit_cast<chsize_t>(immd);
+    printf("acc = %lf d", std::bit_cast<double>( regFile_.acc()));
     advancePc();
     DO_NEXT_INS()
 }
@@ -102,7 +135,7 @@ void Executor::addf(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::addif(Instruction ins) {
-    double res = static_cast<double>(std::bit_cast<float>(ins.immidiate)) +
+    double res = std::bit_cast<double>(codeManager_->getCnst(ins.immidiate)) +
                  std::bit_cast<double>(regFile_.acc());
     regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
@@ -117,7 +150,7 @@ void Executor::subf(Instruction ins) {
 }
 void Executor::subif(Instruction ins) {
     double res = std::bit_cast<double>(regFile_.acc()) -
-                 static_cast<double>(std::bit_cast<float>(ins.immidiate));
+                 std::bit_cast<double>(codeManager_->getCnst(ins.immidiate));
     regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
@@ -130,7 +163,7 @@ void Executor::mulf(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::mulif(Instruction ins) {
-    double res = static_cast<double>(std::bit_cast<float>(ins.immidiate)) *
+    double res = std::bit_cast<double>(codeManager_->getCnst(ins.immidiate)) *
                  std::bit_cast<double>(regFile_.acc());
     regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
@@ -145,7 +178,7 @@ void Executor::divf(Instruction ins) {
 }
 void Executor::divif(Instruction ins) {
     double res = std::bit_cast<double>(regFile_.acc()) /
-                 static_cast<double>(std::bit_cast<float>(ins.immidiate));
+                 std::bit_cast<double>(codeManager_->getCnst(ins.immidiate));
     regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()

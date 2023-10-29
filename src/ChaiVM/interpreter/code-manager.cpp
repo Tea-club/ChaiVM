@@ -57,6 +57,12 @@ void CodeManager::load(const std::filesystem::path &path) {
         throw std::invalid_argument(std::string{"Invalid path "} +
                                     path.string());
     }
+    printf("codeman len = %zu, %zu\n", constantPool_.size(), raw_.size());
+}
+
+chsize_t CodeManager::getCnst(chsize_t id) {
+    assert(id < constantPool_.size());
+    return constantPool_[id];
 }
 
 bytecode_t CodeManager::getBytecode(chsize_t pc) {

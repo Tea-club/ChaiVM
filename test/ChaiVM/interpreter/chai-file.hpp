@@ -12,12 +12,12 @@ public:
         std::vector<std::unique_ptr<Constant>>{}
     ) {}
 
-    size_t addInstr(chai::bytecode_t raw) {
+    Immidiate addInstr(chai::bytecode_t raw) {
         rawInstrs_.push_back(raw);
         return rawInstrs_.size() - 1;
     }
 
-    size_t addConst(std::unique_ptr<Constant>&& constant) {
+    Immidiate addConst(std::unique_ptr<Constant>&& constant) {
         pool_.push_back(
             std::move(constant)
         );

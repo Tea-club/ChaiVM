@@ -41,6 +41,8 @@ public:
 
     void loadPool(std::istream &istream);
 
+    chsize_t getCnst(chsize_t id);
+
     bytecode_t getBytecode(chsize_t pc);
 
     chsize_t startPC();
