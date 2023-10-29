@@ -7,7 +7,7 @@ namespace chai::interpreter {
 
 void CodeManager::load(bytecode_t bytecode) { raw_.push_back(bytecode); }
 
-void CodeManager::load(std::istream &istream) {
+void CodeManager::loadCode(std::istream &istream) {
     if (!istream.good()) {
         throw std::invalid_argument(std::string{"Bad input stream"});
     }
@@ -53,7 +53,7 @@ void CodeManager::load(const std::filesystem::path &path) {
     std::ifstream input_file(path, std::ios::binary | std::ios::in);
     if (input_file.good() && input_file.is_open()) {
         loadPool(input_file);
-        load(input_file);
+        loadCode(input_file);
         input_file.close();
     } else {
         throw std::invalid_argument(std::string{"Invalid path "} +

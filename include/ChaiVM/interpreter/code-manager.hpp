@@ -26,17 +26,21 @@ public:
     void load(bytecode_t bytecode);
 
     /**
-     * Loads stream of instructions only.
-     * @param istream
-     */
-    void load(std::istream &istream);
-
-    /**
      * Parses and loads the full file.
      * @param path Path to the .chai file.
      */
     void load(const std::filesystem::path &path);
 
+    /**
+     * Loads stream of instructions only.
+     * @param istream
+     */
+    void loadCode(std::istream &istream);
+
+    /**
+     * Loads stream of Constant pool.
+     * @param istream
+     */
     void loadPool(std::istream &istream);
 
     chsize_t getCnst(chsize_t id);
