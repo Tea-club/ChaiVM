@@ -14,9 +14,8 @@ target_include_directories(chai_include INTERFACE
     include
 )
 
-include_directories(include)
-
 add_executable(ChaiVM src/main.cpp)
 target_link_libraries(ChaiVM PUBLIC
+    chai_include
     chai_interpreter
 )

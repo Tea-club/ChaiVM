@@ -21,3 +21,4 @@ include (CTest)
 chai_test(./dummy_test.cpp)
 
 add_subdirectory(ChaiVM)
+add_subdirectory(frontend)

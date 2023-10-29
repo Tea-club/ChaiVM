@@ -24,5 +24,5 @@ for instruction in instructions:
 
 print("{", end=" ")
 for operation in opcodes_arr:
-    print(operation + ",", end=" ")
+    print('"' + operation + '"' + ",", end=" ")
 print("}")
