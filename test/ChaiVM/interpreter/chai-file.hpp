@@ -12,12 +12,12 @@ public:
         : ChaiFile(std::vector<chai::bytecode_t>{},
                    std::vector<std::unique_ptr<Constant>>{}) {}
 
-    Immidiate addInstr(chai::bytecode_t raw) {
+    chai::interpreter::Immidiate addInstr(chai::bytecode_t raw) {
         rawInstrs_.push_back(raw);
         return rawInstrs_.size() - 1;
     }
 
-    Immidiate addConst(std::unique_ptr<Constant> &&constant) {
+    chai::interpreter::Immidiate addConst(std::unique_ptr<Constant> &&constant) {
         pool_.push_back(std::move(constant));
         return pool_.size() - 1;
     }

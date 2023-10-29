@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ChaiVM/interpreter/instruction.hpp"
+#include "ChaiVM/interpreter/code-manager.hpp"
 #include "ChaiVM/types.hpp"
 
 struct Constant {
@@ -20,7 +21,7 @@ struct ConstI64 : public Constant {
     void write(std::ofstream &ofs) override {
         ofs.write(reinterpret_cast<const char *>(&data_), sizeof(int64_t));
     }
-    int8_t getType() override { return CodeManager::CNST_I64; }
+    int8_t getType() override { return chai::interpreter::CodeManager::CNST_I64; }
     ~ConstI64() override = default;
 };
 
@@ -30,6 +31,6 @@ struct ConstF64 : public Constant {
     void write(std::ofstream &ofs) override {
         ofs.write(reinterpret_cast<const char *>(&data_), sizeof(double));
     }
-    int8_t getType() override { return CodeManager::CNST_F64; }
+    int8_t getType() override { return chai::interpreter::CodeManager::CNST_F64; }
     ~ConstF64() override = default;
 };
