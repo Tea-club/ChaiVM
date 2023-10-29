@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../test/ChaiVM/interpreter/chai-file.hpp"
+#include "ChaiVM/utils/chai-file.hpp"
 #include "ChaiVM/interpreter/executor.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
 

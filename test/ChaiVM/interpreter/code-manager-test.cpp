@@ -2,7 +2,7 @@
 
 #include "ChaiVM/interpreter/code-manager.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
-#include "chai-file.hpp"
+#include "ChaiVM/utils/chai-file.hpp"
 
 using namespace chai::interpreter;
 using namespace chai::utils;

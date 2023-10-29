@@ -3,8 +3,8 @@
 
 #include "ChaiVM/interpreter/executor.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
-#include "chai-file.hpp"
-#include "constant.hpp"
+#include "ChaiVM/utils/chai-file.hpp"
+#include "ChaiVM/utils/constant.hpp"
 
 using namespace chai::interpreter;
 using namespace chai::utils;
