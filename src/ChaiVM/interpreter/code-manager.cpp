@@ -30,13 +30,13 @@ void CodeManager::loadPool(std::istream &istream) {
         char type;
         istream.read(&type, sizeof type);
         switch (type) {
-        case 'l':
+        case CNST_I64:
             int64_t next_long;
             istream.read(reinterpret_cast<char *>(&next_long),
                          sizeof next_long);
             constantPool_.push_back(next_long);
             break;
-        case 'd':
+        case CNST_F64:
             double next_d;
             istream.read(reinterpret_cast<char *>(&next_d), sizeof next_d);
             constantPool_.push_back(std::bit_cast<chsize_t>(next_d));
