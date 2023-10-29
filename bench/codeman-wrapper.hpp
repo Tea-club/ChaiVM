@@ -14,26 +14,16 @@ public:
 
     ~CodeManWrapper() { std::remove(PATH.c_str()); }
 
-    chai::chsize_t addConst(int64_t data) {
-        return chaiFile_.addConst(std::make_unique<ConstI64>(data));
-    }
-
-    Immidiate addConst(double data) {
-        return chaiFile_.addConst(std::make_unique<ConstF64>(data));
-    }
-
     void load(Operation op, RegisterId r1, RegisterId r2 = 0) {
         chaiFile_.addInstr(instr2Raw(op, r1, r2));
     }
 
     void loadWithConst(Operation op, int64_t data) {
-        chai::chsize_t id = addConst(data);
-        chaiFile_.addInstr(instr2Raw(op, id));
+        chaiFile_.addWithConst(op, data);
     }
 
     void loadWithConst(Operation op, double data) {
-        chai::chsize_t id = addConst(data);
-        chaiFile_.addInstr(instr2Raw(op, id));
+        chaiFile_.addWithConst(op, data);
     }
 
     void load(Operation op) { chaiFile_.addInstr(instr2Raw(op)); }

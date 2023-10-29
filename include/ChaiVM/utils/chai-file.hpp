@@ -1,6 +1,7 @@
 #pragma once
 
 #include "constant.hpp"
+#include "instr2Raw.hpp"
 
 class ChaiFile {
 public:
@@ -21,6 +22,16 @@ public:
     addConst(std::unique_ptr<Constant> &&constant) {
         pool_.push_back(std::move(constant));
         return pool_.size() - 1;
+    }
+
+    void addWithConst(chai::interpreter::Operation op, int64_t data) {
+        chai::chsize_t id = addConst(std::make_unique<ConstI64>(data));
+        addInstr(chai::utils::instr2Raw(op, id));
+    }
+
+    void addWithConst(Operation op, double data) {
+        chai::chsize_t id = addConst(std::make_unique<ConstF64>(data));
+        addInstr(chai::utils::instr2Raw(op, id));
     }
 
     void toFIle(const std::filesystem::path &path) {
