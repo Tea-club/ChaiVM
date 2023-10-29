@@ -23,7 +23,6 @@ void CodeManager::loadPool(std::istream &istream) {
         throw std::invalid_argument(std::string{"Bad input stream"});
     }
     Immidiate constants = 0;
-    static_assert(sizeof constants == 2);
     istream.read(reinterpret_cast<char *>(&constants), sizeof constants);
     for (int i = 0; i < constants; ++i) {
         char type;
