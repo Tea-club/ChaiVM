@@ -14,8 +14,11 @@ namespace chai::interpreter {
 /**
  * Class to manage bytecode. Similar to ClassLoader.
  */
-class CodeManager {
+class CodeManager final {
 public:
+
+    static constexpr int8_t CNST_I64 = 'l';
+    static constexpr int8_t CNST_F64 = 'd';
 
     /**
      * Loads one instruction.
@@ -44,7 +47,7 @@ public:
 
 private:
     std::vector<bytecode_t> raw_;
-    std::vector<chsize_t> constant_pool_;
+    std::vector<chsize_t> constantPool_;
 };
 
 class BeyondCodeBoundaries : public std::runtime_error {

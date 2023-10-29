@@ -1,6 +1,8 @@
+#include <gtest/gtest.h>
+
 #include "ChaiVM/interpreter/code-manager.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
-#include <gtest/gtest.h>
+#include "chai-file.hpp"
 
 using namespace chai::interpreter;
 using namespace chai::utils;
@@ -9,31 +11,17 @@ class CodeManagerTest : public ::testing::Test {
 protected:
     void
     fillFileWithCode(const std::filesystem::path &path,
-                     const std::vector<uint8_t> &raw_pool,
-                     const std::vector<chai::bytecode_t> &rawInstructions) {
-        std::ofstream ofs(path, std::ios::binary | std::ios::out);
-        if (ofs.good() && ofs.is_open()) {
-            for (const auto &ins : raw_pool) {
-                ofs.write(reinterpret_cast<const char *>(&ins),
-                          sizeof(uint8_t));
-            }
-            for (const auto &ins : rawInstructions) {
-                ofs.write(reinterpret_cast<const char *>(&ins),
-                          sizeof(chai::bytecode_t));
-            }
-            ofs.close();
-        } else {
-            throw std::invalid_argument(std::string{"Invalid path "} +
-                                        path.string());
-        }
+                     std::vector<std::unique_ptr<Constant>> &&raw_pool,
+                     std::vector<chai::bytecode_t> &&instructions) {
+        ChaiFile chai_file{
+            std::move(instructions), std::move(raw_pool)
+        };
+        chai_file.toFIle(path);
     }
 
     void TearDown() override { std::remove(filepath_.c_str()); }
 
-    std::vector<uint8_t> default_pool_{
-        0, 0
-    };
-    std::vector<chai::bytecode_t> default_instructions_ = {
+    std::vector<chai::bytecode_t> defaultInstructions_ = {
         instr2Raw(Ldia, 6),    instr2Raw(Star, 2, 0), instr2Raw(Ldia, 8),
         instr2Raw(Star, 3, 0), instr2Raw(Ldra, 3, 0), instr2Raw(Mul, 2, 0),
         instr2Raw(Ret, 0, 0)};
@@ -63,11 +51,14 @@ TEST_F(CodeManagerTest, loadFBadFile) {
 }
 
 TEST_F(CodeManagerTest, loadFileDefault) {
-    std::vector<uint8_t> constant_pool{};
-    fillFileWithCode(filepath_, constant_pool, default_instructions_);
+    fillFileWithCode(
+        filepath_,
+        std::vector<std::unique_ptr<Constant>>{},
+        std::vector<chai::bytecode_t>{defaultInstructions_}
+    );
     codeManager_.load(filepath_);
     chai::chsize_t pc = codeManager_.startPC();
-    for (const auto &ins : default_instructions_) {
+    for (const auto &ins : defaultInstructions_) {
         EXPECT_EQ(codeManager_.getBytecode(pc), ins);
         pc += sizeof(chai::bytecode_t);
     }

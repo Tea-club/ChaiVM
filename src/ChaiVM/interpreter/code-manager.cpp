@@ -33,15 +33,15 @@ void CodeManager::loadPool(std::istream &istream) {
             case 'l':
                 int64_t next_long;
                 istream.read(reinterpret_cast<char *>(&next_long), sizeof next_long);
-                constant_pool_.push_back(next_long);
+                constantPool_.push_back(next_long);
                 break;
             case 'd':
                 double next_d;
                 istream.read(reinterpret_cast<char *>(&next_d), sizeof next_d);
-                constant_pool_.push_back(std::bit_cast<chsize_t>(next_d));
+                constantPool_.push_back(std::bit_cast<chsize_t>(next_d));
                 break;
             default:
-                throw std::invalid_argument(std::string{"Type cannot be"} + std::to_string(type));
+                throw std::invalid_argument(std::string{"Type cannot be "} + std::to_string(type));
                 break;
         }
     }
