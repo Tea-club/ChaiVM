@@ -1,26 +1,19 @@
-#include "ChaiVM/interpreter/code-manager.hpp"
-#include "ChaiVM/utils/instr2Raw.hpp"
 #include <gtest/gtest.h>
+
+#include "ChaiVM/interpreter/code-manager.hpp"
+#include "ChaiVM/utils/chai-file.hpp"
+#include "ChaiVM/utils/instr2Raw.hpp"
 
 using namespace chai::interpreter;
 using namespace chai::utils;
 
 class CodeManagerTest : public ::testing::Test {
 protected:
-    void
-    fillFileWithCode(const std::filesystem::path &path,
-                     const std::vector<chai::bytecode_t> &rawInstructions) {
-        std::ofstream ofs(path, std::ios::binary | std::ios::out);
-        if (ofs.good() && ofs.is_open()) {
-            for (const auto &ins : rawInstructions) {
-                ofs.write(reinterpret_cast<const char *>(&ins),
-                          sizeof(chai::bytecode_t));
-            }
-            ofs.close();
-        } else {
-            throw std::invalid_argument(std::string{"Invalid path "} +
-                                        path.string());
-        }
+    void fillFileWithCode(const std::filesystem::path &path,
+                          std::vector<std::unique_ptr<Constant>> &&raw_pool,
+                          std::vector<chai::bytecode_t> &&instructions) {
+        ChaiFile chai_file{std::move(instructions), std::move(raw_pool)};
+        chai_file.toFile(path);
     }
 
     void TearDown() override { std::remove(filepath_.c_str()); }
@@ -55,7 +48,8 @@ TEST_F(CodeManagerTest, loadFBadFile) {
 }
 
 TEST_F(CodeManagerTest, loadFileDefault) {
-    fillFileWithCode(filepath_, defaultInstructions_);
+    fillFileWithCode(filepath_, std::vector<std::unique_ptr<Constant>>{},
+                     std::vector<chai::bytecode_t>{defaultInstructions_});
     codeManager_.load(filepath_);
     chai::chsize_t pc = codeManager_.startPC();
     for (const auto &ins : defaultInstructions_) {

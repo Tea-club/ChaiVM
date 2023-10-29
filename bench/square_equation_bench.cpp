@@ -34,15 +34,15 @@ static void initSquareEquatino(CodeManWrapper &codeman) {
     const RegisterId r11 = 11;
 
     // r1 = 1.0, r2 = -5.0, r3 = 6.0
-    codeman.loadi(Ldiaf, std::bit_cast<Immidiate>(1.0f));
+    codeman.loadWithConst(Ldiaf, 1.0);
     codeman.load(Star, r1);
-    codeman.loadi(Ldiaf, std::bit_cast<Immidiate>(-5.0f));
+    codeman.loadWithConst(Ldiaf, -5.0);
     codeman.load(Star, r2);
-    codeman.loadi(Ldiaf, std::bit_cast<Immidiate>(+6.0f));
+    codeman.loadWithConst(Ldiaf, +6.0);
     codeman.load(Star, r3);
 
     // r4 = -4*r1*r3
-    codeman.loadi(Ldiaf, std::bit_cast<Immidiate>(-4.0f));
+    codeman.loadWithConst(Ldiaf, -4.0);
     codeman.load(Mulf, r1);
     codeman.load(Mulf, r3);
     codeman.load(Star, r4);
@@ -64,7 +64,7 @@ static void initSquareEquatino(CodeManWrapper &codeman) {
 
     // r7 = 2a
     codeman.load(Ldra, r1);
-    codeman.loadi(chai::interpreter::Mulif, std::bit_cast<Immidiate>(2.0f));
+    codeman.loadWithConst(chai::interpreter::Mulif, 2.0);
     codeman.load(Star, r7);
 
     // r8 = r6 - r2
@@ -79,10 +79,11 @@ static void initSquareEquatino(CodeManWrapper &codeman) {
 
     // acc = -r2 - r6
     // r11 = acc / r7
-    codeman.load(Ldiaf, std::bit_cast<Immidiate>(0.0f));
+    codeman.load(Ldiaf, 0.0);
     codeman.load(Subf, r2);
     codeman.load(Subf, r6);
     codeman.load(Divf, r7);
     codeman.load(Star, r11);
     codeman.load(Ret);
+    codeman.update();
 }

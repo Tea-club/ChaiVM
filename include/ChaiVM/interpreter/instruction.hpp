@@ -8,7 +8,7 @@ namespace chai::interpreter {
 
 using Opcode = uint8_t;
 using RegisterId = uint8_t;
-using Immidiate = uint32_t;
+using Immidiate = uint16_t;
 
 struct Instruction {
     Operation operation;

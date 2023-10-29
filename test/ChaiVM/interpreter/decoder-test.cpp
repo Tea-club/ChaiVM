@@ -59,37 +59,37 @@ protected:
 };
 
 TEST_F(Decoder_I, imm) {
-    const auto instance = buildInstr(Addi, -3); // FFFFFFFD
-    Instruction parsed = decoder::parse(0x000000FFFFFFFD08);
-    EXPECT_TRUE(equal(parsed, instance));
+    const auto instance = buildInstr(Addi, -3); // FFFD
+    Instruction parsed = decoder::parse(0xFFFD0008);
     EXPECT_EQ(parsed.immidiate, instance.immidiate);
+    EXPECT_TRUE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_I, Addi) {
-    const auto instance = buildInstr(Addi, 0xFAAB2C3D);
-    Instruction parsed = decoder::parse(0xD00000FAAB2C3D08);
+    const auto instance = buildInstr(Addi, 0x2C3D);
+    Instruction parsed = decoder::parse(0x2C3D0008);
     EXPECT_TRUE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_R, Add) {
     const auto instance = buildInstr(Add, 12);
-    Instruction parsed = decoder::parse(0xD000000000000C07);
+    Instruction parsed = decoder::parse(0xD0000C07);
     EXPECT_TRUE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_RR, Mov) {
     const auto instance = buildInstr(Mov, 12, 0x43);
-    Instruction parsed = decoder::parse(0xD000000000430C03);
+    Instruction parsed = decoder::parse(0x00430C03);
     EXPECT_TRUE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_RR, NOT_MOV) {
     const auto instance = buildInstr(Mov, 12, 0x43);
-    Instruction parsed = decoder::parse(0xD000000000340C03);
+    Instruction parsed = decoder::parse(0x00340C03);
     EXPECT_FALSE(equal(parsed, instance));
 }
 
 TEST_F(Decoder_RR, INVALID_OPERATION) {
-    Instruction parsed = decoder::parse(0xADBBEEFAAB430CFA);
+    Instruction parsed = decoder::parse(0xAB430CFA);
     EXPECT_EQ(parsed.operation, Inv);
 }
