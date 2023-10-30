@@ -1,6 +1,6 @@
-#include <cassert>
 #include "ChaiVM/interpreter/decoder.hpp"
 #include "ChaiVM/utils/bit-magic.hpp"
+#include <cassert>
 
 namespace chai::interpreter::decoder {
 
