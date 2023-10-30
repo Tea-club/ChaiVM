@@ -23,7 +23,7 @@ format:
 	./tools/clang-format.sh $(PWD)/$(BENCH_DIR)
 .PHONY: build
 build: init
-	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_SANITIZERS=OFF
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCMAKE_BUILD_TYPE=DEBUG -DCHAIVM_ADD_SANITIZERS=OFF
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
 .PHONY: test
@@ -45,7 +45,7 @@ test-extended: init
 
 .PHONY: bench
 bench: init
-	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAI_BENCH=1
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAI_BENCH=1 -DCMAKE_BUILD_TYPE=RELEASE
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 	cd $(PWD)/$(BUILD_DIR) && make run_bench && cd $(PWD)
 

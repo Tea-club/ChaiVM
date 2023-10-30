@@ -26,3 +26,17 @@ print("{", end=" ")
 for operation in opcodes_arr:
     print(operation + ",", end=" ")
 print("}")
+
+
+print("Start templating")
+import jinja2
+tpl = """
+{{ title }}
+{{ '-' * title|length }}
+{% for n, user in enumerate(users, 1) %}
+{{ n }}. {{ user.name }} - должность: {{ user.status }}, оклад: ${{ user.salary }}
+{% endfor %}
+ """
+
+content = {}
+
