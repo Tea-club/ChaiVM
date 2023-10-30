@@ -8,3 +8,4 @@ build/
 # ide stuff
 .idea
 cmake-build-debug
+./include/ChaiVM/interpreter/operations.hpp

@@ -36,32 +36,4 @@ enum Operation {
 
 };
 
-constexpr Operation opcodes2operation[] = {
-    Inv,  Nop,   Ret,  Mov,   Ldia,    Ldra,    Star,    Add,    Addi,  Sub,
-    Subi, Mul,   Muli, Div,   Divi,    Ldiaf,   Addf,    Addif,  Subf,  Subif,
-    Mulf, Mulif, Divf, Divif, IcPrint, IcScani, IcScanf, IcSqrt, IcSin, IcCos,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,     Inv,     Inv,     Inv,    Inv,   Inv,
-    Inv,  Inv,   Inv,  Inv,   Inv,
-};
 } // namespace chai::interpreter
