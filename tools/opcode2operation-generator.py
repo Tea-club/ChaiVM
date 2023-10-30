@@ -2,12 +2,12 @@ import sys
 from datetime import datetime
 import jinja2
 import yaml
-
+import os
 
 def main() -> int:
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         raise RuntimeError('Should be 2 args, received ' + str(len(sys.argv)))
-    with open("resources/instructions.yml") as file:
+    with open(sys.argv[2]) as file:
         full = yaml.safe_load(file)
     instructions = full["instructions"]
     opcodes = set()
@@ -28,6 +28,7 @@ def main() -> int:
 #pragma once
 namespace chai::interpreter {
 enum Operation {
+    Inv = 0,
 {% for n, item in enumerate(items, 1) %}
     {{ item.mnemonic }} = {{ item.fixedvalue }},
 {% endfor %}
@@ -42,7 +43,15 @@ enum Operation {
         'enumerate': enumerate,
     }
 
+    directory = os.path.dirname(sys.argv[1])
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     fp = open(sys.argv[1], 'w')
+    print('ABOBA')
+    print(sys.argv[1])
+    print(jinja2
+          .Template(tpl, trim_blocks=True)
+          .render(content))
     fp.write(
         jinja2
         .Template(tpl, trim_blocks=True)
