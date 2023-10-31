@@ -9,6 +9,7 @@ if (CHAI_BENCH)
     add_subdirectory(bench)
 endif ()
 
+# @todo #15:90min Generate autogen/operations.hpp into build directory.
 set(OPERATIONS_DIR ${CMAKE_SOURCE_DIR}/include/ChaiVM/interpreter/autogen/operations.hpp)
 add_custom_target(gen_operations_header
         COMMENT "Generating ${OPERATIONS_DIR}"
