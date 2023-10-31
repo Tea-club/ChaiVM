@@ -90,6 +90,6 @@ TEST_F(Decoder_RR, NOT_MOV) {
 }
 
 TEST_F(Decoder_RR, INVALID_OPERATION) {
-    Instruction parsed = decoder::parse(0xAB430CFA);
+    Instruction parsed = decoder::parse(0xAB430C00);
     EXPECT_EQ(parsed.operation, Inv);
 }

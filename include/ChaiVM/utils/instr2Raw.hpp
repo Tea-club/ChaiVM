@@ -2,8 +2,8 @@
 
 #include <cstdint>
 
+#include "ChaiVM/interpreter/autogen/operations.hpp"
 #include "ChaiVM/interpreter/instruction.hpp"
-#include "ChaiVM/interpreter/operations.hpp"
 #include "ChaiVM/types.hpp"
 
 using namespace chai::interpreter;

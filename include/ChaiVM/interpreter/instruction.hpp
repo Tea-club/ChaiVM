@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "operations.hpp"
+#include "ChaiVM/interpreter/autogen/operations.hpp"
 
 namespace chai::interpreter {
 
