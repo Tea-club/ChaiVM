@@ -47,11 +47,6 @@ enum Operation {
     if not os.path.exists(directory):
         os.makedirs(directory)
     fp = open(sys.argv[1], 'w')
-    print('ABOBA')
-    print(sys.argv[1])
-    print(jinja2
-          .Template(tpl, trim_blocks=True)
-          .render(content))
     fp.write(
         jinja2
         .Template(tpl, trim_blocks=True)
