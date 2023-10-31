@@ -193,7 +193,7 @@ void Executor::iccos(Instruction ins) {
 }
 void Executor::if_icmpeq(Instruction ins) {
     if (regFile_.acc() == regFile_[ins.r1]) {
-        static_assert(sizeof (Immidiate) == sizeof (int16_t));
+        static_assert(sizeof(Immidiate) == sizeof(int16_t));
         regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -243,29 +243,39 @@ void Executor::if_icmple(Instruction ins) {
 void Executor::if_acmpeq(Instruction ins) {
     /*
      * @todo #42:90min Implement the instruction with object ref
-     *  when objects will be introduced.
+     *  when objects will be introduced in chai.
      */
     DO_NEXT_INS()
 }
 void Executor::if_acmpne(Instruction ins) {
     /*
      * @todo #42:90min Implement the instruction with object ref
-     *  when objects will be introduced.
+     *  when chai objects will be introduced.
      */
     DO_NEXT_INS()
 }
 void Executor::cmpgf(Instruction ins) {
-    regFile_.acc() = (regFile_.acc() < regFile_[ins.r1] ? -1 : static_cast<int>(regFile_.acc() != regFile_[ins.r1]));
+    double acc_f64 = std::bit_cast<double>(regFile_.acc());
+    double r1_f64 = std::bit_cast<double>(regFile_[ins.r1]);
+    regFile_.acc() =
+        (acc_f64 < r1_f64 || acc_f64 != acc_f64 || r1_f64 != r1_f64
+             ? static_cast<chsize_t>(-1)
+             : static_cast<chsize_t>(regFile_.acc() != regFile_[ins.r1]));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::cmplf(Instruction ins) {
-    regFile_.acc() = (regFile_.acc() > regFile_[ins.r1] ? -1 : static_cast<chsize_t>(regFile_.acc() != regFile_[ins.r1]));
+    double acc_f64 = std::bit_cast<double>(regFile_.acc());
+    double r1_f64 = std::bit_cast<double>(regFile_[ins.r1]);
+    regFile_.acc() = (acc_f64 > r1_f64 || acc_f64 != acc_f64 || r1_f64 != r1_f64
+                          ? -1
+                          : static_cast<chsize_t>(acc_f64 != r1_f64));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::g0t0(Instruction ins) {
-    regFile_.pc() += static_cast<int16_t>(regFile_[ins.r1]);
+    regFile_.pc() += static_cast<int16_t>(ins.immidiate);
+    printf("next pc = %lu\n", regFile_.pc());
     DO_NEXT_INS()
 }
 
