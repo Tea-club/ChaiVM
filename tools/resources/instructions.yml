@@ -127,3 +127,48 @@ instructions:
     fixedvalue: 29
     mnemonic: IcCos
     format: N
+  -
+    fixedvalue: 30
+    mnemonic: If_icmpeq
+    format: N
+  -
+    fixedvalue: 31
+    mnemonic: If_icmpne
+    format: RI
+  -
+    fixedvalue: 32
+    mnemonic: If_icmpgt
+    format: RI
+  -
+    fixedvalue: 33
+    mnemonic: If_icmpge
+    format: RI
+  -
+    fixedvalue: 34
+    mnemonic: If_icmplt
+    format: RI
+  -
+    fixedvalue: 35
+    mnemonic: If_icmple
+    format: RI
+
+  -
+    fixedvalue: 36
+    mnemonic: If_acmpeq
+    format: RI
+  -
+    fixedvalue: 37
+    mnemonic: If_acmpne
+    format: RI
+  -
+    fixedvalue: 38
+    mnemonic: Сmpgf
+    format: R
+  -
+    fixedvalue: 39
+    mnemonic: Cmplf
+    format: R
+  -
+    fixedvalue: 40
+    mnemonic: Goto
+    format: I
