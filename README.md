@@ -1,4 +1,5 @@
 # ChaiVM - Virtual machine for chai bytecode.
+You can read more about chai isa [here](ISA.md) 
 ## How to build:
 ```shell
 $ make build
