@@ -257,18 +257,18 @@ void Executor::if_acmpne(Instruction ins) {
 void Executor::cmpgf(Instruction ins) {
     double acc_f64 = std::bit_cast<double>(regFile_.acc());
     double r1_f64 = std::bit_cast<double>(regFile_[ins.r1]);
-    regFile_.acc() = (acc_f64 < r1_f64 || acc_f64 != acc_f64 || r1_f64 != r1_f64
-                          ? static_cast<chsize_t>(-1)
-                          : static_cast<chsize_t>(acc_f64 != r1_f64));
+    regFile_.acc() = (acc_f64 >= r1_f64)
+          ? static_cast<size_t>(acc_f64 != r1_f64)
+          : static_cast<size_t>(-1);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::cmplf(Instruction ins) {
     double acc_f64 = std::bit_cast<double>(regFile_.acc());
     double r1_f64 = std::bit_cast<double>(regFile_[ins.r1]);
-    regFile_.acc() = (acc_f64 > r1_f64 || acc_f64 != acc_f64 || r1_f64 != r1_f64
-                          ? -1
-                          : static_cast<chsize_t>(acc_f64 != r1_f64));
+    regFile_.acc() = regFile_.acc() = (acc_f64 <= r1_f64)
+                                      ? static_cast<size_t>(acc_f64 != r1_f64)
+                                      : static_cast<size_t>(-1);
     advancePc();
     DO_NEXT_INS()
 }
