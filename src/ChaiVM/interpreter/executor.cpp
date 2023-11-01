@@ -275,7 +275,6 @@ void Executor::cmplf(Instruction ins) {
 }
 void Executor::g0t0(Instruction ins) {
     regFile_.pc() += static_cast<int16_t>(ins.immidiate);
-    printf("next pc = %lu\n", regFile_.pc());
     DO_NEXT_INS()
 }
 
