@@ -11,7 +11,7 @@ public:
 //    template <class U> Allocator(const Allocator<U> &) noexcept {}
     virtual T *allocate(size_t n) = 0;
     virtual void deallocate(T *p, size_t n) = 0;
-    virtual ~Allocator() = 0;
+    virtual ~Allocator() {}
 };
 
 template <class T, class U>

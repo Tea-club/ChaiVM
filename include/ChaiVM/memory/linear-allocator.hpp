@@ -11,7 +11,7 @@
 namespace chai::memory {
 
 template<class T>
-class LinearAllocator : public INonCopyable, public Allocator<T> {
+class LinearAllocator : public Allocator<T>, public INonCopyable {
 public:
     using value_type = T;
 
@@ -29,16 +29,11 @@ public:
         if (n > (buffer_.size() - buffer_.offset()) / sizeof(T)) {
             throw std::bad_array_new_length();
         }
-        T *allocated = new (buffer_.currentPosition()) T[n];
+        void *current = buffer_.currentPosition();
         buffer_.shiftOffset(n * sizeof(T));
-        return allocated;
+        return reinterpret_cast<T *>(current);
     }
-    void deallocate(T* p, std::size_t n) override {
-        for (int i = 0; i < n; ++i) {
-            p[i].~T();
-        }
-    }
-
+    void deallocate(T* p, std::size_t n) override {}
 private:
     LinearBuffer &buffer_;
 };

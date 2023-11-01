@@ -5,8 +5,20 @@ using namespace chai::memory;
 
 constexpr size_t BUFFER_SIZE = 1024;
 
-TEST(LinearAllocatorTest, primitive) {
+TEST(LinearAllocatorTest, primitives) {
     LinearBuffer buffer(BUFFER_SIZE);
     LinearAllocator<int> allocator(buffer);
-    int* arr = allocator.allocate(5);
+    size_t n = 5;
+    int* buf = allocator.allocate(n);
+    int* arr = new(buf) int[n];
+    for (int i = 0; i < n; ++i) {
+        arr[i] = i;
+    }
+    for (int i = 0; i < n; ++i) {
+        EXPECT_EQ(arr[i], i);
+    }
+}
+
+TEST(LinearAllocatorTest, classes) {
+
 }
