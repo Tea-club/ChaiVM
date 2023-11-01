@@ -260,7 +260,7 @@ void Executor::cmpgf(Instruction ins) {
     regFile_.acc() =
         (acc_f64 < r1_f64 || acc_f64 != acc_f64 || r1_f64 != r1_f64
              ? static_cast<chsize_t>(-1)
-             : static_cast<chsize_t>(regFile_.acc() != regFile_[ins.r1]));
+             : static_cast<chsize_t>(acc_f64 != r1_f64));
     advancePc();
     DO_NEXT_INS()
 }
