@@ -29,11 +29,15 @@ public:
         if (n > (buffer_.size() - buffer_.offset()) / sizeof(T)) {
             throw std::bad_array_new_length();
         }
-        T* current = buffer_.currentPosition();
-        buffer_.shiftOffset(n);
-        return current;
+        T *allocated = new (buffer_.currentPosition()) T[n];
+        buffer_.shiftOffset(n * sizeof(T));
+        return allocated;
     }
-    void deallocate(T* p, std::size_t n) override {}
+    void deallocate(T* p, std::size_t n) override {
+        for (int i = 0; i < n; ++i) {
+            p[i].~T();
+        }
+    }
 
 private:
     LinearBuffer &buffer_;
