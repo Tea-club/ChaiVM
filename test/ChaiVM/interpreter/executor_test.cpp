@@ -27,6 +27,9 @@ protected:
 
     const std::filesystem::path PATH{"./exec-testing.chai"};
 
+    /*
+     * @todo #42:60min Rename all load methods to more appropriate names.
+     */
     void loadRR(Operation op, RegisterId reg1, RegisterId reg2 = 0) {
         chaiFile_.addInstr(instr2Raw(op, reg1, reg2));
     }
