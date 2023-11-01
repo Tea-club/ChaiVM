@@ -41,10 +41,9 @@ There is ChaiVM's accumulator(acc) based ISA.
 | If_acmpne | RI | ref, if references are not equal, branch to instruction at offset [imm] |
 | Сmpgf | R | f64 -> i64, compare acc with r1. Acc became 1 i64 if greater than r1, 0 if equal, otherwise -1 |
 | Cmplf | R | f64 -> i64, compare acc with r1. Acc became 1 i64 if less than r1, 0 if equal, otherwise -1 |
-| Goto | I | goes to another instruction at branchoffset [imm] |
+| Goto | I | Goes to another instruction at branchoffset [imm] |
 
-
-##### To generate this file from `tools/resources/instructions.yaml` use the following python script:
+To generate this file use the following python script:
 ```shell
 $ python3 tools/isa-spec.py
 ```

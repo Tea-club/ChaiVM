@@ -211,4 +211,4 @@ instructions:
     fixedvalue: 40
     mnemonic: Goto
     format: I
-    description: "goes to another instruction at branchoffset [imm]"
+    description: "Goes to another instruction at branchoffset [imm]"
