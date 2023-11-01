@@ -5,34 +5,38 @@
 #include <numeric>
 
 #include "ChaiVM/utils/non-copyable.hpp"
+#include "ChaiVM/memory/linear-buffer.hpp"
+#include "ChaiVM/memory/allocator.hpp"
 
 namespace chai::memory {
 
 template<class T>
-struct LinearAllocator : INonCopyable {
-    typedef T value_type;
+class LinearAllocator : public INonCopyable, public Allocator<T> {
+public:
+    using value_type = T;
 
-    LinearAllocator() = default;
+    explicit LinearAllocator(LinearBuffer &buffer) : buffer_(buffer) {}
 
-    template<class U>
-    constexpr LinearAllocator(const LinearAllocator<U>&) noexcept = delete;
+//    template<class U>
+//    constexpr LinearAllocator(const LinearAllocator<U>&) noexcept = delete;
 
-    T* allocate(std::size_t n) {
-        if (n > std::numeric_limits<std::size_t>::max() / sizeof(T))
+    /**
+     * @todo #32:60min Use placement new for objects in allocate and call their
+     * destructors in deallocate. Create a hash map with pointers to objects and
+     * allocated size.
+     */
+    T* allocate(std::size_t n) override {
+        if (n > (buffer_.size() - buffer_.offset()) / sizeof(T)) {
             throw std::bad_array_new_length();
-
-        if (auto p = static_cast<T*>(std::malloc(n * sizeof(T)))) {
-            report(p, n);
-            return p;
         }
-
-        throw std::bad_alloc();
+        T* current = buffer_.currentPosition();
+        buffer_.shiftOffset(n);
+        return current;
     }
+    void deallocate(T* p, std::size_t n) override {}
 
-    void deallocate(T* p, std::size_t n) noexcept {
-        std::free(p);
-    }
 private:
+    LinearBuffer &buffer_;
 };
 
 //TODO
@@ -43,4 +47,4 @@ bool operator==(const LinearAllocator <T>&, const LinearAllocator <U>&) { return
 template<class T, class U>
 bool operator!=(const LinearAllocator <T>&, const LinearAllocator <U>&) { return false; }
 
-}
+}  // namespace chai::memory
