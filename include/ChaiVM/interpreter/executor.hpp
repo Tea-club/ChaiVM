@@ -50,18 +50,33 @@ private:
     void icsqrt(Instruction ins);
     void icsin(Instruction ins);
     void iccos(Instruction ins);
+    void if_icmpeq(Instruction ins);
+    void if_icmpne(Instruction ins);
+    void if_icmpgt(Instruction ins);
+    void if_icmpge(Instruction ins);
+    void if_icmplt(Instruction ins);
+    void if_icmple(Instruction ins);
+    void if_acmpeq(Instruction ins);
+    void if_acmpne(Instruction ins);
+    void cmpgf(Instruction ins);
+    void cmplf(Instruction ins);
+    void g0t0(Instruction ins);
 
-    static constexpr Handler handlerArr[] = {
-        &Executor::inv,     &Executor::nop,     &Executor::ret,
-        &Executor::mov,     &Executor::ldia,    &Executor::ldra,
-        &Executor::star,    &Executor::add,     &Executor::addi,
-        &Executor::sub,     &Executor::subi,    &Executor::mul,
-        &Executor::muli,    &Executor::div,     &Executor::divi,
-        &Executor::ldiaf,   &Executor::addf,    &Executor::addif,
-        &Executor::subf,    &Executor::subif,   &Executor::mulf,
-        &Executor::mulif,   &Executor::divf,    &Executor::divif,
-        &Executor::icprint, &Executor::icscani, &Executor::icscanf,
-        &Executor::icsqrt,  &Executor::icsin,   &Executor::iccos};
+    static constexpr Handler HANDLER_ARR[] = {
+        &Executor::inv,       &Executor::nop,       &Executor::ret,
+        &Executor::mov,       &Executor::ldia,      &Executor::ldra,
+        &Executor::star,      &Executor::add,       &Executor::addi,
+        &Executor::sub,       &Executor::subi,      &Executor::mul,
+        &Executor::muli,      &Executor::div,       &Executor::divi,
+        &Executor::ldiaf,     &Executor::addf,      &Executor::addif,
+        &Executor::subf,      &Executor::subif,     &Executor::mulf,
+        &Executor::mulif,     &Executor::divf,      &Executor::divif,
+        &Executor::icprint,   &Executor::icscani,   &Executor::icscanf,
+        &Executor::icsqrt,    &Executor::icsin,     &Executor::iccos,
+        &Executor::if_icmpeq, &Executor::if_icmpne, &Executor::if_icmpgt,
+        &Executor::if_icmpge, &Executor::if_icmplt, &Executor::if_icmple,
+        &Executor::if_acmpeq, &Executor::if_acmpne, &Executor::cmpgf,
+        &Executor::cmplf,     &Executor::g0t0};
 
 private:
     CodeManager *codeManager_;

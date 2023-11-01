@@ -6,7 +6,7 @@ namespace chai::interpreter::decoder {
 
 Instruction parse(bytecode_t word) {
     const Opcode opcode = utils::ExtractBits<bytecode_t, 8, 0>(word);
-    assert(opcode <= IcCos);
+    assert(opcode <= Goto);
     return Instruction{
         .operation = static_cast<Operation>(opcode),
         .immidiate = utils::ExtractBits<bytecode_t, Immidiate, 16, 16>(word),

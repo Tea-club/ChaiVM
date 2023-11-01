@@ -8,7 +8,7 @@ namespace chai::interpreter {
 #define DO_NEXT_INS()                                                          \
     Instruction newIns =                                                       \
         decoder::parse(codeManager_->getBytecode(regFile_.pc()));              \
-    (this->*handlerArr[newIns.operation])(newIns);
+    (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager)
     : codeManager_(manager), regFile_(codeManager_->startPC()) {}
@@ -189,6 +189,91 @@ void Executor::iccos(Instruction ins) {
     regFile_.acc() = std::bit_cast<chsize_t>(
         std::cos(std::bit_cast<double>(regFile_.acc())));
     advancePc();
+    DO_NEXT_INS()
+}
+void Executor::if_icmpeq(Instruction ins) {
+    if (regFile_.acc() == regFile_[ins.r1]) {
+        static_assert(sizeof(Immidiate) == sizeof(int16_t));
+        regFile_.pc() += static_cast<int16_t>(ins.immidiate);
+    } else {
+        advancePc();
+    }
+    DO_NEXT_INS()
+}
+void Executor::if_icmpne(Instruction ins) {
+    if (regFile_.acc() != regFile_[ins.r1]) {
+        regFile_.pc() += static_cast<int16_t>(ins.immidiate);
+    } else {
+        advancePc();
+    }
+    DO_NEXT_INS()
+}
+void Executor::if_icmpgt(Instruction ins) {
+    if (regFile_.acc() > regFile_[ins.r1]) {
+        regFile_.pc() += static_cast<int16_t>(ins.immidiate);
+    } else {
+        advancePc();
+    }
+    DO_NEXT_INS()
+}
+void Executor::if_icmpge(Instruction ins) {
+    if (regFile_.acc() >= regFile_[ins.r1]) {
+        regFile_.pc() += static_cast<int16_t>(ins.immidiate);
+    } else {
+        advancePc();
+    }
+    DO_NEXT_INS()
+}
+void Executor::if_icmplt(Instruction ins) {
+    if (regFile_.acc() < regFile_[ins.r1]) {
+        regFile_.pc() += static_cast<int16_t>(ins.immidiate);
+    } else {
+        advancePc();
+    }
+    DO_NEXT_INS()
+}
+void Executor::if_icmple(Instruction ins) {
+    if (regFile_.acc() <= regFile_[ins.r1]) {
+        regFile_.pc() += static_cast<int16_t>(ins.immidiate);
+    } else {
+        advancePc();
+    }
+    DO_NEXT_INS()
+}
+void Executor::if_acmpeq(Instruction ins) {
+    /*
+     * @todo #42:90min Implement the instruction with object ref
+     *  when objects will be introduced in chai.
+     */
+    DO_NEXT_INS()
+}
+void Executor::if_acmpne(Instruction ins) {
+    /*
+     * @todo #42:90min Implement the instruction with object ref
+     *  when chai objects will be introduced.
+     */
+    DO_NEXT_INS()
+}
+void Executor::cmpgf(Instruction ins) {
+    double acc_f64 = std::bit_cast<double>(regFile_.acc());
+    double r1_f64 = std::bit_cast<double>(regFile_[ins.r1]);
+    regFile_.acc() = (acc_f64 >= r1_f64)
+                         ? static_cast<size_t>(acc_f64 != r1_f64)
+                         : static_cast<size_t>(-1);
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::cmplf(Instruction ins) {
+    double acc_f64 = std::bit_cast<double>(regFile_.acc());
+    double r1_f64 = std::bit_cast<double>(regFile_[ins.r1]);
+    regFile_.acc() = regFile_.acc() =
+        (acc_f64 <= r1_f64) ? static_cast<size_t>(acc_f64 != r1_f64)
+                            : static_cast<size_t>(-1);
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::g0t0(Instruction ins) {
+    regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     DO_NEXT_INS()
 }
 
