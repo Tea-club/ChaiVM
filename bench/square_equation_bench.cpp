@@ -30,7 +30,10 @@ static void initSquareEquatino(CodeManWrapper &codeman) {
     const RegisterId r7 = 7;
     const RegisterId r8 = 8;
     const RegisterId r9 = 9;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
     const RegisterId r10 = 10;
+#pragma GCC diagnostic pop
     const RegisterId r11 = 11;
 
     // r1 = 1.0, r2 = -5.0, r3 = 6.0
