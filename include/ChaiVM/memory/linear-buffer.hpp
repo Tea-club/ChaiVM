@@ -7,7 +7,7 @@
 
 namespace chai::memory {
 
-class LinearBuffer : public INonCopyable {
+class LinearBuffer final : public INonCopyable {
 public:
     explicit LinearBuffer(size_t sz);
     LinearBuffer(LinearBuffer &&other) noexcept;

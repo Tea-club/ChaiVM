@@ -10,7 +10,7 @@
 
 namespace chai::memory {
 
-template <class T> class LinearAllocator : IAllocator<T> {
+template <class T> class LinearAllocator final : IAllocator<T> {
 public:
     using value_type = T;
 

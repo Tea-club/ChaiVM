@@ -11,9 +11,10 @@ protected:
 
 class Stub {
 public:
+    static constexpr int DFT = -1;
     explicit Stub(int num) : stub(num) {}
     Stub() {}
-    int stub = 0;
+    int stub = DFT;
 };
 
 TEST_F(LinearAllocatorTest, Primitives) {
@@ -42,10 +43,7 @@ TEST_F(LinearAllocatorTest, StdContainers) {
     LinearAllocator<Stub> allocator{buffer_};
     std::vector<Stub, decltype(allocator)> vec(n, allocator);
     for (auto &e : vec) {
-        e = Stub(42);
-    }
-    for (auto &e : vec) {
-        EXPECT_EQ(e.stub, 42);
+        EXPECT_EQ(e.stub, Stub::DFT);
     }
 }
 
