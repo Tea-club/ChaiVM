@@ -18,4 +18,9 @@ chai::bytecode_t instr2Raw(Operation op, Immidiate imm) {
 
 chai::bytecode_t instr2Raw(Operation op) { return (operation2opcode(op)); }
 
+chai::bytecode_t inst2RawRI(Operation op, RegisterId r1, Immidiate imm) {
+    return (operation2opcode(op)) | (static_cast<chai::bytecode_t>(imm) << 16) |
+           (r1 << 8);
+}
+
 } // namespace chai::utils
