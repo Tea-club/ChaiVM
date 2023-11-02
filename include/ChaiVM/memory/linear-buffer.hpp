@@ -9,22 +9,15 @@ namespace chai::memory {
 
 class LinearBuffer : public INonCopyable {
 public:
-    explicit LinearBuffer(size_t sz) : size_(sz), buf_(new char[size_]) {}
-    LinearBuffer(LinearBuffer &&other) noexcept {
-        std::swap(size_, other.size_);
-        std::swap(buf_, other.buf_);
-    }
-    LinearBuffer &operator=(LinearBuffer &&other) noexcept {
-        std::swap(size_, other.size_);
-        std::swap(buf_, other.buf_);
-        return *this;
-    }
-    ~LinearBuffer() { delete[] buf_; }
+    explicit LinearBuffer(size_t sz);
+    LinearBuffer(LinearBuffer &&other) noexcept;
+    LinearBuffer &operator=(LinearBuffer &&other) noexcept;
+    ~LinearBuffer();
 
-    size_t size() const { return size_; }
-    size_t offset() const { return offset_; }
-    void *currentPosition() { return buf_ + offset_; }
-    void shiftOffset(size_t n) { offset_ += n; }
+    size_t size() const;
+    size_t offset() const;
+    void *currentPosition() const;
+    void shiftOffset(size_t n);
 
 private:
     size_t size_ = 0;
@@ -32,4 +25,4 @@ private:
     char *buf_ = nullptr;
 };
 
-}  // namespace chai::memory
+} // namespace chai::memory

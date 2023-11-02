@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include "ChaiVM/memory/linear-allocator.hpp"
+#include <gtest/gtest.h>
 
 using namespace chai::memory;
 
@@ -19,8 +19,8 @@ public:
 TEST_F(LinearAllocatorTest, Primitives) {
     size_t n = 5;
     LinearAllocator<int> allocator{buffer_};
-    int* buf = allocator.allocate(n);
-    int* arr = new(buf) int[n];
+    int *buf = allocator.allocate(n);
+    int *arr = new (buf) int[n];
     for (int i = 0; i < n; ++i) {
         arr[i] = i;
     }
@@ -31,8 +31,8 @@ TEST_F(LinearAllocatorTest, Primitives) {
 TEST_F(LinearAllocatorTest, Classes) {
     size_t n = 1;
     LinearAllocator<Stub> allocator{buffer_};
-    Stub* buf = allocator.allocate(n);
-    Stub* inst = new(buf) Stub;
+    Stub *buf = allocator.allocate(n);
+    Stub *inst = new (buf) Stub;
     inst->stub = 10;
     EXPECT_EQ(inst->stub, 10);
     inst->~Stub();

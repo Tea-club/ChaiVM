@@ -13,4 +13,4 @@ public:
     virtual ~IAllocator() {}
 };
 
-}  // namespace chai::memory
+} // namespace chai::memory

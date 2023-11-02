@@ -405,7 +405,6 @@ TEST_F(ExecutorTest, SquareEquation) {
     const RegisterId r7 = 7;
     const RegisterId r8 = 8;
     const RegisterId r9 = 9;
-    const RegisterId r10 = 10;
     const RegisterId r11 = 11;
     // r1 = 1.0, r2 = -5.0, r3 = 6.0
     loadWithConst(Ldiaf, 1.0);
