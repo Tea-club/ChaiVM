@@ -10,11 +10,11 @@ namespace chai::memory {
 class LinearBuffer : public INonCopyable {
 public:
     explicit LinearBuffer(size_t sz) : size_(sz), buf_(new char[size_]) {}
-    LinearBuffer(LinearBuffer &&other) : size_(0), buf_(nullptr) {
+    LinearBuffer(LinearBuffer &&other) noexcept {
         std::swap(size_, other.size_);
         std::swap(buf_, other.buf_);
     }
-    LinearBuffer &operator=(LinearBuffer &&other) {
+    LinearBuffer &operator=(LinearBuffer &&other) noexcept {
         std::swap(size_, other.size_);
         std::swap(buf_, other.buf_);
         return *this;
