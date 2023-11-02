@@ -21,10 +21,10 @@ TEST_F(LinearAllocatorTest, Primitives) {
     LinearAllocator<int> allocator{buffer_};
     int *buf = allocator.allocate(n);
     int *arr = new (buf) int[n];
-    for (int i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         arr[i] = i;
     }
-    for (int i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         EXPECT_EQ(arr[i], i);
     }
 }

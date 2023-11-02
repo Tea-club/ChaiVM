@@ -24,7 +24,10 @@ public:
         buffer_.shiftOffset(n * sizeof(T));
         return reinterpret_cast<T *>(current);
     }
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
     void deallocate(T *p, std::size_t n) override {}
+    #pragma GCC diagnostic pop
 
 private:
     LinearBuffer &buffer_;
