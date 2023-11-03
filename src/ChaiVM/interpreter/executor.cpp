@@ -15,6 +15,9 @@ Executor::Executor(CodeManager *manager)
 void Executor::run() { DO_NEXT_INS() }
 void Executor::restart() { regFile_.pc() = codeManager_->startPC(); }
 const RegisterFile &Executor::getState() const & { return regFile_; }
+
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 void Executor::inv(Instruction ins) {
     throw InvalidInstruction("Invalid operation at pc: " +
                              std::to_string(regFile_.pc()));

@@ -7,5 +7,5 @@ build/
 
 # ide stuff
 .idea
-cmake-build-debug
+cmake-build*
 include/ChaiVM/interpreter/autogen

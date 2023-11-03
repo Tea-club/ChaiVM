@@ -1,4 +1,3 @@
-
 add_library(chai_utils STATIC)
 target_sources(chai_utils PRIVATE
     ./instr2Raw.cpp

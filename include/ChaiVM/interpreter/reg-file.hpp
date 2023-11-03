@@ -13,8 +13,8 @@ namespace chai::interpreter {
 class RegisterFile {
 public:
     RegisterFile(chsize_t pc);
-    chsize_t &operator[](int n) &;
-    const chsize_t &operator[](int n) const &;
+    chsize_t &operator[](size_t n) &;
+    const chsize_t &operator[](size_t n) const &;
     chsize_t &pc();
     chsize_t pc() const;
     chsize_t &acc();

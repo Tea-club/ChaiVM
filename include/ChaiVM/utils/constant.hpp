@@ -10,7 +10,6 @@ struct Constant {
     virtual void write(std::ofstream &ofs) = 0;
     virtual int8_t getType() = 0;
     virtual ~Constant() = default;
-    ;
 };
 
 struct ConstI64 : public Constant {
