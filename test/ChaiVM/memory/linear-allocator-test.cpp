@@ -38,12 +38,23 @@ TEST_F(LinearAllocatorTest, Classes) {
     EXPECT_EQ(inst->stub, 10);
     inst->~Stub();
 }
-TEST_F(LinearAllocatorTest, StdContainers) {
+TEST_F(LinearAllocatorTest, StdContainersDefault) {
     size_t n = 10;
     LinearAllocator<Stub> allocator{buffer_};
     std::vector<Stub, decltype(allocator)> vec(n, allocator);
     for (auto &e : vec) {
         EXPECT_EQ(e.stub, Stub::DFT);
+    }
+}
+TEST_F(LinearAllocatorTest, StdContainers) {
+    size_t n = 10;
+    LinearAllocator<Stub> allocator{buffer_};
+    std::vector<Stub, decltype(allocator)> vec(n, allocator);
+    for (auto &e : vec) {
+        e = Stub(42);
+    }
+    for (auto &e : vec) {
+        EXPECT_EQ(e.stub, 42);
     }
 }
 
@@ -66,7 +77,7 @@ TEST_F(LinearAllocatorTest, StdContainersAllocation) {
     EXPECT_EQ(buffer_.offset(), n * sizeof(Stub));
 }
 
-TEST_F(LinearAllocatorTest, BasArrayNewLength) {
+TEST_F(LinearAllocatorTest, BadArrayNewLength) {
     size_t n = BUFFER_SIZE / sizeof(Stub) + 1;
     LinearAllocator<Stub> allocator{buffer_};
     EXPECT_THROW(allocator.allocate(n), std::bad_array_new_length);
