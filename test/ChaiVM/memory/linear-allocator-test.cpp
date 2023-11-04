@@ -136,8 +136,8 @@ TEST_F(LinearAllocatorTest, FrameContainersAllocation) {
     size_t n = 8;
     size_t nregs = 16;
     LinearAllocator<FrameStub> allocator{buffer_};
-    std::vector<FrameStub, decltype(allocator)> vec(n, {nregs, buffer_},
-                                                    allocator);
+    std::vector<FrameStub, decltype(allocator)> vec(
+        n, FrameStub(nregs, buffer_), allocator);
     /**
      * An extra `regs_` vector (the last term
      * `nregs * sizeof(FrameLikeStub::RegType)`) appears due to extra call of
