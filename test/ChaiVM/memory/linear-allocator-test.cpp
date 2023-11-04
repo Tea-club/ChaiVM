@@ -122,17 +122,26 @@ TEST_F(LinearAllocatorTest, StdContainersAllocation) {
     std::vector<Stub, decltype(allocator)> vec(n, allocator);
     EXPECT_EQ(buffer_.offset(), n * sizeof(Stub));
 }
-
+TEST_F(LinearAllocatorTest, FrameContainersSingleAllocation) {
+    size_t nregs = 39;
+    LinearAllocator<FrameStub> allocator{buffer_};
+    FrameStub *buf = allocator.allocate(1);
+    FrameStub *inst = new (buf) FrameStub(nregs, buffer_);
+    inst->regs_[nregs - 1] = 20;
+    EXPECT_EQ(buffer_.offset(),
+              sizeof(FrameStub) + nregs * sizeof(FrameStub::RegType));
+    EXPECT_EQ(inst->regs_[nregs - 1], 20);
+}
 TEST_F(LinearAllocatorTest, FrameContainersAllocation) {
     size_t n = 8;
     size_t nregs = 16;
     LinearAllocator<FrameStub> allocator{buffer_};
-    std::vector<FrameStub, decltype(allocator)> vec(
-        n, FrameStub(nregs, buffer_), allocator);
+    std::vector<FrameStub, decltype(allocator)> vec(n, {nregs, buffer_},
+                                                    allocator);
     /**
-     * @todo #32:60min Find out is this an error, and where an additional vector
-     * is constructed. IDK why does an extra vector appears (the last term
-     * `nregs * sizeof(FrameLikeStub::RegType)`)
+     * An extra `regs_` vector (the last term
+     * `nregs * sizeof(FrameLikeStub::RegType)`) appears due to extra call of
+     * FrameStub constructor when constructing a `vec`
      */
     EXPECT_EQ(buffer_.offset(),
               n * (sizeof(FrameStub) + nregs * sizeof(FrameStub::RegType)) +
