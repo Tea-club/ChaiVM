@@ -2,7 +2,7 @@
 
 #include <bit>
 
-#include "code-manager.hpp"
+#include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "decoder.hpp"
 #include "reg-file.hpp"
 

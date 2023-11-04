@@ -7,7 +7,7 @@ class ChaiFile {
 public:
     ChaiFile(std::vector<chai::bytecode_t> &&instrs,
              std::vector<std::unique_ptr<Constant>> &&pool)
-        : rawInstrs_(instrs), pool_(std::move(pool)) {}
+        : rawInstrs_(instrs), pool_(std::move(pool)), functions_() {}
 
     ChaiFile()
         : ChaiFile(std::vector<chai::bytecode_t>{},
@@ -44,6 +44,9 @@ public:
                 cnst->putType(ofs);
                 cnst->write(ofs);
             }
+            Immidiate funcs = functions_.size();
+            ofs.write(reinterpret_cast<const char *>(&funcs),
+                      sizeof(funcs));
             for (const auto &ins : rawInstrs_) {
                 ofs.write(reinterpret_cast<const char *>(&ins),
                           sizeof(chai::bytecode_t));
@@ -58,4 +61,5 @@ public:
 private:
     std::vector<chai::bytecode_t> rawInstrs_;
     std::vector<std::unique_ptr<Constant>> pool_;
+    std::vector<FunctionInfo> functions_;
 };

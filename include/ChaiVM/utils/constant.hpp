@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ChaiVM/interpreter/code-manager.hpp"
+#include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "ChaiVM/interpreter/instruction.hpp"
 #include "ChaiVM/types.hpp"
 

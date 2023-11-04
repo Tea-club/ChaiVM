@@ -1,7 +1,7 @@
 #include <bit>
 #include <cassert>
 
-#include "ChaiVM/interpreter/code-manager.hpp"
+#include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 
 namespace chai::interpreter {
 
@@ -51,6 +51,13 @@ void CodeManager::load(const std::filesystem::path &path) {
     std::ifstream input_file(path, std::ios::binary | std::ios::in);
     if (input_file.good() && input_file.is_open()) {
         loadPool(input_file);
+        Immidiate func_count = 0;
+        input_file.read(reinterpret_cast<char *>(&func_count), sizeof func_count);
+        func_count = 0;
+        funcs_ = std::vector<FunctionInfo>{func_count};
+        for (int i = 0; i < func_count; ++i) {
+            loadFunction(input_file);
+        }
         loadCode(input_file);
         input_file.close();
     } else {

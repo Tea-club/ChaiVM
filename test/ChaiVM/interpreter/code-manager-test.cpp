@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "ChaiVM/interpreter/code-manager.hpp"
+#include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "ChaiVM/utils/chai-file.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
 
