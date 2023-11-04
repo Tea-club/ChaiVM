@@ -18,13 +18,13 @@ public:
     int stub_ = DFT;
 };
 
-class FrameLikeStub {
+class FrameStub {
 public:
     using RegType = int;
     size_t nregs_ = 0;
     std::vector<RegType, LinearAllocator<RegType>> regs_;
     static constexpr int DFT = -1;
-    FrameLikeStub(size_t nregs, LinearBuffer &buffer)
+    FrameStub(size_t nregs, LinearBuffer &buffer)
         : nregs_(nregs), regs_(nregs_, DFT, LinearAllocator<RegType>(buffer)) {}
 };
 
@@ -53,52 +53,52 @@ TEST_F(LinearAllocatorTest, StdContainersDefault) {
     size_t n = 10;
     LinearAllocator<Stub> allocator{buffer_};
     std::vector<Stub, decltype(allocator)> vec(n, allocator);
-    for (auto &e : vec) {
-        EXPECT_EQ(e.stub_, Stub::DFT);
+    for (auto &item : vec) {
+        EXPECT_EQ(item.stub_, Stub::DFT);
     }
 }
 TEST_F(LinearAllocatorTest, StdContainers) {
     size_t n = 10;
     LinearAllocator<Stub> allocator{buffer_};
     std::vector<Stub, decltype(allocator)> vec(n, allocator);
-    for (auto &e : vec) {
-        e = Stub(42);
+    for (auto &item : vec) {
+        item = Stub(42);
     }
-    for (auto &e : vec) {
-        EXPECT_EQ(e.stub_, 42);
+    for (auto &item : vec) {
+        EXPECT_EQ(item.stub_, 42);
     }
 }
-TEST_F(LinearAllocatorTest, FrameLikeContainersDefault) {
+TEST_F(LinearAllocatorTest, FrameContainersDefault) {
     size_t n = 10;
     size_t nregs = 16;
-    LinearAllocator<FrameLikeStub> allocator{buffer_};
-    std::vector<FrameLikeStub, decltype(allocator)> vec(
-        n, FrameLikeStub(nregs, buffer_), allocator);
-    for (auto &e : vec) {
-        EXPECT_EQ(e.nregs_, nregs);
-        EXPECT_EQ(e.regs_.size(), nregs);
-        for (auto &r : e.regs_) {
-            EXPECT_EQ(r, FrameLikeStub::DFT);
+    LinearAllocator<FrameStub> allocator{buffer_};
+    std::vector<FrameStub, decltype(allocator)> vec(
+        n, FrameStub(nregs, buffer_), allocator);
+    for (auto &item : vec) {
+        EXPECT_EQ(item.nregs_, nregs);
+        EXPECT_EQ(item.regs_.size(), nregs);
+        for (auto &r : item.regs_) {
+            EXPECT_EQ(r, FrameStub::DFT);
         }
     }
 }
-TEST_F(LinearAllocatorTest, FrameLikeContainers) {
+TEST_F(LinearAllocatorTest, FrameContainers) {
     size_t n = 8;
     size_t nregs = 16;
-    LinearAllocator<FrameLikeStub> allocator{buffer_};
-    std::vector<FrameLikeStub, decltype(allocator)> vec(
-        n, FrameLikeStub(nregs, buffer_), allocator);
-    for (auto &e : vec) {
-        for (auto &r : e.regs_) {
+    LinearAllocator<FrameStub> allocator{buffer_};
+    std::vector<FrameStub, decltype(allocator)> vec(
+        n, FrameStub(nregs, buffer_), allocator);
+    for (auto &item : vec) {
+        for (auto &r : item.regs_) {
             r = 426;
         }
-        e.regs_.push_back(426);
-        e.nregs_++;
+        item.regs_.push_back(426);
+        item.nregs_++;
     }
-    for (auto &e : vec) {
-        EXPECT_EQ(e.nregs_, nregs + 1);
-        EXPECT_EQ(e.regs_.size(), nregs + 1);
-        for (auto &r : e.regs_) {
+    for (auto &item : vec) {
+        EXPECT_EQ(item.nregs_, nregs + 1);
+        EXPECT_EQ(item.regs_.size(), nregs + 1);
+        for (auto &r : item.regs_) {
             EXPECT_EQ(r, 426);
         }
     }
@@ -123,21 +123,20 @@ TEST_F(LinearAllocatorTest, StdContainersAllocation) {
     EXPECT_EQ(buffer_.offset(), n * sizeof(Stub));
 }
 
-TEST_F(LinearAllocatorTest, FrameLikeContainersAllocation) {
-    size_t n = 1;
-    size_t nregs = 2;
-    LinearAllocator<FrameLikeStub> allocator{buffer_};
-    std::vector<FrameLikeStub, decltype(allocator)> vec(
-        n, FrameLikeStub(nregs, buffer_), allocator);
-
+TEST_F(LinearAllocatorTest, FrameContainersAllocation) {
+    size_t n = 8;
+    size_t nregs = 16;
+    LinearAllocator<FrameStub> allocator{buffer_};
+    std::vector<FrameStub, decltype(allocator)> vec(
+        n, FrameStub(nregs, buffer_), allocator);
     /**
      * @todo #32:60min Find out is this an error, and where an additional vector
      * is constructed. IDK why does an extra vector appears (the last term
      * `nregs * sizeof(FrameLikeStub::RegType)`)
      */
-    EXPECT_EQ(buffer_.offset(), n * (sizeof(FrameLikeStub) +
-                                     nregs * sizeof(FrameLikeStub::RegType)) +
-                                    nregs * sizeof(FrameLikeStub::RegType));
+    EXPECT_EQ(buffer_.offset(),
+              n * (sizeof(FrameStub) + nregs * sizeof(FrameStub::RegType)) +
+                  nregs * sizeof(FrameStub::RegType));
 }
 
 TEST_F(LinearAllocatorTest, BadArrayNewLength) {
