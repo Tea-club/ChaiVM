@@ -2,6 +2,7 @@
 #include <cmath>
 
 #include "ChaiVM/interpreter/executor.hpp"
+#include "ChaiVM/interpreter/frame.hpp"
 
 namespace chai::interpreter {
 
@@ -278,6 +279,13 @@ void Executor::cmplf(Instruction ins) {
 void Executor::g0t0(Instruction ins) {
     regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     DO_NEXT_INS()
+}
+void Executor::call(Instruction ins) {
+    auto n_regs = codeManager_->getFunc(ins.immidiate).num_regs;
+    auto n_args = codeManager_->getFunc(ins.immidiate).num_args;
+
+    advancePc();
+    DO_NEXT_INS();
 }
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}

@@ -24,6 +24,7 @@ void CodeManager::loadPool(std::istream &istream) {
     }
     Immidiate constants = 0;
     istream.read(reinterpret_cast<char *>(&constants), sizeof constants);
+    dispatch_ = std::vector<Immidiate>{constants};
     for (int i = 0; i < constants; ++i) {
         char type;
         istream.read(&type, sizeof type);

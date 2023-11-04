@@ -19,8 +19,14 @@ namespace chai::interpreter {
  */
 class CodeManager final {
 public:
-    static constexpr int8_t CNST_I64 = 'l';
-    static constexpr int8_t CNST_F64 = 'd';
+
+    enum ConstantTag: uint8_t  {
+        CNST_I64 = 1,
+        CNST_F64,
+        CNST_FUNC_NAME_AND_TYPE,
+        CNST_RAW_STR, // Analogue of CONSTANT_Utf8 in jvm
+    };
+
     /**
      * Loads one instruction.
      * @param bytecode Raw instruction.
@@ -69,7 +75,7 @@ public:
         istream.read(reinterpret_cast<char *>(&code_len), sizeof code_len);
         assert(code_len % sizeof(bytecode_t) == 0);
         bytecode_t bytecode = 0;
-        size_t next = funcs_.size();
+        const size_t next = funcs_.size();
         funcs_.push_back(
             FunctionInfo {
                 .num_regs = max_regs,
@@ -81,11 +87,16 @@ public:
             istream.read(reinterpret_cast<char *>(&bytecode), sizeof(bytecode_t));
             funcs_[next].code.push_back(bytecode);
         }
+        dispatch_[const_ref] = next;
     }
 
     chsize_t getCnst(chsize_t id);
 
     bytecode_t getBytecode(chsize_t pc);
+
+    const FunctionInfo & getFunc(Immidiate imm) const {
+        return funcs_[dispatch_[imm]];
+    }
 
     chsize_t startPC();
 
@@ -93,6 +104,12 @@ private:
     std::vector<FunctionInfo> funcs_;
     std::vector<bytecode_t> raw_;
     std::vector<chsize_t> constantPool_;
+
+    /**
+     * Id in appropriate collection by immidiate.
+     *  For example, func by imm is found as funcs_[dispatch_[imm]].
+     */
+    std::vector<Immidiate> dispatch_;
 };
 
 class BeyondCodeBoundaries : public std::runtime_error {

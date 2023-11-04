@@ -61,6 +61,7 @@ private:
     void cmpgf(Instruction ins);
     void cmplf(Instruction ins);
     void g0t0(Instruction ins);
+    void call(Instruction ins);
 
     static constexpr Handler HANDLER_ARR[] = {
         &Executor::inv,       &Executor::nop,       &Executor::ret,
@@ -76,7 +77,7 @@ private:
         &Executor::if_icmpeq, &Executor::if_icmpne, &Executor::if_icmpgt,
         &Executor::if_icmpge, &Executor::if_icmplt, &Executor::if_icmple,
         &Executor::if_acmpeq, &Executor::if_acmpne, &Executor::cmpgf,
-        &Executor::cmplf,     &Executor::g0t0};
+        &Executor::cmplf,     &Executor::g0t0, &Executor::call};
 
 private:
     CodeManager *codeManager_;

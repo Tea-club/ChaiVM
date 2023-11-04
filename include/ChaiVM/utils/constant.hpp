@@ -5,10 +5,10 @@
 #include "ChaiVM/types.hpp"
 
 struct Constant {
-    void putType(std::ofstream &ofs) { ofs.put(this->getType()); }
+    void putType(std::ofstream &ofs) { ofs.put(this->getTag()); }
 
     virtual void write(std::ofstream &ofs) = 0;
-    virtual int8_t getType() = 0;
+    virtual uint8_t getTag() = 0;
     virtual ~Constant() = default;
 };
 
@@ -20,8 +20,8 @@ struct ConstI64 : public Constant {
     void write(std::ofstream &ofs) override {
         ofs.write(reinterpret_cast<const char *>(&data_), sizeof(int64_t));
     }
-    int8_t getType() override {
-        return chai::interpreter::CodeManager::CNST_I64;
+    uint8_t getTag() override {
+        return chai::interpreter::CodeManager::ConstantTag::CNST_I64;
     }
     ~ConstI64() override = default;
 };
@@ -32,8 +32,32 @@ struct ConstF64 : public Constant {
     void write(std::ofstream &ofs) override {
         ofs.write(reinterpret_cast<const char *>(&data_), sizeof(double));
     }
-    int8_t getType() override {
-        return chai::interpreter::CodeManager::CNST_F64;
+    uint8_t getTag() override {
+        return chai::interpreter::CodeManager::ConstantTag::CNST_F64;
     }
     ~ConstF64() override = default;
+};
+
+struct ConstFuncNameAndType : public Constant {
+    chai::interpreter::Immidiate name_index_;
+    chai::interpreter::Immidiate descriptor_index_;
+    void write(std::ofstream &ofs) override {
+        ofs.write(reinterpret_cast<const char *>(&name_index_), sizeof(name_index_));
+        ofs.write(reinterpret_cast<const char *>(&descriptor_index_), sizeof(descriptor_index_));
+    }
+    uint8_t getTag() override {
+        return chai::interpreter::CodeManager::ConstantTag::CNST_FUNC_NAME_AND_TYPE;
+    }
+};
+
+struct ConstRawStr : public Constant {
+    int16_t len;
+    std::string str;
+    void write(std::ofstream &ofs) override {
+        ofs.write(reinterpret_cast<const char *>(&len), sizeof(len));
+        ofs << str;
+    }
+    uint8_t getTag() override {
+        return chai::interpreter::CodeManager::ConstantTag::CNST_RAW_STR;
+    }
 };
