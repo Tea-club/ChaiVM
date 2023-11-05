@@ -5,14 +5,6 @@
 
 namespace chai::interpreter {
 
-chai::chsize_t &RegisterFile::operator[](size_t n) & {
-    assert(n <= Size);
-    return registers_[n];
-}
-const chsize_t &RegisterFile::operator[](size_t n) const & {
-    assert(n <= Size);
-    return registers_[n];
-}
 chai::chsize_t &RegisterFile::pc() { return pc_; }
 chai::chsize_t RegisterFile::pc() const { return pc_; }
 chai::chsize_t &RegisterFile::acc() { return acc_; }

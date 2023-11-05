@@ -54,12 +54,12 @@ void CodeManager::load(const std::filesystem::path &path) {
         loadPool(input_file);
         Immidiate func_count = 0;
         input_file.read(reinterpret_cast<char *>(&func_count), sizeof func_count);
-        func_count = 0;
-        funcs_ = std::vector<FunctionInfo>{func_count};
+        std::cout << "func_count = " << func_count << std::endl;
+        funcs_ = std::vector<Function>{func_count};
         for (int i = 0; i < func_count; ++i) {
             loadFunction(input_file);
         }
-        loadCode(input_file);
+//        loadCode(input_file);
         input_file.close();
     } else {
         throw std::invalid_argument(std::string{"Invalid path "} +

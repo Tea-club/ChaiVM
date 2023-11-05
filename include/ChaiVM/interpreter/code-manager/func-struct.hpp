@@ -5,7 +5,7 @@
 
 namespace chai::interpreter {
 
-struct FunctionInfo {
+struct Function {
     uint8_t num_regs;
     uint8_t num_args;
     Immidiate const_func_ref;

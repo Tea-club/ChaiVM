@@ -8,14 +8,14 @@ namespace chai::interpreter {
 
 #define DO_NEXT_INS()                                                          \
     Instruction newIns =                                                       \
-        decoder::parse(codeManager_->getBytecode(regFile_.pc()));              \
+        decoder::parse(current_frame_->func_.code[regFile_.pc()]);              \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
-Executor::Executor(CodeManager *manager)
-    : codeManager_(manager), regFile_(codeManager_->startPC()) {}
-void Executor::run() { DO_NEXT_INS() }
+void Executor::run() {
+    init();
+    //DO_NEXT_INS()
+    }
 void Executor::restart() { regFile_.pc() = codeManager_->startPC(); }
-const RegisterFile &Executor::getState() const & { return regFile_; }
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -32,7 +32,7 @@ void Executor::ret(Instruction ins) {
     return;
 }
 void Executor::mov(Instruction ins) {
-    regFile_[ins.r2] = regFile_[ins.r1];
+    (*current_frame_)[ins.r2] = (*current_frame_)[ins.r1];
     advancePc();
     DO_NEXT_INS()
 }
@@ -42,17 +42,17 @@ void Executor::ldia(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::ldra(Instruction ins) {
-    regFile_.acc() = regFile_[ins.r1];
+    regFile_.acc() = (*current_frame_)[ins.r1];
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::star(Instruction ins) {
-    regFile_[ins.r1] = regFile_.acc();
+    (*current_frame_)[ins.r1] = regFile_.acc();
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::add(Instruction ins) {
-    regFile_.acc() += regFile_[ins.r1];
+    regFile_.acc() += (*current_frame_)[ins.r1];
     advancePc();
     DO_NEXT_INS()
 }
@@ -62,7 +62,7 @@ void Executor::addi(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::sub(Instruction ins) {
-    regFile_.acc() -= regFile_[ins.r1];
+    regFile_.acc() -= (*current_frame_)[ins.r1];
     advancePc();
     DO_NEXT_INS()
 }
@@ -72,7 +72,7 @@ void Executor::subi(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::mul(Instruction ins) {
-    regFile_.acc() *= regFile_[ins.r1];
+    regFile_.acc() *= (*current_frame_)[ins.r1];
     advancePc();
     DO_NEXT_INS()
 }
@@ -84,7 +84,7 @@ void Executor::muli(Instruction ins) {
 void Executor::div(Instruction ins) {
     regFile_.acc() =
         static_cast<chsize_t>(std::bit_cast<int64_t>(regFile_.acc()) /
-                              static_cast<int64_t>(regFile_[ins.r1]));
+                              static_cast<int64_t>((*current_frame_)[ins.r1]));
     advancePc();
     DO_NEXT_INS()
 }
@@ -103,7 +103,7 @@ void Executor::ldiaf(Instruction ins) {
 }
 
 void Executor::addf(Instruction ins) {
-    double res = std::bit_cast<double>(regFile_[ins.r1]) +
+    double res = std::bit_cast<double>((*current_frame_)[ins.r1]) +
                  std::bit_cast<double>(regFile_.acc());
     regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
@@ -118,7 +118,7 @@ void Executor::addif(Instruction ins) {
 }
 void Executor::subf(Instruction ins) {
     double res = std::bit_cast<double>(regFile_.acc()) -
-                 std::bit_cast<double>(regFile_[ins.r1]);
+                 std::bit_cast<double>((*current_frame_)[ins.r1]);
     regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
@@ -131,7 +131,7 @@ void Executor::subif(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::mulf(Instruction ins) {
-    double res = std::bit_cast<double>(regFile_[ins.r1]) *
+    double res = std::bit_cast<double>((*current_frame_)[ins.r1]) *
                  std::bit_cast<double>(regFile_.acc());
     regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
@@ -146,7 +146,7 @@ void Executor::mulif(Instruction ins) {
 }
 void Executor::divf(Instruction ins) {
     double res = std::bit_cast<double>(regFile_.acc()) /
-                 std::bit_cast<double>(regFile_[ins.r1]);
+                 std::bit_cast<double>((*current_frame_)[ins.r1]);
     regFile_.acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
@@ -196,7 +196,7 @@ void Executor::iccos(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::if_icmpeq(Instruction ins) {
-    if (regFile_.acc() == regFile_[ins.r1]) {
+    if (regFile_.acc() == (*current_frame_)[ins.r1]) {
         static_assert(sizeof(Immidiate) == sizeof(int16_t));
         regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     } else {
@@ -205,7 +205,7 @@ void Executor::if_icmpeq(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::if_icmpne(Instruction ins) {
-    if (regFile_.acc() != regFile_[ins.r1]) {
+    if (regFile_.acc() != (*current_frame_)[ins.r1]) {
         regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -213,7 +213,7 @@ void Executor::if_icmpne(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::if_icmpgt(Instruction ins) {
-    if (regFile_.acc() > regFile_[ins.r1]) {
+    if (regFile_.acc() > (*current_frame_)[ins.r1]) {
         regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -221,7 +221,7 @@ void Executor::if_icmpgt(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::if_icmpge(Instruction ins) {
-    if (regFile_.acc() >= regFile_[ins.r1]) {
+    if (regFile_.acc() >= (*current_frame_)[ins.r1]) {
         regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -229,7 +229,7 @@ void Executor::if_icmpge(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::if_icmplt(Instruction ins) {
-    if (regFile_.acc() < regFile_[ins.r1]) {
+    if (regFile_.acc() < (*current_frame_)[ins.r1]) {
         regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -237,7 +237,7 @@ void Executor::if_icmplt(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::if_icmple(Instruction ins) {
-    if (regFile_.acc() <= regFile_[ins.r1]) {
+    if (regFile_.acc() <= (*current_frame_)[ins.r1]) {
         regFile_.pc() += static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -260,7 +260,7 @@ void Executor::if_acmpne(Instruction ins) {
 }
 void Executor::cmpgf(Instruction ins) {
     double acc_f64 = std::bit_cast<double>(regFile_.acc());
-    double r1_f64 = std::bit_cast<double>(regFile_[ins.r1]);
+    double r1_f64 = std::bit_cast<double>((*current_frame_)[ins.r1]);
     regFile_.acc() = (acc_f64 >= r1_f64)
                          ? static_cast<size_t>(acc_f64 != r1_f64)
                          : static_cast<size_t>(-1);
@@ -269,7 +269,7 @@ void Executor::cmpgf(Instruction ins) {
 }
 void Executor::cmplf(Instruction ins) {
     double acc_f64 = std::bit_cast<double>(regFile_.acc());
-    double r1_f64 = std::bit_cast<double>(regFile_[ins.r1]);
+    double r1_f64 = std::bit_cast<double>((*current_frame_)[ins.r1]);
     regFile_.acc() = regFile_.acc() =
         (acc_f64 <= r1_f64) ? static_cast<size_t>(acc_f64 != r1_f64)
                             : static_cast<size_t>(-1);
@@ -281,10 +281,10 @@ void Executor::g0t0(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::call(Instruction ins) {
-    auto n_regs = codeManager_->getFunc(ins.immidiate).num_regs;
-    auto n_args = codeManager_->getFunc(ins.immidiate).num_args;
-
-    advancePc();
+    memory::LinearAllocator<Frame> allocator{buffer_};
+    current_frame_ = new (allocator.allocate(1))
+        Frame (current_frame_, codeManager_->getFunc(ins.immidiate), buffer_);
+    regFile_.pc() = 0;
     DO_NEXT_INS();
 }
 

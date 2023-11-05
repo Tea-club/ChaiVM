@@ -5,6 +5,7 @@
 #include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "decoder.hpp"
 #include "reg-file.hpp"
+#include "frame.hpp"
 
 namespace chai::interpreter {
 
@@ -13,9 +14,39 @@ public:
     using Handler = void (Executor::*)(Instruction);
 
     Executor(CodeManager *manager);
+    Executor(CodeManager *manager, memory::LinearBuffer& buffer): codeManager_(manager), regFile_(manager -> startPC()), buffer_(buffer) {}
+
+    /**
+     * Loads the first frame (public static void main).
+     */
+    void init() {
+        assert(current_frame_ == nullptr); // No current frame
+        memory::LinearAllocator<Frame> allocator{buffer_};
+        current_frame_ = new (allocator.allocate(1))
+            Frame (nullptr, codeManager_->startFunc(), buffer_);
+        regFile_.pc() = 0;
+    }
     void run();
     void restart();
-    const RegisterFile &getState() const &;
+    std::vector<chsize_t> getState() const & {
+        if (current_frame_ == nullptr) {
+            return std::vector<chsize_t>{};
+        }
+        return current_frame_->copyState();
+    }
+
+    chsize_t &pc() {
+        return pc_;
+    }
+    chsize_t pc() const {
+        return pc_;
+    }
+    chsize_t &acc() {
+        return acc_;
+    }
+    chsize_t acc() const {
+        return acc_;
+    }
 
 private:
     inline void advancePc();
@@ -80,8 +111,12 @@ private:
         &Executor::cmplf,     &Executor::g0t0, &Executor::call};
 
 private:
+    chsize_t acc_;
+    chsize_t pc_;
     CodeManager *codeManager_;
     RegisterFile regFile_;
+    memory::LinearBuffer &buffer_;
+    Frame *current_frame_ = nullptr;
 };
 
 inline void Executor::advancePc() { regFile_.pc() += sizeof(bytecode_t); }

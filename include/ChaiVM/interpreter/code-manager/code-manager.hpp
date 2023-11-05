@@ -73,11 +73,20 @@ public:
         // size of instructions in function in bytes
         uint32_t code_len = 0;
         istream.read(reinterpret_cast<char *>(&code_len), sizeof code_len);
+        std::cout << "acc_flags = " << access_flags << std::endl;
+        std::cout << "const_ref = " << const_ref << std::endl;
+        std::cout << "atts_count = " << atts_count << std::endl;
+        std::cout << "atts_name_index = " << att_name_index << std::endl;
+        std::cout << "atts_len = " << att_len << std::endl;
+        std::cout << "max_regs = " << (int)max_regs << std::endl;
+        std::cout << "nargs = " << (int)nargs << std::endl;
+        std::cout << "codelen = " << code_len << std::endl;
+
         assert(code_len % sizeof(bytecode_t) == 0);
         bytecode_t bytecode = 0;
         const size_t next = funcs_.size();
         funcs_.push_back(
-            FunctionInfo {
+            Function {
                 .num_regs = max_regs,
                 .num_args = nargs,
                 .code {code_len / sizeof(bytecode_t)},
@@ -88,20 +97,25 @@ public:
             funcs_[next].code.push_back(bytecode);
         }
         dispatch_[const_ref] = next;
+
     }
 
     chsize_t getCnst(chsize_t id);
 
     bytecode_t getBytecode(chsize_t pc);
 
-    const FunctionInfo & getFunc(Immidiate imm) const {
+    const Function & getFunc(Immidiate imm) const {
         return funcs_[dispatch_[imm]];
     }
 
     chsize_t startPC();
+    Function startFunc() {
+        assert(funcs_.size() > 0);
+        return funcs_[0];
+    }
 
 private:
-    std::vector<FunctionInfo> funcs_;
+    std::vector<Function> funcs_;
     std::vector<bytecode_t> raw_;
     std::vector<chsize_t> constantPool_;
 
