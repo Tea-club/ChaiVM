@@ -12,7 +12,9 @@ static void BM_SquareEquation(benchmark::State &state) {
     initSquareEquatino(wrapper);
 
     for (auto _ : state) {
-        chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);;
+        chai::memory::LinearBuffer buffer_ =
+            chai::memory::LinearBuffer(1024 * 256);
+        ;
         Executor executor{&wrapper.manager_, buffer_};
         executor.run();
     }

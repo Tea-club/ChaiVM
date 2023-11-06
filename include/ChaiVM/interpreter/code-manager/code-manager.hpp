@@ -62,31 +62,18 @@ public:
         // size of instructions in function in bytes
         uint32_t code_len = 0;
         istream.read(reinterpret_cast<char *>(&code_len), sizeof code_len);
-        std::cout << "acc_flags = " << access_flags << std::endl;
-        std::cout << "const_ref = " << const_ref << std::endl;
-        std::cout << "atts_count = " << atts_count << std::endl;
-        std::cout << "atts_name_index = " << att_name_index << std::endl;
-        std::cout << "atts_len = " << att_len << std::endl;
-        std::cout << "max_regs = " << (int)max_regs << std::endl;
-        std::cout << "nargs = " << (int)nargs << std::endl;
-        std::cout << "codelen = " << code_len << std::endl;
 
         assert(code_len % sizeof(bytecode_t) == 0);
         bytecode_t bytecode = 0;
         const size_t next = funcs_.size();
-        std::cout << "next = " << next << std::endl;
         funcs_.push_back(Function{
             .num_regs = max_regs,
             .num_args = nargs,
         });
-        std::cout << "before cycle, size = " << funcs_[next].code.size()
-                  << std::endl;
         for (uint i = 0; i < code_len / sizeof(bytecode_t); ++i) {
             istream.read(reinterpret_cast<char *>(&bytecode),
                          sizeof(bytecode_t));
             funcs_[next].code.push_back(bytecode);
-            std::cout << "pushed back " << bytecode
-                      << ", size = " << funcs_[next].code.size() << std::endl;
         }
         dispatch_[const_ref] = next;
     }
@@ -96,17 +83,11 @@ public:
     bytecode_t getBytecode(size_t func, chsize_t pc);
 
     const Function &getFunc(Immidiate imm) const {
-        std::cout << "dispatch_[imm] = " << dispatch_[imm] << std::endl;
         return funcs_[dispatch_[imm]];
     }
 
     const Function &startFunc() const {
         assert(!funcs_.empty());
-        //        std::cout << "in start func, code: " << funcs_[0].code.size()
-        //        << std::endl; for (const bytecode_t &instr: funcs_[0].code ) {
-        //            printf("%lu, ", instr);
-        //        }
-        //        std::cout << std::endl;
         return funcs_[0];
     }
 

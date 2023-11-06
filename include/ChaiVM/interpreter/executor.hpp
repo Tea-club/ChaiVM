@@ -19,21 +19,9 @@ public:
     /**
      * Loads the first frame (public static void main).
      */
-    void init() {
-        assert(currentFrame_ == nullptr); // No current frame
-        currentFrame_ = new (allocator_.allocate(1))
-            Frame(nullptr, codeManager_->startFunc(), buffer_);
-        std::cout << "in init() func.code.size = "
-                  << (currentFrame_->func_).code.size() << std::endl;
-        pc() = 0;
-    }
+    void init();
+
     void run();
-    std::vector<chsize_t> getState() const & {
-        if (currentFrame_ == nullptr) {
-            return std::vector<chsize_t>{};
-        }
-        return currentFrame_->copyState();
-    }
 
     chsize_t &pc() {
         assert(currentFrame_ != nullptr);

@@ -7,4 +7,5 @@ target_sources(chai_interpreter PRIVATE
     ./executor.cpp
     ./decoder.cpp
     ./code-manager.cpp
+    ./frame.cpp
 )

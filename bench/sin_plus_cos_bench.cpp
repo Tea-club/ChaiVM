@@ -11,7 +11,9 @@ static void BM_SinCos(benchmark::State &state) {
     CodeManWrapper wrapper{};
     initSinPlusCos(wrapper);
     for (auto _ : state) {
-        chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);;
+        chai::memory::LinearBuffer buffer_ =
+            chai::memory::LinearBuffer(1024 * 256);
+        ;
         Executor executor{&wrapper.manager_, buffer_};
         executor.run();
     }

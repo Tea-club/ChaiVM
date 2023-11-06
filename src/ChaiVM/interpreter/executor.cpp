@@ -12,6 +12,13 @@ namespace chai::interpreter {
     std::cout << "new ins was parsed: " << newIns.operation << std::endl;      \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
+void Executor::init() {
+    assert(currentFrame_ == nullptr); // No current frame
+    currentFrame_ = new (allocator_.allocate(1))
+        Frame(nullptr, codeManager_->startFunc(), buffer_);
+    pc() = 0;
+}
+
 void Executor::run() {
     init();
     std::cout << std::endl;

@@ -651,18 +651,14 @@ TEST_F(ExecutorTest, Call) {
     loadRR(Star, 99);
     loadWithConst(Ldiaf, val1);
     loadRR(Star, 98);
-    Immidiate func_ref = chaiFile_.addFunction(
-        UINT16_MAX,
-        "abpba_func",
-        "(II)I",
-        std::vector<bytecode_t>{
-            instr2Raw(Ldra, 49, 0), // val2
-            instr2Raw(Sub, 48, 0),  // val1
-            instr2Raw(Ret),
-        },
-        2,
-        50
-    );
+    Immidiate func_ref =
+        chaiFile_.addFunction(UINT16_MAX, "abpba_func", "(II)I",
+                              std::vector<bytecode_t>{
+                                  instr2Raw(Ldra, 49, 0), // val2
+                                  instr2Raw(Sub, 48, 0),  // val1
+                                  instr2Raw(Ret),
+                              },
+                              2, 50);
     loadI(Call, func_ref);
     load(Ret);
     update();

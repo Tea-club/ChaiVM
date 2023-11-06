@@ -13,10 +13,10 @@ public:
             addConst(std::make_unique<ConstRawStr>("main"));
         chai::interpreter::Immidiate descriptor_index =
             addConst(std::make_unique<ConstRawStr>("()V"));
-        const_func_name_and_type_index =
+        constFuncNameAndTypeIndex_ =
             addConst(std::make_unique<ConstFuncNameAndType>(name_index,
                                                             descriptor_index));
-        code_att_str = addConst(std::make_unique<ConstRawStr>("Code"));
+        codeAttStr_ = addConst(std::make_unique<ConstRawStr>("Code"));
         // Add main function
     }
 
@@ -71,7 +71,7 @@ public:
             FunctionInfo{.access_flags = access_flags,
                          .name_and_type_index = func_name_and_type_index,
                          .atts_count = 1, // Code only
-                         .att_name_index = code_att_str,
+                         .att_name_index = codeAttStr_,
                          .att_len = 6 + code_len,
                          .max_registers = max_regs,
                          .nargs = num_args,
@@ -90,7 +90,6 @@ public:
                 cnst->putType(ofs);
                 cnst->write(ofs);
             }
-            std::cout << "in toFile constants = " << constants << std::endl;
             // since main function too.
             chai::interpreter::Immidiate funcs = functions_.size() + 1;
             ofs.write(reinterpret_cast<const char *>(&funcs), sizeof(funcs));
@@ -110,8 +109,7 @@ public:
         chai::interpreter::Immidiate access_flags = UINT16_MAX;
         ofs.write(reinterpret_cast<const char *>(&access_flags),
                   sizeof(access_flags));
-        chai::interpreter::Immidiate const_ref = const_func_name_and_type_index;
-        std::cout << "const_ref in dumpMainFunc = " << const_ref << std::endl;
+        chai::interpreter::Immidiate const_ref = constFuncNameAndTypeIndex_;
         ofs.write(reinterpret_cast<const char *>(&const_ref),
                   sizeof(const_ref));
         chai::interpreter::Immidiate atts_count = 1;
@@ -143,6 +141,6 @@ private:
      * All functions except main.
      */
     std::vector<FunctionInfo> functions_;
-    chai::interpreter::Immidiate const_func_name_and_type_index;
-    chai::interpreter::Immidiate code_att_str;
+    chai::interpreter::Immidiate constFuncNameAndTypeIndex_;
+    chai::interpreter::Immidiate codeAttStr_;
 };
