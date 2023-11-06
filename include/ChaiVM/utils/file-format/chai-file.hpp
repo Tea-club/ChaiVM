@@ -1,19 +1,21 @@
 #pragma once
 
+#include "ChaiVM/utils/file-format/function-info.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
-#include "constant.hpp"
+#include "ChaiVM/utils/file-format/constant.hpp"
 
 class ChaiFile {
 public:
     ChaiFile(std::vector<chai::bytecode_t> &&instrs,
              std::vector<std::unique_ptr<Constant>> &&pool)
         : rawInstrs_(instrs), pool_(std::move(pool)) {
-        Immidiate name_index = addConst(std::make_unique<ConstRawStr>("main"));
-        Immidiate descriptor_index =
+        chai::interpreter::Immidiate name_index = addConst(std::make_unique<ConstRawStr>("main"));
+        chai::interpreter::Immidiate descriptor_index =
             addConst(std::make_unique<ConstRawStr>("()V"));
         const_func_name_and_type_index =
             addConst(std::make_unique<ConstFuncNameAndType>(name_index,
                                                             descriptor_index));
+        code_att_str = addConst(std::make_unique<ConstRawStr>("Code"));
         // Add main function
     }
 
@@ -37,15 +39,49 @@ public:
         addInstr(chai::utils::instr2Raw(op, id));
     }
 
-    void addWithConst(Operation op, double data) {
+    void addWithConst(chai::interpreter::Operation op, double data) {
         chai::chsize_t id = addConst(std::make_unique<ConstF64>(data));
         addInstr(chai::utils::instr2Raw(op, id));
+    }
+
+    /**
+     * A more or less convenient way to add a function to the file
+     * @param access_flags
+     * @param name
+     * @param descriptor like in jvm.
+     * @param instrs vector of raw instructions
+     * @param num_args Number of arguments of the function.
+     * @param max_regs Number of registers to be allocated on the frame.
+     * @return immidiate - Id of the function (ConstFuncNameAndType).
+     */
+    chai::interpreter::Immidiate addFunction(chai::interpreter::Immidiate access_flags, std::string name, std::string descriptor, std::vector<chai::bytecode_t> instrs, uint8_t num_args, uint8_t max_regs = 100) {
+        chai::interpreter::Immidiate name_index = addConst(std::make_unique<ConstRawStr>(name));
+        chai::interpreter::Immidiate descriptor_index =
+            addConst(std::make_unique<ConstRawStr>(descriptor));
+        chai::interpreter::Immidiate func_name_and_type_index =
+            addConst(std::make_unique<ConstFuncNameAndType>(name_index,
+                                                            descriptor_index));
+        uint32_t code_len = instrs.size() * sizeof(chai::bytecode_t);
+        functions_.push_back(
+            FunctionInfo {
+                .access_flags = access_flags,
+                .name_and_type_index = func_name_and_type_index,
+                .atts_count = 1,  // Code only
+                .att_name_index = code_att_str,
+                .att_len = 6 + code_len,
+                .max_registers = max_regs,
+                .nargs = num_args,
+                .code_len = code_len,
+                .code = instrs
+            }    
+        );
+        return func_name_and_type_index;
     }
 
     void toFile(const std::filesystem::path &path) {
         std::ofstream ofs(path, std::ios::binary | std::ios::out);
         if (ofs.good() && ofs.is_open()) {
-            Immidiate constants = pool_.size();
+            chai::interpreter::Immidiate constants = pool_.size();
             ofs.write(reinterpret_cast<const char *>(&constants),
                       sizeof(constants));
             for (const std::unique_ptr<Constant> &cnst : pool_) {
@@ -53,9 +89,13 @@ public:
                 cnst->write(ofs);
             }
             std::cout << "in toFile constants = " << constants << std::endl;
-            Immidiate funcs = functions_.size() + 1;
+            // since main function too.
+            chai::interpreter::Immidiate funcs = functions_.size() + 1;
             ofs.write(reinterpret_cast<const char *>(&funcs), sizeof(funcs));
             dumpMainFunc(ofs);
+            for (const auto& func: functions_) {
+                func.dump(ofs);
+            }
             ofs.close();
         } else {
             throw std::invalid_argument(std::string{"Invalid path "} +
@@ -64,18 +104,18 @@ public:
     }
 
     void dumpMainFunc(std::ofstream &ofs) {
-        static_assert(sizeof(Immidiate) == 2);
-        Immidiate access_flags = UINT16_MAX;
+        static_assert(sizeof(chai::interpreter::Immidiate) == 2);
+        chai::interpreter::Immidiate access_flags = UINT16_MAX;
         ofs.write(reinterpret_cast<const char *>(&access_flags),
                   sizeof(access_flags));
-        Immidiate const_ref = const_func_name_and_type_index;
+        chai::interpreter::Immidiate const_ref = const_func_name_and_type_index;
         std::cout << "const_ref in dumpMainFunc = " << const_ref << std::endl;
         ofs.write(reinterpret_cast<const char *>(&const_ref),
                   sizeof(const_ref));
-        Immidiate atts_count = 1;
+        chai::interpreter::Immidiate atts_count = 1;
         ofs.write(reinterpret_cast<const char *>(&atts_count),
                   sizeof(atts_count));
-        Immidiate att_name_index = UINT16_MAX;
+        chai::interpreter::Immidiate att_name_index = UINT16_MAX;
         ofs.write(reinterpret_cast<const char *>(&att_name_index),
                   sizeof(att_name_index));
         uint32_t att_len = 6 + rawInstrs_.size() * sizeof(chai::bytecode_t);
@@ -96,6 +136,11 @@ public:
 private:
     std::vector<chai::bytecode_t> rawInstrs_;
     std::vector<std::unique_ptr<Constant>> pool_;
-    std::vector<Function> functions_;
-    Immidiate const_func_name_and_type_index;
+
+    /**
+     * All functions except main.
+     */
+    std::vector<FunctionInfo> functions_;
+    chai::interpreter::Immidiate const_func_name_and_type_index;
+    chai::interpreter::Immidiate code_att_str;
 };

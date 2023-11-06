@@ -9,6 +9,7 @@
 using chai::bytecode_t;
 using chai::utils::inst2RawRI;
 using chai::utils::instr2Raw;
+using namespace chai::interpreter;
 
 class ExecutorTest : public ::testing::Test {
 protected:
@@ -635,4 +636,36 @@ TEST_F(ExecutorTest, Goto_forward_and_back) {
     }
     update();
     exec_.run();
+}
+
+/*
+ * r99 = val2
+ * r98 = val1
+ * aboba(r98, r99) {ret r49 - r48}
+ * ret
+ */
+TEST_F(ExecutorTest, Call) {
+    int64_t val1 = static_cast<int64_t>(314);
+    int64_t val2 = static_cast<int64_t>(271);
+    loadWithConst(Ldiaf, val2);
+    loadRR(Star, 99);
+    loadWithConst(Ldiaf, val1);
+    loadRR(Star, 98);
+    Immidiate func_ref = chaiFile_.addFunction(
+        UINT16_MAX,
+        "abpba_func",
+        "(II)I",
+        std::vector<bytecode_t>{
+            instr2Raw(Ldra, 49, 0), // val2
+            instr2Raw(Sub, 48, 0),  // val1
+            instr2Raw(Ret),
+        },
+        2,
+        50
+    );
+    loadI(Call, func_ref);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), val2 - val1);
 }
