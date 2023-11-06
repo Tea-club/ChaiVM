@@ -216,4 +216,4 @@ instructions:
     fixedvalue: 41
     mnemonic: Call
     format: I
-    description: "Calls function [imm]"
+    description: "Calls function [imm]. Imm is reference to function in constant pool named constant_func_name_and_type."

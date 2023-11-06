@@ -42,6 +42,7 @@ There is ChaiVM's accumulator(acc) based ISA.
 | Сmpgf | R | f64 -> i64, compare acc with r1. Acc became 1 i64 if greater than r1, 0 if equal, otherwise -1 |
 | Cmplf | R | f64 -> i64, compare acc with r1. Acc became 1 i64 if less than r1, 0 if equal, otherwise -1 |
 | Goto | I | Goes to another instruction at branchoffset [imm] |
+| Call | I | Calls function [imm]. Imm is reference to function in constant pool named constant_func_name_and_type. |
 
 To generate this file use the following python script:
 ```shell
