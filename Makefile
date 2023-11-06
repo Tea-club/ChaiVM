@@ -23,7 +23,7 @@ format:
 	./tools/clang-format.sh $(PWD)/$(BENCH_DIR)
 .PHONY: build
 build: init
-	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCMAKE_BUILD_TYPE=DEBUG -DCHAIVM_ADD_SANITIZERS=OFF
+	cmake -S $(PWD) -B $(PWD)/$(BUILD_DIR) -DCHAIVM_ADD_MEM_SANITIZER=OFF -DCHAIVM_ADD_THREAD_SANITIZER=OFF
 	cmake --build $(PWD)/$(BUILD_DIR) --parallel $(JOBS)
 
 .PHONY: test

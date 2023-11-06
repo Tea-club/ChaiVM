@@ -41,21 +41,28 @@ struct ConstF64 : public Constant {
 struct ConstFuncNameAndType : public Constant {
     chai::interpreter::Immidiate name_index_;
     chai::interpreter::Immidiate descriptor_index_;
+    ConstFuncNameAndType(chai::interpreter::Immidiate name_index,
+                         chai::interpreter::Immidiate descriptor_index)
+        : name_index_{name_index}, descriptor_index_{descriptor_index} {};
     void write(std::ofstream &ofs) override {
-        ofs.write(reinterpret_cast<const char *>(&name_index_), sizeof(name_index_));
-        ofs.write(reinterpret_cast<const char *>(&descriptor_index_), sizeof(descriptor_index_));
+        ofs.write(reinterpret_cast<const char *>(&name_index_),
+                  sizeof(name_index_));
+        ofs.write(reinterpret_cast<const char *>(&descriptor_index_),
+                  sizeof(descriptor_index_));
     }
     uint8_t getTag() override {
-        return chai::interpreter::CodeManager::ConstantTag::CNST_FUNC_NAME_AND_TYPE;
+        return chai::interpreter::CodeManager::ConstantTag::
+            CNST_FUNC_NAME_AND_TYPE;
     }
 };
 
 struct ConstRawStr : public Constant {
-    int16_t len;
-    std::string str;
+    int16_t len_;
+    std::string str_;
+    ConstRawStr(std::string str) : len_(str.size()), str_(str) {}
     void write(std::ofstream &ofs) override {
-        ofs.write(reinterpret_cast<const char *>(&len), sizeof(len));
-        ofs << str;
+        ofs.write(reinterpret_cast<const char *>(&len_), sizeof(len_));
+        ofs << str_;
     }
     uint8_t getTag() override {
         return chai::interpreter::CodeManager::ConstantTag::CNST_RAW_STR;

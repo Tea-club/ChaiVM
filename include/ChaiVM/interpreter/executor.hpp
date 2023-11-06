@@ -4,8 +4,8 @@
 
 #include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "decoder.hpp"
-#include "reg-file.hpp"
 #include "frame.hpp"
+#include "reg-file.hpp"
 
 namespace chai::interpreter {
 
@@ -14,39 +14,40 @@ public:
     using Handler = void (Executor::*)(Instruction);
 
     Executor(CodeManager *manager);
-    Executor(CodeManager *manager, memory::LinearBuffer& buffer): codeManager_(manager), regFile_(manager -> startPC()), buffer_(buffer) {}
+    Executor(CodeManager *manager, memory::LinearBuffer &buffer)
+        : codeManager_(manager), buffer_(buffer), allocator_{buffer_} {}
 
     /**
      * Loads the first frame (public static void main).
      */
     void init() {
-        assert(current_frame_ == nullptr); // No current frame
-        memory::LinearAllocator<Frame> allocator{buffer_};
-        current_frame_ = new (allocator.allocate(1))
-            Frame (nullptr, codeManager_->startFunc(), buffer_);
-        regFile_.pc() = 0;
+        assert(currentFrame_ == nullptr); // No current frame
+        currentFrame_ = new (allocator_.allocate(1))
+            Frame(nullptr, codeManager_->startFunc(), buffer_);
+        std::cout << "in init() func.code.size = "
+                  << (currentFrame_->func_).code.size() << std::endl;
+        pc() = 0;
     }
     void run();
-    void restart();
     std::vector<chsize_t> getState() const & {
-        if (current_frame_ == nullptr) {
+        if (currentFrame_ == nullptr) {
             return std::vector<chsize_t>{};
         }
-        return current_frame_->copyState();
+        return currentFrame_->copyState();
     }
 
     chsize_t &pc() {
-        return pc_;
+        assert(currentFrame_ != nullptr);
+        return currentFrame_->pc_;
     }
     chsize_t pc() const {
-        return pc_;
+        assert(currentFrame_ != nullptr);
+        return currentFrame_->pc_;
     }
-    chsize_t &acc() {
-        return acc_;
-    }
-    chsize_t acc() const {
-        return acc_;
-    }
+    chsize_t &acc() { return acc_; }
+    chsize_t acc() const { return acc_; }
+
+    Frame const *getCurrentFrame() const { return this->currentFrame_; }
 
 private:
     inline void advancePc();
@@ -108,18 +109,17 @@ private:
         &Executor::if_icmpeq, &Executor::if_icmpne, &Executor::if_icmpgt,
         &Executor::if_icmpge, &Executor::if_icmplt, &Executor::if_icmple,
         &Executor::if_acmpeq, &Executor::if_acmpne, &Executor::cmpgf,
-        &Executor::cmplf,     &Executor::g0t0, &Executor::call};
+        &Executor::cmplf,     &Executor::g0t0,      &Executor::call};
 
 private:
     chsize_t acc_;
-    chsize_t pc_;
     CodeManager *codeManager_;
-    RegisterFile regFile_;
     memory::LinearBuffer &buffer_;
-    Frame *current_frame_ = nullptr;
+    memory::LinearAllocator<Frame> allocator_;
+    Frame *currentFrame_ = nullptr;
 };
 
-inline void Executor::advancePc() { regFile_.pc() += sizeof(bytecode_t); }
+inline void Executor::advancePc() { pc() += sizeof(bytecode_t); }
 
 /**
  * @todo #8:30m>/DEV make this exception to take RegisterFile and return it's

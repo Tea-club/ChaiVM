@@ -1,16 +1,16 @@
 #pragma once
 
+#include <cassert>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <istream>
 #include <vector>
-#include <cassert>
 
-#include "ChaiVM/memory/linear-buffer.hpp"
 #include "ChaiVM/interpreter/code-manager/func-struct.hpp"
 #include "ChaiVM/memory/allocator.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
+#include "ChaiVM/memory/linear-buffer.hpp"
 
 namespace chai::interpreter {
 
@@ -19,8 +19,7 @@ namespace chai::interpreter {
  */
 class CodeManager final {
 public:
-
-    enum ConstantTag: uint8_t  {
+    enum ConstantTag : uint8_t {
         CNST_I64 = 1,
         CNST_F64,
         CNST_FUNC_NAME_AND_TYPE,
@@ -28,22 +27,10 @@ public:
     };
 
     /**
-     * Loads one instruction.
-     * @param bytecode Raw instruction.
-     */
-    void load(bytecode_t bytecode);
-
-    /**
      * Parses and loads the full file.
      * @param path Path to the .chai file.
      */
     void load(const std::filesystem::path &path);
-
-    /**
-     * Loads stream of instructions only.
-     * @param istream
-     */
-    void loadCode(std::istream &istream);
 
     /**
      * Loads stream of Constant pool.
@@ -53,7 +40,8 @@ public:
 
     void loadFunction(std::istream &istream) {
         uint16_t access_flags = 0;
-        istream.read(reinterpret_cast<char *>(&access_flags), sizeof access_flags);
+        istream.read(reinterpret_cast<char *>(&access_flags),
+                     sizeof access_flags);
         Immidiate const_ref = 0;
         istream.read(reinterpret_cast<char *>(&const_ref), sizeof const_ref);
         Immidiate atts_count = 0;
@@ -63,7 +51,8 @@ public:
 
         // read code attribute
         Immidiate att_name_index = 0;
-        istream.read(reinterpret_cast<char *>(&att_name_index), sizeof att_name_index);
+        istream.read(reinterpret_cast<char *>(&att_name_index),
+                     sizeof att_name_index);
         uint32_t att_len = 0;
         istream.read(reinterpret_cast<char *>(&att_len), sizeof att_len);
         uint8_t max_regs = 0;
@@ -85,39 +74,46 @@ public:
         assert(code_len % sizeof(bytecode_t) == 0);
         bytecode_t bytecode = 0;
         const size_t next = funcs_.size();
-        funcs_.push_back(
-            Function {
-                .num_regs = max_regs,
-                .num_args = nargs,
-                .code {code_len / sizeof(bytecode_t)},
-            }
-        );
+        std::cout << "next = " << next << std::endl;
+        funcs_.push_back(Function{
+            .num_regs = max_regs,
+            .num_args = nargs,
+        });
+        std::cout << "before cycle, size = " << funcs_[next].code.size()
+                  << std::endl;
         for (uint i = 0; i < code_len / sizeof(bytecode_t); ++i) {
-            istream.read(reinterpret_cast<char *>(&bytecode), sizeof(bytecode_t));
+            istream.read(reinterpret_cast<char *>(&bytecode),
+                         sizeof(bytecode_t));
             funcs_[next].code.push_back(bytecode);
+            std::cout << "pushed back " << bytecode
+                      << ", size = " << funcs_[next].code.size() << std::endl;
         }
         dispatch_[const_ref] = next;
-
     }
 
-    chsize_t getCnst(chsize_t id);
+    chsize_t getCnst(Immidiate id);
 
-    bytecode_t getBytecode(chsize_t pc);
+    bytecode_t getBytecode(size_t func, chsize_t pc);
 
-    const Function & getFunc(Immidiate imm) const {
+    const Function &getFunc(Immidiate imm) const {
+        std::cout << "dispatch_[imm] = " << dispatch_[imm] << std::endl;
         return funcs_[dispatch_[imm]];
     }
 
-    chsize_t startPC();
-    Function startFunc() {
-        assert(funcs_.size() > 0);
+    const Function &startFunc() const {
+        assert(!funcs_.empty());
+        //        std::cout << "in start func, code: " << funcs_[0].code.size()
+        //        << std::endl; for (const bytecode_t &instr: funcs_[0].code ) {
+        //            printf("%lu, ", instr);
+        //        }
+        //        std::cout << std::endl;
         return funcs_[0];
     }
 
 private:
     std::vector<Function> funcs_;
-    std::vector<bytecode_t> raw_;
     std::vector<chsize_t> constantPool_;
+    std::vector<std::string> stringPool_{};
 
     /**
      * Id in appropriate collection by immidiate.

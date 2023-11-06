@@ -12,7 +12,10 @@ LinearBuffer &LinearBuffer::operator=(LinearBuffer &&other) noexcept {
     std::swap(buf_, other.buf_);
     return *this;
 }
-LinearBuffer::~LinearBuffer() { delete[] buf_; }
+LinearBuffer::~LinearBuffer() {
+    std::cout << "lin buffer destructor" << std::endl;
+    delete[] buf_;
+}
 
 size_t LinearBuffer::size() const { return size_; }
 size_t LinearBuffer::offset() const { return offset_; }
