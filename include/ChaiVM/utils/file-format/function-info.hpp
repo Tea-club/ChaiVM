@@ -14,7 +14,8 @@ struct FunctionInfo {
     void dump(std::ofstream &ofs) const {
         ofs.write(reinterpret_cast<const char *>(&access_flags),
                   sizeof(access_flags));
-        std::cout << "const_ref in dump of function = " << name_and_type_index << std::endl;
+        std::cout << "const_ref in dump of function = " << name_and_type_index
+                  << std::endl;
         ofs.write(reinterpret_cast<const char *>(&name_and_type_index),
                   sizeof(name_and_type_index));
         ofs.write(reinterpret_cast<const char *>(&atts_count),

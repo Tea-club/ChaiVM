@@ -1,15 +1,16 @@
 #pragma once
 
+#include "ChaiVM/utils/file-format/constant.hpp"
 #include "ChaiVM/utils/file-format/function-info.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
-#include "ChaiVM/utils/file-format/constant.hpp"
 
 class ChaiFile {
 public:
     ChaiFile(std::vector<chai::bytecode_t> &&instrs,
              std::vector<std::unique_ptr<Constant>> &&pool)
         : rawInstrs_(instrs), pool_(std::move(pool)) {
-        chai::interpreter::Immidiate name_index = addConst(std::make_unique<ConstRawStr>("main"));
+        chai::interpreter::Immidiate name_index =
+            addConst(std::make_unique<ConstRawStr>("main"));
         chai::interpreter::Immidiate descriptor_index =
             addConst(std::make_unique<ConstRawStr>("()V"));
         const_func_name_and_type_index =
@@ -54,8 +55,12 @@ public:
      * @param max_regs Number of registers to be allocated on the frame.
      * @return immidiate - Id of the function (ConstFuncNameAndType).
      */
-    chai::interpreter::Immidiate addFunction(chai::interpreter::Immidiate access_flags, std::string name, std::string descriptor, std::vector<chai::bytecode_t> instrs, uint8_t num_args, uint8_t max_regs = 100) {
-        chai::interpreter::Immidiate name_index = addConst(std::make_unique<ConstRawStr>(name));
+    chai::interpreter::Immidiate
+    addFunction(chai::interpreter::Immidiate access_flags, std::string name,
+                std::string descriptor, std::vector<chai::bytecode_t> instrs,
+                uint8_t num_args, uint8_t max_regs = 100) {
+        chai::interpreter::Immidiate name_index =
+            addConst(std::make_unique<ConstRawStr>(name));
         chai::interpreter::Immidiate descriptor_index =
             addConst(std::make_unique<ConstRawStr>(descriptor));
         chai::interpreter::Immidiate func_name_and_type_index =
@@ -63,18 +68,15 @@ public:
                                                             descriptor_index));
         uint32_t code_len = instrs.size() * sizeof(chai::bytecode_t);
         functions_.push_back(
-            FunctionInfo {
-                .access_flags = access_flags,
-                .name_and_type_index = func_name_and_type_index,
-                .atts_count = 1,  // Code only
-                .att_name_index = code_att_str,
-                .att_len = 6 + code_len,
-                .max_registers = max_regs,
-                .nargs = num_args,
-                .code_len = code_len,
-                .code = instrs
-            }    
-        );
+            FunctionInfo{.access_flags = access_flags,
+                         .name_and_type_index = func_name_and_type_index,
+                         .atts_count = 1, // Code only
+                         .att_name_index = code_att_str,
+                         .att_len = 6 + code_len,
+                         .max_registers = max_regs,
+                         .nargs = num_args,
+                         .code_len = code_len,
+                         .code = instrs});
         return func_name_and_type_index;
     }
 
@@ -93,7 +95,7 @@ public:
             chai::interpreter::Immidiate funcs = functions_.size() + 1;
             ofs.write(reinterpret_cast<const char *>(&funcs), sizeof(funcs));
             dumpMainFunc(ofs);
-            for (const auto& func: functions_) {
+            for (const auto &func : functions_) {
                 func.dump(ofs);
             }
             ofs.close();

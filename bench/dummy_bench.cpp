@@ -7,7 +7,9 @@ static void BM_SomeFunction(benchmark::State &state) {
 
         // This code gets timed
         chai::interpreter::CodeManager codeManager{};
-        chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);;
+        chai::memory::LinearBuffer buffer_ =
+            chai::memory::LinearBuffer(1024 * 256);
+        ;
         chai::interpreter::Executor executor{&codeManager, buffer_};
     }
 }

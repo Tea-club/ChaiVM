@@ -7,9 +7,8 @@ class Frame {
 public:
     Frame(Frame *prev, const Function &func, memory::LinearBuffer &buffer)
         : func_(func), alloc_(memory::LinearAllocator<chsize_t>{buffer}),
-          prev_(prev),
-          regsize(func.num_regs), registers_(func.num_regs, 0, alloc_) {
-    }
+          prev_(prev), regsize(func.num_regs),
+          registers_(func.num_regs, 0, alloc_) {}
 
     void copyLastRegs() {
         assert(prev_ != nullptr);
@@ -17,7 +16,8 @@ public:
         assert(nargs <= regsize);
         assert(nargs <= prev_->regsize);
         for (size_t i = 0; i < nargs; ++i) {
-            registers_[regsize - 1 - i] = prev_->registers_[prev_ ->regsize - 1 - i];
+            registers_[regsize - 1 - i] =
+                prev_->registers_[prev_->regsize - 1 - i];
         }
     }
 
