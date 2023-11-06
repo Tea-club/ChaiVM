@@ -10,10 +10,11 @@ static void BM_SquareEquation(benchmark::State &state) {
     // Perform setup here
     CodeManWrapper wrapper{};
     initSquareEquatino(wrapper);
-    Executor executor{&wrapper.manager_};
+
     for (auto _ : state) {
+        chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);;
+        Executor executor{&wrapper.manager_, buffer_};
         executor.run();
-        executor.restart();
     }
 }
 // Register the function as a benchmark

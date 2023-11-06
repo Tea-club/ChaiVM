@@ -13,7 +13,6 @@ class Executor {
 public:
     using Handler = void (Executor::*)(Instruction);
 
-    Executor(CodeManager *manager);
     Executor(CodeManager *manager, memory::LinearBuffer &buffer)
         : codeManager_(manager), buffer_(buffer), allocator_{buffer_} {}
 
