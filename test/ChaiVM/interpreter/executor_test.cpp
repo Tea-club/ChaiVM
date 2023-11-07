@@ -1,70 +1,9 @@
-#include <cmath>
-#include <gtest/gtest.h>
-
-#include "ChaiVM/interpreter/executor.hpp"
-#include "ChaiVM/utils/file-format/chai-file.hpp"
-#include "ChaiVM/utils/file-format/constant.hpp"
-#include "ChaiVM/utils/instr2Raw.hpp"
+#include "executor-test-fixture.hpp"
 
 using chai::bytecode_t;
 using chai::utils::inst2RawRI;
 using chai::utils::instr2Raw;
 using namespace chai::interpreter;
-
-class ExecutorTest : public ::testing::Test {
-protected:
-    static constexpr RegisterId R0 = 1;
-    static constexpr RegisterId R1 = 1;
-    static constexpr RegisterId R2 = 2;
-    static constexpr RegisterId R3 = 3;
-    static constexpr RegisterId R4 = 4;
-    static constexpr RegisterId R5 = 5;
-    static constexpr RegisterId R6 = 6;
-    static constexpr RegisterId R7 = 7;
-    static constexpr RegisterId R8 = 8;
-    static constexpr RegisterId R9 = 9;
-    static constexpr RegisterId R10 = 10;
-    static constexpr RegisterId R11 = 11;
-
-    const std::filesystem::path PATH{"./exec-testing.chai"};
-
-    /*
-     * @todo #42:60min Rename all load methods to more appropriate names.
-     */
-    void loadRR(Operation op, RegisterId reg1, RegisterId reg2 = 0) {
-        chaiFile_.addInstr(instr2Raw(op, reg1, reg2));
-    }
-
-    void loadRI(Operation op, RegisterId reg1, Immidiate imm) {
-        chaiFile_.addInstr(inst2RawRI(op, reg1, imm));
-    }
-
-    int loadI(Operation op, Immidiate imm) {
-        return chaiFile_.addInstr(instr2Raw(op, imm));
-    }
-
-    void loadWithConst(Operation op, int64_t data) {
-        chaiFile_.addWithConst(op, data);
-    }
-
-    void loadWithConst(Operation op, double data) {
-        chaiFile_.addWithConst(op, data);
-    }
-
-    int load(Operation op) { return chaiFile_.addInstr(instr2Raw(op)); }
-
-    void update() {
-        chaiFile_.toFile(PATH);
-        codeManager_.load(PATH);
-    }
-
-    void TearDown() override { std::remove(PATH.c_str()); }
-
-    ChaiFile chaiFile_;
-    CodeManager codeManager_;
-    chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);
-    Executor exec_{&codeManager_, buffer_};
-};
 
 class MathTest : public ExecutorTest {};
 
@@ -385,64 +324,6 @@ TEST_F(MathTest, iccos) {
     EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.acc()), 0.5);
 }
 
-TEST_F(ExecutorTest, SquareEquation) {
-    // r1 = 1.0, r2 = -5.0, r3 = 6.0
-    loadWithConst(Ldiaf, 1.0);
-    loadRR(Star, R1, 0);
-    loadWithConst(Ldiaf, -5.0);
-    loadRR(Star, R2, 0);
-    loadWithConst(Ldiaf, +6.0);
-    loadRR(Star, R3, 0);
-
-    // r4 = -4*r1*r3
-    loadWithConst(Ldiaf, -4.0);
-    loadRR(Mulf, R1, 0);
-    loadRR(Mulf, R3, 0);
-    loadRR(Star, R4, 0);
-
-    // r5 = b * b
-    loadRR(Ldra, R2, 0);
-    loadRR(Mulf, R2, 0);
-    loadRR(Star, R5, 0);
-
-    // r6 = r5 + r4
-    loadRR(Ldra, R5, 0);
-    loadRR(Addf, R4, 0);
-    loadRR(Star, R6, 0);
-
-    // r6 = sqrt(r6)
-    loadRR(Ldra, R6, 0);
-    load(IcSqrt);
-    loadRR(Star, R6, 0);
-
-    // r7 = 2a
-    loadRR(Ldra, R1, 0);
-    loadWithConst(Mulif, 2.0);
-    loadRR(Star, R7, 0);
-
-    // r8 = r6 - r2
-    loadRR(Ldra, R6, 0);
-    loadRR(Subf, R2, 0);
-    loadRR(Star, R8, 0);
-
-    // X1 = r9 = r8 / r7
-    loadRR(Ldra, R8, 0);
-    loadRR(Divf, R7, 0);
-    loadRR(Star, R9, 0);
-
-    // acc = -r2 - r6
-    // r11 = acc / r7
-    loadWithConst(Ldiaf, 0.0);
-    loadRR(Subf, R2, 0);
-    loadRR(Subf, R6, 0);
-    loadRR(Divf, R7, 0);
-    loadRR(Star, R11, 0);
-    load(Ret);
-    update();
-    exec_.run();
-    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.acc()), 2.0);
-}
-
 TEST_F(ExecutorTest, If_icmpeq_simple) {
     Immidiate val = chaiFile_.addConst(std::make_unique<ConstI64>(42));
     loadI(Ldia, val);
@@ -646,12 +527,12 @@ TEST_F(ExecutorTest, Goto_forward_and_back) {
 TEST_F(ExecutorTest, Call) {
     int64_t val1 = static_cast<int64_t>(314);
     int64_t val2 = static_cast<int64_t>(271);
-    loadWithConst(Ldiaf, val2);
+    loadWithConst(Ldia, val2);
     loadRR(Star, 99);
-    loadWithConst(Ldiaf, val1);
+    loadWithConst(Ldia, val1);
     loadRR(Star, 98);
     Immidiate func_ref =
-        chaiFile_.addFunction(UINT16_MAX, "abpba_func", "(II)I",
+        chaiFile_.addFunction(UINT16_MAX, "aboba_func", "(II)I",
                               std::vector<bytecode_t>{
                                   instr2Raw(Ldra, 49, 0), // val2
                                   instr2Raw(Sub, 48, 0),  // val1
