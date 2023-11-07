@@ -68,22 +68,20 @@ TEST_F(ExecutorTest, Factorial) {
     Immidiate one = chaiFile_.addConst(std::make_unique<ConstI64>(1));
     loadWithConst(Ldia, n);
     loadRR(Star, 99);
-    constexpr Immidiate FUNC_REF = 8;
-    Immidiate func_ref = chaiFile_.addFunction(
-        UINT16_MAX, "factorial", "(I)I",
-        std::vector<bytecode_t>{
-            instr2Raw(Ldra, 7, 0), // val2
-            inst2RawRI(If_icmpne, one,
-                       static_cast<Immidiate>(3 * sizeof(bytecode_t))),
-            instr2Raw(Ldia, one), instr2Raw(Ret), instr2Raw(Star, 2, 0),
-            instr2Raw(Subi, one), instr2Raw(Star, 7, 0),
-            instr2Raw(Call,
-                      FUNC_REF), // The most dirty line in the project. FUNC_REF
-                                 // is id of the "factorial" function which this
-                                 // function will return.
-            instr2Raw(Mul, 2, 0), instr2Raw(Ret)},
-        2, 8);
-    assert(func_ref == FUNC_REF);
+    Immidiate func_ref = chaiFile_.nextFunc();
+    EXPECT_EQ(
+        chaiFile_.addFunction(
+            UINT16_MAX, "factorial", "(I)I",
+            std::vector<bytecode_t>{
+                instr2Raw(Ldra, 7, 0), // val2
+                inst2RawRI(If_icmpne, one,
+                           static_cast<Immidiate>(3 * sizeof(bytecode_t))),
+                instr2Raw(Ldia, one), instr2Raw(Ret), instr2Raw(Star, 2, 0),
+                instr2Raw(Subi, one), instr2Raw(Star, 7, 0),
+                instr2Raw(Call, func_ref), instr2Raw(Mul, 2, 0),
+                instr2Raw(Ret)},
+            2, 8),
+        func_ref);
     loadI(Call, func_ref);
     load(Ret);
     update();

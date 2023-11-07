@@ -6,6 +6,6 @@ target_sources(chai_interpreter PRIVATE
     ./reg-file.cpp
     ./executor.cpp
     ./decoder.cpp
-    ./code-manager.cpp
+        code-manager/code-manager.cpp
     ./frame.cpp
 )

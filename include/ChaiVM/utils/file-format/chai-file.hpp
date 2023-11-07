@@ -80,7 +80,15 @@ public:
         return func_name_and_type_index;
     }
 
-    void toFile(const std::filesystem::path &path) {
+    /**
+     * What id will return addFunction if call it in the current state.
+     * We need it to use the function_ref in creating the function (for example,
+     * recursive functions).
+     * @return id of next func_ref.
+     */
+    chai::interpreter::Immidiate nextFunc() const { return pool_.size() + 2; }
+
+    void toFile(const std::filesystem::path &path) const {
         std::ofstream ofs(path, std::ios::binary | std::ios::out);
         if (ofs.good() && ofs.is_open()) {
             chai::interpreter::Immidiate constants = pool_.size();
@@ -104,7 +112,7 @@ public:
         }
     }
 
-    void dumpMainFunc(std::ofstream &ofs) {
+    void dumpMainFunc(std::ofstream &ofs) const {
         static_assert(sizeof(chai::interpreter::Immidiate) == 2);
         chai::interpreter::Immidiate access_flags = UINT16_MAX;
         ofs.write(reinterpret_cast<const char *>(&access_flags),
