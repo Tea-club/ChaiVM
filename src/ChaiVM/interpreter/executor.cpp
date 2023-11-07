@@ -9,7 +9,6 @@ namespace chai::interpreter {
 #define DO_NEXT_INS()                                                          \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
-    std::cout << "new ins was parsed: " << newIns.operation << std::endl;      \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 void Executor::init() {
@@ -21,17 +20,8 @@ void Executor::init() {
 
 void Executor::run() {
     init();
-    std::cout << std::endl;
     assert(currentFrame_ != nullptr);
-    std::cout << "after init() func.code.size = "
-              << (currentFrame_->func_).code.size() << std::endl;
-    std::cout << "new ins was not parsed, pc = " << pc() << std::endl;
-    std::cout << "finc.code.size = " << currentFrame_->func_.code.size()
-              << std::endl;
-
-    Instruction newIns = decoder::parse(currentFrame_->func_.code[pc()]);
-    std::cout << "new ins was parsed: " << newIns.operation << std::endl;
-    (this->*HANDLER_ARR[newIns.operation])(newIns);
+    DO_NEXT_INS()
 }
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -45,14 +35,13 @@ void Executor::nop(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::ret(Instruction ins) {
-    std::cout << "in Executor::ret " << std::endl;
     Frame *buf = currentFrame_;
     currentFrame_ = currentFrame_->back();
     buf->~Frame();
     if (currentFrame_ != nullptr) {
         advancePc();
+        DO_NEXT_INS()
     }
-    std::cout << "return from ret instruction " << std::endl;
     return;
 }
 void Executor::mov(Instruction ins) {

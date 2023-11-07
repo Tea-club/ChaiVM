@@ -12,7 +12,6 @@ public:
     explicit LinearBuffer(size_t sz);
     LinearBuffer(LinearBuffer &&other) noexcept;
     LinearBuffer &operator=(LinearBuffer &&other) noexcept;
-    ~LinearBuffer();
 
     size_t size() const;
     size_t offset() const;

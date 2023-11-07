@@ -12,7 +12,6 @@ void CodeManager::loadPool(std::istream &istream) {
     Immidiate constants = 0;
     istream.read(reinterpret_cast<char *>(&constants), sizeof constants);
     dispatch_ = std::vector<Immidiate>(constants, -1);
-    std::cout << "constants = " << constants << std::endl;
     for (int i = 0; i < constants; ++i) {
         char type;
         istream.read(&type, sizeof type);
@@ -65,7 +64,6 @@ void CodeManager::load(const std::filesystem::path &path) {
         Immidiate func_count = 0;
         input_file.read(reinterpret_cast<char *>(&func_count),
                         sizeof func_count);
-        std::cout << "func_count = " << func_count << std::endl;
         funcs_ = std::vector<Function>{};
         for (int i = 0; i < func_count; ++i) {
             loadFunction(input_file);
@@ -78,9 +76,6 @@ void CodeManager::load(const std::filesystem::path &path) {
 }
 
 chsize_t CodeManager::getCnst(Immidiate id) {
-    std::cout << "getCnst, constant pool size = " << constantPool_.size()
-              << std::endl;
-    std::cout << "getCnst, imm id = " << id << std::endl;
     assert(id < constantPool_.size());
     return constantPool_[id];
 }

@@ -88,7 +88,6 @@ TEST_F(ExecutorTest, run) {
     loadRR(Ret, 0, 0);
     update();
     exec_.run();
-    std::cout << "in test" << std::endl;
     EXPECT_EQ(exec_.acc(), 48);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
