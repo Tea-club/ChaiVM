@@ -54,7 +54,7 @@ void CodeManager::loadPool(std::istream &istream) {
                          sizeof descriptor_index);
             constantPool_.push_back((static_cast<chsize_t>(type) << 32) |
                                     (static_cast<chsize_t>(name_index) << 16) |
-                                    (static_cast<chsize_t>(name_index) << 0));
+                                    (static_cast<chsize_t>(descriptor_index) << 0));
             break;
         case CNST_RAW_STR:
             uint16_t len;
