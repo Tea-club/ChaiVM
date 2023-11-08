@@ -67,7 +67,7 @@ private:
      * We cannot contain strings in constantPool_ so we keep constant strings
      * here.
      */
-    std::vector<std::string> stringPool_{};
+    std::vector<std::string> stringPool_;
 
     /**
      * Id in appropriate collection by immidiate.

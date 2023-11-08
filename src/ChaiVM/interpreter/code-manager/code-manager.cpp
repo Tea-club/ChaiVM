@@ -5,6 +5,24 @@
 
 namespace chai::interpreter {
 
+void CodeManager::load(const std::filesystem::path &path) {
+    std::ifstream input_file(path, std::ios::binary | std::ios::in);
+    if (input_file.good() && input_file.is_open()) {
+        loadPool(input_file);
+        Immidiate func_count = 0;
+        input_file.read(reinterpret_cast<char *>(&func_count),
+                        sizeof func_count);
+        funcs_ = std::vector<Function>{};
+        for (int i = 0; i < func_count; ++i) {
+            loadFunction(input_file);
+        }
+        input_file.close();
+    } else {
+        throw std::invalid_argument(std::string{"Invalid path "} +
+                                    path.string());
+    }
+}
+
 void CodeManager::loadPool(std::istream &istream) {
     if (!istream.good()) {
         throw std::invalid_argument(std::string{"Bad input stream"});
@@ -54,24 +72,6 @@ void CodeManager::loadPool(std::istream &istream) {
                                         std::to_string(type));
             break;
         }
-    }
-}
-
-void CodeManager::load(const std::filesystem::path &path) {
-    std::ifstream input_file(path, std::ios::binary | std::ios::in);
-    if (input_file.good() && input_file.is_open()) {
-        loadPool(input_file);
-        Immidiate func_count = 0;
-        input_file.read(reinterpret_cast<char *>(&func_count),
-                        sizeof func_count);
-        funcs_ = std::vector<Function>{};
-        for (int i = 0; i < func_count; ++i) {
-            loadFunction(input_file);
-        }
-        input_file.close();
-    } else {
-        throw std::invalid_argument(std::string{"Invalid path "} +
-                                    path.string());
     }
 }
 
