@@ -55,7 +55,18 @@ public:
 
 private:
     std::vector<Function> funcs_;
+
+    /**
+     * Runtime constant pool. Constants(excepting Strings) with id [imm] can be
+     * retrieved via this vector. If [imm] is String then the string keeps in
+     * stringPool_[dispatch_[imm]].
+     */
     std::vector<chsize_t> constantPool_;
+
+    /**
+     * We cannot contain strings in constantPool_ so we keep constant strings
+     * here.
+     */
     std::vector<std::string> stringPool_{};
 
     /**
