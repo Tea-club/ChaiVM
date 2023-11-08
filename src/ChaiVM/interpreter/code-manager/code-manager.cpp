@@ -45,7 +45,7 @@ void CodeManager::loadPool(std::istream &istream) {
             buf = new char[len + 1];
             istream.read(buf, len);
             buf[len] = 0;
-            stringPool_.push_back(std::string{buf});
+            stringPool_.emplace_back(buf);
             constantPool_.push_back(stringPool_.size() - 1);
             delete[] buf;
             break;
