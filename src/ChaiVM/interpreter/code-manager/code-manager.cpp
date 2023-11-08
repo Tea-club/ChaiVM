@@ -12,7 +12,6 @@ void CodeManager::load(const std::filesystem::path &path) {
         Immidiate func_count;
         input_file.read(reinterpret_cast<char *>(&func_count),
                         sizeof func_count);
-        funcs_ = std::vector<Function>{};
         for (int i = 0; i < func_count; ++i) {
             loadFunction(input_file);
         }
@@ -28,7 +27,8 @@ void CodeManager::loadPool(std::istream &istream) {
         throw std::invalid_argument(std::string{"Bad input stream"});
     }
     Immidiate constant_count;
-    istream.read(reinterpret_cast<char *>(&constant_count), sizeof constant_count);
+    istream.read(reinterpret_cast<char *>(&constant_count),
+                 sizeof constant_count);
     dispatch_ = std::vector<Immidiate>(constant_count, -1);
     for (int i = 0; i < constant_count; ++i) {
         char type;
@@ -52,9 +52,10 @@ void CodeManager::loadPool(std::istream &istream) {
             Immidiate descriptor_index;
             istream.read(reinterpret_cast<char *>(&descriptor_index),
                          sizeof descriptor_index);
-            constantPool_.push_back((static_cast<chsize_t>(type) << 32) |
-                                    (static_cast<chsize_t>(name_index) << 16) |
-                                    (static_cast<chsize_t>(descriptor_index) << 0));
+            constantPool_.push_back(
+                (static_cast<chsize_t>(type) << 32) |
+                (static_cast<chsize_t>(name_index) << 16) |
+                (static_cast<chsize_t>(descriptor_index) << 0));
             break;
         case CNST_RAW_STR:
             uint16_t len;
@@ -130,7 +131,7 @@ bytecode_t CodeManager::getBytecode(size_t func, chsize_t pc) {
     }
 }
 
-const Function & CodeManager::getFunc(Immidiate imm) const {
+const Function &CodeManager::getFunc(Immidiate imm) const {
     return funcs_[dispatch_[imm]];
 }
 
