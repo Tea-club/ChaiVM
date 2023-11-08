@@ -27,10 +27,10 @@ void CodeManager::loadPool(std::istream &istream) {
     if (!istream.good()) {
         throw std::invalid_argument(std::string{"Bad input stream"});
     }
-    Immidiate constants;
-    istream.read(reinterpret_cast<char *>(&constants), sizeof constants);
-    dispatch_ = std::vector<Immidiate>(constants, -1);
-    for (int i = 0; i < constants; ++i) {
+    Immidiate constant_count;
+    istream.read(reinterpret_cast<char *>(&constant_count), sizeof constant_count);
+    dispatch_ = std::vector<Immidiate>(constant_count, -1);
+    for (int i = 0; i < constant_count; ++i) {
         char type;
         istream.read(&type, sizeof type);
         switch (type) {
