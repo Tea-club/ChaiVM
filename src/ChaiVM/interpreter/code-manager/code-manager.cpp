@@ -9,7 +9,7 @@ void CodeManager::load(const std::filesystem::path &path) {
     std::ifstream input_file(path, std::ios::binary | std::ios::in);
     if (input_file.good() && input_file.is_open()) {
         loadPool(input_file);
-        Immidiate func_count = 0;
+        Immidiate func_count;
         input_file.read(reinterpret_cast<char *>(&func_count),
                         sizeof func_count);
         funcs_ = std::vector<Function>{};
@@ -27,7 +27,7 @@ void CodeManager::loadPool(std::istream &istream) {
     if (!istream.good()) {
         throw std::invalid_argument(std::string{"Bad input stream"});
     }
-    Immidiate constants = 0;
+    Immidiate constants;
     istream.read(reinterpret_cast<char *>(&constants), sizeof constants);
     dispatch_ = std::vector<Immidiate>(constants, -1);
     for (int i = 0; i < constants; ++i) {
@@ -76,31 +76,31 @@ void CodeManager::loadPool(std::istream &istream) {
 }
 
 void CodeManager::loadFunction(std::istream &istream) {
-    uint16_t access_flags = 0;
+    uint16_t access_flags;
     istream.read(reinterpret_cast<char *>(&access_flags), sizeof access_flags);
-    Immidiate const_ref = 0;
+    Immidiate const_ref;
     istream.read(reinterpret_cast<char *>(&const_ref), sizeof const_ref);
-    Immidiate atts_count = 0;
+    Immidiate atts_count;
     istream.read(reinterpret_cast<char *>(&atts_count), sizeof atts_count);
     // only "Code" attribute is supported
     assert(atts_count == 1);
 
     // read code attribute
-    Immidiate att_name_index = 0;
+    Immidiate att_name_index;
     istream.read(reinterpret_cast<char *>(&att_name_index),
                  sizeof att_name_index);
-    uint32_t att_len = 0;
+    uint32_t att_len;
     istream.read(reinterpret_cast<char *>(&att_len), sizeof att_len);
-    uint8_t max_regs = 0;
+    uint8_t max_regs;
     istream.read(reinterpret_cast<char *>(&max_regs), sizeof max_regs);
-    uint8_t nargs = 0;
+    uint8_t nargs;
     istream.read(reinterpret_cast<char *>(&nargs), sizeof nargs);
     // size of instructions in function in bytes
-    uint32_t code_len = 0;
+    uint32_t code_len;
     istream.read(reinterpret_cast<char *>(&code_len), sizeof code_len);
 
     assert(code_len % sizeof(bytecode_t) == 0);
-    bytecode_t bytecode = 0;
+    bytecode_t bytecode;
     const size_t next = funcs_.size();
     funcs_.push_back(Function{
         .numRegs = max_regs,
