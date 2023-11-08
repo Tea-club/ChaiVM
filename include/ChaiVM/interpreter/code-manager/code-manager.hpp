@@ -44,14 +44,9 @@ public:
 
     bytecode_t getBytecode(size_t func, chsize_t pc);
 
-    const Function &getFunc(Immidiate imm) const {
-        return funcs_[dispatch_[imm]];
-    }
+    const Function &getFunc(Immidiate imm) const;
 
-    const Function &startFunc() const {
-        assert(!funcs_.empty());
-        return funcs_[0];
-    }
+    const Function &getStartFunc() const;
 
 private:
     std::vector<Function> funcs_;

@@ -14,7 +14,7 @@ namespace chai::interpreter {
 void Executor::init() {
     assert(currentFrame_ == nullptr); // No current frame
     currentFrame_ = new (allocator_.allocate(1))
-        Frame(nullptr, codeManager_->startFunc(), buffer_);
+        Frame(nullptr, codeManager_->getStartFunc(), buffer_);
     pc() = 0;
 }
 

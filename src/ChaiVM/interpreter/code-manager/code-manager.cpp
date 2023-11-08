@@ -130,6 +130,15 @@ bytecode_t CodeManager::getBytecode(size_t func, chsize_t pc) {
     }
 }
 
+const Function & CodeManager::getFunc(Immidiate imm) const {
+    return funcs_[dispatch_[imm]];
+}
+
+const Function &CodeManager::getStartFunc() const {
+    assert(!funcs_.empty());
+    return funcs_[0];
+}
+
 BeyondCodeBoundaries::BeyondCodeBoundaries(const char *msg)
     : runtime_error(msg) {}
 BeyondCodeBoundaries::BeyondCodeBoundaries(const std::string &msg)
