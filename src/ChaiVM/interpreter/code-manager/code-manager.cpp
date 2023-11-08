@@ -103,8 +103,8 @@ void CodeManager::loadFunction(std::istream &istream) {
     bytecode_t bytecode = 0;
     const size_t next = funcs_.size();
     funcs_.push_back(Function{
-        .num_regs = max_regs,
-        .num_args = nargs,
+        .numRegs = max_regs,
+        .numArgs = nargs,
     });
     for (uint i = 0; i < code_len / sizeof(bytecode_t); ++i) {
         istream.read(reinterpret_cast<char *>(&bytecode), sizeof(bytecode_t));

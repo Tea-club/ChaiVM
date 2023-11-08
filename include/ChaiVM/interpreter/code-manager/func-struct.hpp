@@ -8,9 +8,9 @@
 namespace chai::interpreter {
 
 struct Function {
-    uint8_t num_regs;
-    uint8_t num_args;
-    Immidiate const_func_ref;
+    uint8_t numRegs;
+    uint8_t numArgs;
+    Immidiate constFuncRef;
     std::vector<bytecode_t> code = {};
 };
 
