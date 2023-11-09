@@ -18,6 +18,7 @@ public:
     void addWithConst(chai::interpreter::Operation op, int64_t data);
 
     void addWithConst(chai::interpreter::Operation op, double data);
+
     /**
      * A more or less convenient way to add a function to the file
      * @param access_flags
