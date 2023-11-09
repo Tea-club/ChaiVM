@@ -21,14 +21,14 @@ public:
 
     void run();
 
-    chsize_t &pc();
-    chsize_t pc() const;
     chsize_t &acc();
     chsize_t acc() const;
 
     Frame const *getCurrentFrame() const;
 
 private:
+    chsize_t &pc();
+    chsize_t pc() const;
     inline void advancePc();
     void inv(Instruction ins);
     void nop(Instruction ins);
