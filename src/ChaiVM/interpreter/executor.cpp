@@ -309,7 +309,7 @@ void Executor::call(Instruction ins) {
     memory::LinearAllocator<Frame> allocator{buffer_};
     currentFrame_ = new (allocator.allocate(1))
         Frame(currentFrame_, codeManager_->getFunc(ins.immidiate), buffer_);
-    currentFrame_->copyLastRegs();
+    currentFrame_->passArgs();
     pc() = 0;
     DO_NEXT_INS();
 }

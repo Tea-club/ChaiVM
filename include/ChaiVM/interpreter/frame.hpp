@@ -11,14 +11,14 @@ class Frame {
 public:
     Frame(Frame *prev, const Function &func, memory::LinearBuffer &buffer);
 
-    void copyLastRegs();
+    void passArgs();
 
     chai::chsize_t &operator[](size_t n) &;
     const chsize_t &operator[](size_t n) const &;
 
     /**
      * Get state.
-     * @return
+     * @return state.
      */
     std::vector<chsize_t> copyState();
 

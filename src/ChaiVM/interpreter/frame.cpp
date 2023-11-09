@@ -8,7 +8,7 @@ Frame::Frame(Frame *prev, const Function &func, memory::LinearBuffer &buffer)
     : func_(func), prev_(prev), regsize_(func.numRegs),
       registers_(func.numRegs, 0, memory::LinearAllocator<chsize_t>{buffer}) {}
 
-void Frame::copyLastRegs() {
+void Frame::passArgs() {
     assert(prev_ != nullptr);
     size_t nargs = func_.numArgs;
     assert(nargs <= regsize_);
