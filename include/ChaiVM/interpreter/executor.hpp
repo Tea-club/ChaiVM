@@ -94,7 +94,6 @@ private:
     chsize_t acc_;
     CodeManager *codeManager_;
     memory::LinearBuffer &buffer_;
-    memory::LinearAllocator<Frame> allocator_;
     Frame *currentFrame_ = nullptr;
 };
 

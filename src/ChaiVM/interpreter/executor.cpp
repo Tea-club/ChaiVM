@@ -12,11 +12,11 @@ namespace chai::interpreter {
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &buffer)
-    : codeManager_(manager), buffer_(buffer), allocator_{buffer_} {}
+    : codeManager_(manager), buffer_(buffer) {}
 
 void Executor::init() {
     assert(currentFrame_ == nullptr); // No current frame
-    currentFrame_ = new (allocator_.allocate(1))
+    currentFrame_ = new (memory::LinearAllocator<Frame>{buffer_}.allocate(1))
         Frame(nullptr, codeManager_->getStartFunc(), buffer_);
     pc() = 0;
 }
