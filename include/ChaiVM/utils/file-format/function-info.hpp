@@ -6,6 +6,8 @@
 #include "ChaiVM/interpreter/instruction.hpp"
 #include "ChaiVM/types.hpp"
 
+namespace chai::utils::fileformat {
+
 struct FunctionInfo {
     chai::interpreter::Immidiate accessFlags_;
     chai::interpreter::Immidiate nameAndTypeIndex_;
@@ -19,3 +21,5 @@ struct FunctionInfo {
 
     void dump(std::ofstream &ofs) const;
 };
+
+} // namespace chai::utils::fileformat

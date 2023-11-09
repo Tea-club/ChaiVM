@@ -2,6 +2,8 @@
 
 #include "ChaiVM/utils/file-format/function-info.hpp"
 
+namespace chai::utils::fileformat {
+
 void FunctionInfo::dump(std::ofstream &ofs) const {
     ofs.write(reinterpret_cast<const char *>(&accessFlags_),
               sizeof(accessFlags_));
@@ -20,3 +22,5 @@ void FunctionInfo::dump(std::ofstream &ofs) const {
                   sizeof(chai::bytecode_t));
     }
 }
+
+} // namespace chai::utils::fileformat
