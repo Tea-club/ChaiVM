@@ -81,7 +81,7 @@ TEST_F(ExecutorTest, Factorial) {
                 instr2Raw(Subi, one), instr2Raw(Star, 7, 0),
                 instr2Raw(Call, func_ref), instr2Raw(Mul, 2, 0),
                 instr2Raw(Ret)},
-            2, 8),
+            1, 8),
         func_ref);
     loadI(Call, func_ref);
     load(Ret);
