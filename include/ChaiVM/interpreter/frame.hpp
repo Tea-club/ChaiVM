@@ -31,7 +31,7 @@ public:
 private:
     memory::LinearAllocator<chsize_t> alloc_;
     Frame *prev_;
-    size_t regsize;
+    size_t regsize_;
     std::vector<chsize_t, memory::LinearAllocator<chsize_t>> registers_;
 };
 
