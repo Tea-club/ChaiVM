@@ -546,4 +546,5 @@ TEST_F(ExecutorTest, Call) {
     update();
     exec_.run();
     EXPECT_EQ(static_cast<int64_t>(exec_.acc()), val2 - val1);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
