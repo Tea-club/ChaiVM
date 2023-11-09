@@ -10,10 +10,13 @@ static void BM_SquareEquation(benchmark::State &state) {
     // Perform setup here
     CodeManWrapper wrapper{};
     initSquareEquatino(wrapper);
-    Executor executor{&wrapper.manager_};
+
     for (auto _ : state) {
+        chai::memory::LinearBuffer buffer_ =
+            chai::memory::LinearBuffer(1024 * 256);
+        ;
+        Executor executor{&wrapper.manager_, buffer_};
         executor.run();
-        executor.restart();
     }
 }
 // Register the function as a benchmark
@@ -32,6 +35,7 @@ static void initSquareEquatino(CodeManWrapper &codeman) {
     const RegisterId r9 = 9;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wunused-variable"
     const RegisterId r10 = 10;
 #pragma GCC diagnostic pop
     const RegisterId r11 = 11;

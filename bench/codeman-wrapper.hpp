@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ChaiVM/interpreter/executor.hpp"
-#include "ChaiVM/utils/chai-file.hpp"
+#include "ChaiVM/utils/file-format/chai-file.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
 
 using namespace chai::interpreter;
@@ -35,5 +35,5 @@ public:
 
 public:
     CodeManager manager_;
-    ChaiFile chaiFile_;
+    chai::utils::fileformat::ChaiFile chaiFile_;
 };
