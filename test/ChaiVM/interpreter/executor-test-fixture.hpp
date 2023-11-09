@@ -29,45 +29,25 @@ protected:
      */
     void loadRR(chai::interpreter::Operation op,
                 chai::interpreter::RegisterId reg1,
-                chai::interpreter::RegisterId reg2 = 0) {
-        chaiFile_.addInstr(chai::utils::instr2Raw(op, reg1, reg2));
-    }
-
+                chai::interpreter::RegisterId reg2 = 0);
     void loadRI(chai::interpreter::Operation op,
                 chai::interpreter::RegisterId reg1,
-                chai::interpreter::Immidiate imm) {
-        chaiFile_.addInstr(chai::utils::inst2RawRI(op, reg1, imm));
-    }
+                chai::interpreter::Immidiate imm);
 
     int loadI(chai::interpreter::Operation op,
-              chai::interpreter::Immidiate imm) {
-        return chaiFile_.addInstr(chai::utils::instr2Raw(op, imm));
-    }
+              chai::interpreter::Immidiate imm);
 
-    void loadWithConst(chai::interpreter::Operation op, int64_t data) {
-        chaiFile_.addWithConst(op, data);
-    }
+    void loadWithConst(chai::interpreter::Operation op, int64_t data);
 
-    void loadWithConst(chai::interpreter::Operation op, double data) {
-        chaiFile_.addWithConst(op, data);
-    }
+    void loadWithConst(chai::interpreter::Operation op, double data);
 
-    int load(chai::interpreter::Operation op) {
-        return chaiFile_.addInstr(chai::utils::instr2Raw(op));
-    }
+    int load(chai::interpreter::Operation op);
 
-    void update() {
-        chaiFile_.toFile(PATH);
-        codeManager_.load(PATH);
-    }
+    void update();
 
-    void SetUp() override {
-        PATH = std::string{"test"}
-                   .append(std::to_string(counter++))
-                   .append(".chai");
-    }
+    void SetUp() override ;
 
-    void TearDown() override { std::remove(PATH.c_str()); }
+    void TearDown() override ;
 
     static std::atomic<int> counter;
     ChaiFile chaiFile_;
@@ -75,5 +55,3 @@ protected:
     chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);
     chai::interpreter::Executor exec_{&codeManager_, buffer_};
 };
-
-std::atomic<int> ExecutorTest::counter{0};
