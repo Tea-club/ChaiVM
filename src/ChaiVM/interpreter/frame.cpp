@@ -18,4 +18,27 @@ void Frame::copyLastRegs() {
     }
 }
 
+chai::chsize_t &Frame::operator[](size_t n) & {
+    assert(n < regsize);
+    return registers_[n];
+}
+const chsize_t &Frame::operator[](size_t n) const & {
+    assert(n < regsize);
+    return registers_[n];
+}
+
+/**
+ * Get state.
+ * @return
+ */
+std::vector<chsize_t> Frame::copyState() {
+    std::vector<chsize_t> ret{registers_.size()};
+    for (auto item : registers_) {
+        ret.push_back(item);
+    }
+    return ret;
+}
+
+Frame *Frame::back() { return prev_; }
+
 } // namespace chai::interpreter

@@ -5,7 +5,6 @@
 #include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "decoder.hpp"
 #include "frame.hpp"
-#include "reg-file.hpp"
 
 namespace chai::interpreter {
 
@@ -13,8 +12,7 @@ class Executor {
 public:
     using Handler = void (Executor::*)(Instruction);
 
-    Executor(CodeManager *manager, memory::LinearBuffer &buffer)
-        : codeManager_(manager), buffer_(buffer), allocator_{buffer_} {}
+    Executor(CodeManager *manager, memory::LinearBuffer &buffer);
 
     /**
      * Loads the first frame (public static void main).
@@ -23,18 +21,12 @@ public:
 
     void run();
 
-    chsize_t &pc() {
-        assert(currentFrame_ != nullptr);
-        return currentFrame_->pc_;
-    }
-    chsize_t pc() const {
-        assert(currentFrame_ != nullptr);
-        return currentFrame_->pc_;
-    }
-    chsize_t &acc() { return acc_; }
-    chsize_t acc() const { return acc_; }
+    chsize_t &pc();
+    chsize_t pc() const;
+    chsize_t &acc();
+    chsize_t acc() const;
 
-    Frame const *getCurrentFrame() const { return this->currentFrame_; }
+    Frame const *getCurrentFrame() const;
 
 private:
     inline void advancePc();

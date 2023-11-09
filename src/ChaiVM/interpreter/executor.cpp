@@ -11,6 +11,9 @@ namespace chai::interpreter {
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
+Executor::Executor(CodeManager *manager, memory::LinearBuffer &buffer)
+    : codeManager_(manager), buffer_(buffer), allocator_{buffer_} {}
+
 void Executor::init() {
     assert(currentFrame_ == nullptr); // No current frame
     currentFrame_ = new (allocator_.allocate(1))
@@ -23,6 +26,20 @@ void Executor::run() {
     assert(currentFrame_ != nullptr);
     DO_NEXT_INS()
 }
+
+chsize_t &Executor::pc() {
+    assert(currentFrame_ != nullptr);
+    return currentFrame_->pc_;
+}
+chsize_t Executor::pc() const {
+    assert(currentFrame_ != nullptr);
+    return currentFrame_->pc_;
+}
+
+chsize_t &Executor::acc() { return acc_; }
+chsize_t Executor::acc() const { return acc_; }
+
+Frame const *Executor::getCurrentFrame() const { return this->currentFrame_; }
 
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 

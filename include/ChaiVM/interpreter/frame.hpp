@@ -13,28 +13,16 @@ public:
 
     void copyLastRegs();
 
-    chai::chsize_t &operator[](size_t n) & {
-        assert(n < regsize);
-        return registers_[n];
-    }
-    const chsize_t &operator[](size_t n) const & {
-        assert(n < regsize);
-        return registers_[n];
-    }
+    chai::chsize_t &operator[](size_t n) &;
+    const chsize_t &operator[](size_t n) const &;
 
     /**
      * Get state.
      * @return
      */
-    std::vector<chsize_t> copyState() {
-        std::vector<chsize_t> ret{registers_.size()};
-        for (auto item : registers_) {
-            ret.push_back(item);
-        }
-        return ret;
-    }
+    std::vector<chsize_t> copyState();
 
-    Frame *back() { return prev_; }
+    Frame *back();
 
 public:
     Function const &func_;
