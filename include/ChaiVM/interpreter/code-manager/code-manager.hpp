@@ -54,7 +54,7 @@ private:
     /**
      * Runtime constant pool. Constants(excepting Strings) with id [imm] can be
      * retrieved via this vector. If [imm] is String then the string keeps in
-     * stringPool_[dispatch_[imm]].
+     * stringPool_[constantPool_[imm]].
      */
     std::vector<chsize_t> constantPool_;
 

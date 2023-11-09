@@ -51,9 +51,9 @@ ChaiFile::addFunction(chai::interpreter::Immidiate access_flags,
         std::make_unique<ConstFuncNameAndType>(name_index, descriptor_index));
     uint32_t code_len = instrs.size() * sizeof(chai::bytecode_t);
     functions_.push_back(
-        FunctionInfo{.access_flags = access_flags,
-                     .name_and_type_index = func_name_and_type_index,
-                     .atts_count = 1, // Code only
+        FunctionInfo{.accessFlags_ = access_flags,
+                     .nameAndTypeIndex_ = func_name_and_type_index,
+                     .attsCount_ = 1, // Code only
                      .attNameIndex_ = codeAttStr_,
                      .attLen_ = 6 + code_len,
                      .maxRegisters_ = max_regs,

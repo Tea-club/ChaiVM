@@ -36,8 +36,9 @@ void ExecutorTest::update() {
 }
 
 void ExecutorTest::SetUp() {
-    PATH =
-        std::string{"test"}.append(std::to_string(counter++)).append(".chai");
+    PATH = std::string{"test_"}.append(std::string{
+        testing::UnitTest::GetInstance()->current_test_info()->name()});
+    std::remove(PATH.c_str());
 }
 
 void ExecutorTest::TearDown() { std::remove(PATH.c_str()); }

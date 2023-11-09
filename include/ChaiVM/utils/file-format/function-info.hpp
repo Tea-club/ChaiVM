@@ -1,9 +1,15 @@
 #pragma once
 
+#include "vector"
+#include <cstdint>
+
+#include "ChaiVM/interpreter/instruction.hpp"
+#include "ChaiVM/types.hpp"
+
 struct FunctionInfo {
-    chai::interpreter::Immidiate access_flags;
-    chai::interpreter::Immidiate name_and_type_index;
-    chai::interpreter::Immidiate atts_count;
+    chai::interpreter::Immidiate accessFlags_;
+    chai::interpreter::Immidiate nameAndTypeIndex_;
+    chai::interpreter::Immidiate attsCount_;
     chai::interpreter::Immidiate attNameIndex_;
     uint32_t attLen_;
     uint8_t maxRegisters_;

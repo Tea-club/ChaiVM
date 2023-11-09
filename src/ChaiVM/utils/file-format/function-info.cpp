@@ -1,12 +1,13 @@
+#include <fstream>
+
 #include "ChaiVM/utils/file-format/function-info.hpp"
 
 void FunctionInfo::dump(std::ofstream &ofs) const {
-    ofs.write(reinterpret_cast<const char *>(&access_flags),
-              sizeof(access_flags));
-    ofs.write(reinterpret_cast<const char *>(&name_and_type_index),
-              sizeof(name_and_type_index));
-    ofs.write(reinterpret_cast<const char *>(&atts_count),
-              sizeof(atts_count));
+    ofs.write(reinterpret_cast<const char *>(&accessFlags_),
+              sizeof(accessFlags_));
+    ofs.write(reinterpret_cast<const char *>(&nameAndTypeIndex_),
+              sizeof(nameAndTypeIndex_));
+    ofs.write(reinterpret_cast<const char *>(&attsCount_), sizeof(attsCount_));
     ofs.write(reinterpret_cast<const char *>(&attNameIndex_),
               sizeof(attNameIndex_));
     ofs.write(reinterpret_cast<const char *>(&attLen_), sizeof(attLen_));
