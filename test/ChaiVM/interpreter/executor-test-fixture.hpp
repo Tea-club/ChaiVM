@@ -49,7 +49,6 @@ protected:
 
     void TearDown() override;
 
-    static std::atomic<int> counter;
     ChaiFile chaiFile_;
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);

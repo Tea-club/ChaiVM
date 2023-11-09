@@ -42,5 +42,3 @@ void ExecutorTest::SetUp() {
 }
 
 void ExecutorTest::TearDown() { std::remove(PATH.c_str()); }
-
-std::atomic<int> ExecutorTest::counter{0};
