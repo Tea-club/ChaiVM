@@ -13,8 +13,7 @@ public:
 
     chai::interpreter::Immidiate addInstr(chai::bytecode_t raw);
 
-    chai::interpreter::Immidiate
-    addConst(std::unique_ptr<Constant> &&constant);
+    chai::interpreter::Immidiate addConst(std::unique_ptr<Constant> &&constant);
 
     void addWithConst(chai::interpreter::Operation op, int64_t data);
 
@@ -30,9 +29,10 @@ public:
      * @return immidiate - Id of the function (ConstFuncNameAndType).
      */
     chai::interpreter::Immidiate
-    addFunction(chai::interpreter::Immidiate access_flags, const std::string& name,
-                const std::string& descriptor, const std::vector<chai::bytecode_t>& instrs,
-                uint8_t num_args, uint8_t max_regs = 100);
+    addFunction(chai::interpreter::Immidiate access_flags,
+                const std::string &name, const std::string &descriptor,
+                const std::vector<chai::bytecode_t> &instrs, uint8_t num_args,
+                uint8_t max_regs = 100);
 
     /**
      * What id will return addFunction if call it in the current state.

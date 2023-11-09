@@ -6,7 +6,8 @@ namespace chai::interpreter {
 
 Frame::Frame(Frame *prev, const Function &func, memory::LinearBuffer &buffer)
     : func_(func), alloc_(memory::LinearAllocator<chsize_t>{buffer}),
-      prev_(prev), regsize_(func.numRegs), registers_(func.numRegs, 0, alloc_) {}
+      prev_(prev), regsize_(func.numRegs), registers_(func.numRegs, 0, alloc_) {
+}
 
 void Frame::copyLastRegs() {
     assert(prev_ != nullptr);
@@ -14,7 +15,8 @@ void Frame::copyLastRegs() {
     assert(nargs <= regsize_);
     assert(nargs <= prev_->regsize_);
     for (size_t i = 0; i < nargs; ++i) {
-        registers_[regsize_ - 1 - i] = prev_->registers_[prev_->regsize_ - 1 - i];
+        registers_[regsize_ - 1 - i] =
+            prev_->registers_[prev_->regsize_ - 1 - i];
     }
 }
 
