@@ -4,12 +4,12 @@ struct FunctionInfo {
     chai::interpreter::Immidiate access_flags;
     chai::interpreter::Immidiate name_and_type_index;
     chai::interpreter::Immidiate atts_count;
-    chai::interpreter::Immidiate att_name_index;
-    uint32_t att_len;
-    uint8_t max_registers;
-    uint8_t nargs;
-    uint32_t code_len;
-    std::vector<chai::bytecode_t> code;
+    chai::interpreter::Immidiate attNameIndex_;
+    uint32_t attLen_;
+    uint8_t maxRegisters_;
+    uint8_t nargs_;
+    uint32_t codeLen_;
+    std::vector<chai::bytecode_t> code_;
 
     void dump(std::ofstream &ofs) const {
         ofs.write(reinterpret_cast<const char *>(&access_flags),
@@ -18,14 +18,14 @@ struct FunctionInfo {
                   sizeof(name_and_type_index));
         ofs.write(reinterpret_cast<const char *>(&atts_count),
                   sizeof(atts_count));
-        ofs.write(reinterpret_cast<const char *>(&att_name_index),
-                  sizeof(att_name_index));
-        ofs.write(reinterpret_cast<const char *>(&att_len), sizeof(att_len));
-        ofs.write(reinterpret_cast<const char *>(&max_registers),
-                  sizeof(max_registers));
-        ofs.write(reinterpret_cast<const char *>(&nargs), sizeof(nargs));
-        ofs.write(reinterpret_cast<const char *>(&code_len), sizeof(code_len));
-        for (const auto &ins : code) {
+        ofs.write(reinterpret_cast<const char *>(&attNameIndex_),
+                  sizeof(attNameIndex_));
+        ofs.write(reinterpret_cast<const char *>(&attLen_), sizeof(attLen_));
+        ofs.write(reinterpret_cast<const char *>(&maxRegisters_),
+                  sizeof(maxRegisters_));
+        ofs.write(reinterpret_cast<const char *>(&nargs_), sizeof(nargs_));
+        ofs.write(reinterpret_cast<const char *>(&codeLen_), sizeof(codeLen_));
+        for (const auto &ins : code_) {
             ofs.write(reinterpret_cast<const char *>(&ins),
                       sizeof(chai::bytecode_t));
         }

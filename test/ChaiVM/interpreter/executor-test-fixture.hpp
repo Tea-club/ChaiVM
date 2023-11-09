@@ -45,9 +45,9 @@ protected:
 
     void update();
 
-    void SetUp() override ;
+    void SetUp() override;
 
-    void TearDown() override ;
+    void TearDown() override;
 
     static std::atomic<int> counter;
     ChaiFile chaiFile_;

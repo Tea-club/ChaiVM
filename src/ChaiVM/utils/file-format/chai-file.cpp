@@ -54,12 +54,12 @@ ChaiFile::addFunction(chai::interpreter::Immidiate access_flags,
         FunctionInfo{.access_flags = access_flags,
                      .name_and_type_index = func_name_and_type_index,
                      .atts_count = 1, // Code only
-                     .att_name_index = codeAttStr_,
-                     .att_len = 6 + code_len,
-                     .max_registers = max_regs,
-                     .nargs = num_args,
-                     .code_len = code_len,
-                     .code = instrs});
+                     .attNameIndex_ = codeAttStr_,
+                     .attLen_ = 6 + code_len,
+                     .maxRegisters_ = max_regs,
+                     .nargs_ = num_args,
+                     .codeLen_ = code_len,
+                     .code_ = instrs});
     return func_name_and_type_index;
 }
 
