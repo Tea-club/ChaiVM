@@ -77,8 +77,8 @@ void CodeManager::loadPool(std::istream &istream) {
 }
 
 /*
- * @todo #1:90min We can use chai::utils::fileformat::FuncInfo here somehow. Read
- *  to structure and then work with their fields.
+ * @todo #1:90min We can use chai::utils::fileformat::FuncInfo here somehow.
+ * Read to structure and then work with their fields.
  */
 void CodeManager::loadFunction(std::istream &istream) {
     uint16_t access_flags;
