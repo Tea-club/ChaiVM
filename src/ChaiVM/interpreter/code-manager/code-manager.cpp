@@ -31,8 +31,8 @@ void CodeManager::loadPool(std::istream &istream) {
                  sizeof constant_count);
     dispatch_ = std::vector<Immidiate>(constant_count, -1);
     for (int i = 0; i < constant_count; ++i) {
-        char type;
-        istream.read(&type, sizeof type);
+        ConstantTag type;
+        istream.read(reinterpret_cast<char *>(&type), sizeof type);
         switch (type) {
         case CNST_I64:
             int64_t next_long;
