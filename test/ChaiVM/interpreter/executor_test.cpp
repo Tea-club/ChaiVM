@@ -57,7 +57,8 @@ TEST_F(ExecutorTest, mov) {
     loadWithConst(Ldia, val);
     loadRR(Star, r1, 0);
     loadRR(Mov, r1, r2);
-    load(Ldra);
+    loadWithConst(Mul, static_cast<int64_t>(-1));
+    loadRR(Ldra, r2, 0);
     load(Ret);
     update();
     exec_.run();
