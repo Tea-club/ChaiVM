@@ -1,5 +1,7 @@
 #include "ChaiVM/utils/file-format/chai-file.hpp"
 
+namespace chai::utils::fileformat {
+
 ChaiFile::ChaiFile(std::vector<chai::bytecode_t> &&instrs,
                    std::vector<std::unique_ptr<Constant>> &&pool)
     : rawInstrs_(instrs), pool_(std::move(pool)) {
@@ -117,3 +119,5 @@ void ChaiFile::dumpMainFunc(std::ofstream &ofs) const {
                   sizeof(chai::bytecode_t));
     }
 }
+
+} // namespace chai::utils::fileformat

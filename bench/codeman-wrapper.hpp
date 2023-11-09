@@ -35,5 +35,5 @@ public:
 
 public:
     CodeManager manager_;
-    ChaiFile chaiFile_;
+    chai::utils::fileformat::ChaiFile chaiFile_;
 };

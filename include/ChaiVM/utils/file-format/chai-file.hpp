@@ -4,6 +4,8 @@
 #include "ChaiVM/utils/file-format/function-info.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
 
+namespace chai::utils::fileformat {
+
 class ChaiFile {
 public:
     ChaiFile(std::vector<chai::bytecode_t> &&instrs,
@@ -58,3 +60,5 @@ private:
     chai::interpreter::Immidiate constFuncNameAndTypeIndex_;
     chai::interpreter::Immidiate codeAttStr_;
 };
+
+} // namespace chai::utils::fileformat

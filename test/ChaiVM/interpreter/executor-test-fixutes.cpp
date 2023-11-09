@@ -1,5 +1,7 @@
 #include "executor-test-fixture.hpp"
 
+using namespace chai::utils::fileformat;
+
 void ExecutorTest::loadRR(chai::interpreter::Operation op,
                           chai::interpreter::RegisterId reg1,
                           chai::interpreter::RegisterId reg2) {

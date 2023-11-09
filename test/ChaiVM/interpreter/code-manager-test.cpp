@@ -6,6 +6,7 @@
 
 using namespace chai::interpreter;
 using namespace chai::utils;
+using namespace chai::utils::fileformat;
 
 constexpr size_t MAIN_FUNC_ID = 0;
 

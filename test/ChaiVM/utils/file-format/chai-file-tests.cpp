@@ -4,6 +4,7 @@
 
 using chai::bytecode_t;
 using chai::utils::instr2Raw;
+using chai::utils::fileformat::ChaiFile;
 using namespace chai::interpreter;
 
 TEST(ChaiFile, nextFunc) {

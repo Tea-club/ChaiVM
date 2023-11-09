@@ -4,6 +4,7 @@ using chai::bytecode_t;
 using chai::utils::inst2RawRI;
 using chai::utils::instr2Raw;
 using namespace chai::interpreter;
+using namespace chai::utils::fileformat;
 
 TEST_F(ExecutorTest, SquareEquation) {
     // r1 = 1.0, r2 = -5.0, r3 = 6.0

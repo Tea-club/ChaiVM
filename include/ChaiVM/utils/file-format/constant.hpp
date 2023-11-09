@@ -4,67 +4,63 @@
 #include "ChaiVM/interpreter/instruction.hpp"
 #include "ChaiVM/types.hpp"
 
+namespace chai::utils::fileformat {
+
 struct Constant {
-    void putType(std::ofstream &ofs) { ofs.put(this->getTag()); }
+    void putType(std::ofstream &ofs);
 
     virtual void write(std::ofstream &ofs) = 0;
+
     virtual uint8_t getTag() = 0;
+
     virtual ~Constant() = default;
 };
 
 struct ConstI64 : public Constant {
     int64_t data_;
 
-    ConstI64(int64_t data) : data_(data){};
+    ConstI64(int64_t data);
 
-    void write(std::ofstream &ofs) override {
-        ofs.write(reinterpret_cast<const char *>(&data_), sizeof(int64_t));
-    }
-    uint8_t getTag() override {
-        return chai::interpreter::CodeManager::ConstantTag::CNST_I64;
-    }
+    void write(std::ofstream &ofs) override;
+
+    uint8_t getTag() override;
+
     ~ConstI64() override = default;
 };
 
 struct ConstF64 : public Constant {
     double data_;
-    ConstF64(double data) : data_(data){};
-    void write(std::ofstream &ofs) override {
-        ofs.write(reinterpret_cast<const char *>(&data_), sizeof(double));
-    }
-    uint8_t getTag() override {
-        return chai::interpreter::CodeManager::ConstantTag::CNST_F64;
-    }
+
+    ConstF64(double data);
+
+    void write(std::ofstream &ofs) override;
+
+    uint8_t getTag() override;
+
     ~ConstF64() override = default;
 };
 
 struct ConstFuncNameAndType : public Constant {
-    chai::interpreter::Immidiate name_index_;
-    chai::interpreter::Immidiate descriptor_index_;
+    chai::interpreter::Immidiate nameIndex_;
+    chai::interpreter::Immidiate descriptorIndex_;
+
     ConstFuncNameAndType(chai::interpreter::Immidiate name_index,
-                         chai::interpreter::Immidiate descriptor_index)
-        : name_index_{name_index}, descriptor_index_{descriptor_index} {};
-    void write(std::ofstream &ofs) override {
-        ofs.write(reinterpret_cast<const char *>(&name_index_),
-                  sizeof(name_index_));
-        ofs.write(reinterpret_cast<const char *>(&descriptor_index_),
-                  sizeof(descriptor_index_));
-    }
-    uint8_t getTag() override {
-        return chai::interpreter::CodeManager::ConstantTag::
-            CNST_FUNC_NAME_AND_TYPE;
-    }
+                         chai::interpreter::Immidiate descriptor_index);
+
+    void write(std::ofstream &ofs) override;
+
+    uint8_t getTag() override;
 };
 
 struct ConstRawStr : public Constant {
-    int16_t len_;
+    uint16_t len_;
     std::string str_;
-    ConstRawStr(std::string str) : len_(str.size()), str_(str) {}
-    void write(std::ofstream &ofs) override {
-        ofs.write(reinterpret_cast<const char *>(&len_), sizeof(len_));
-        ofs << str_;
-    }
-    uint8_t getTag() override {
-        return chai::interpreter::CodeManager::ConstantTag::CNST_RAW_STR;
-    }
+
+    ConstRawStr(std::string str);
+
+    void write(std::ofstream &ofs) override;
+
+    uint8_t getTag() override;
 };
+
+} // namespace chai::utils::fileformat
