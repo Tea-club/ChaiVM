@@ -217,3 +217,8 @@ instructions:
     mnemonic: Call
     format: I
     description: "Calls function [imm]. Imm is reference to function in constant pool named constant_func_name_and_type."
+  -
+    fixedvalue: 42
+    mnemonic: NewArray
+    format: RI
+    description: "Allocates array with number of elements from r1 register. Type of elements are specified in imm."
