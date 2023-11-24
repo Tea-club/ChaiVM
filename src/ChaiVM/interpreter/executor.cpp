@@ -313,6 +313,8 @@ void Executor::call(Instruction ins) {
     pc() = 0;
     DO_NEXT_INS();
 }
+void Executor::newi64array(Instruction ins) {}
+void Executor::newf64array(Instruction ins) {}
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)

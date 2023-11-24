@@ -219,6 +219,11 @@ instructions:
     description: "Calls function [imm]. Imm is reference to function in constant pool named constant_func_name_and_type."
   -
     fixedvalue: 42
-    mnemonic: NewArray
-    format: RI
-    description: "Allocates array with number of elements from r1 register. Type of elements are specified in imm."
+    mnemonic: NewI64Array
+    format: R
+    description: "Allocates array of type i64 with number of elements from r1 register. A reference to this new array is stored in acc."
+  -
+    fixedvalue: 43
+    mnemonic: NewF64Array
+    format: R
+    description: "Allocates array of type f64 with number of elements from r1 register. A reference to this new array is stored in acc."
