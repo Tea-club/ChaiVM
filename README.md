@@ -22,7 +22,7 @@ fn main 8 0:
   Mov 0 r0
   Ret
 ```
-Where Ret returns exit code `r0`. "main" is name if the starting function, `8` is number of registers in it, `0` is number of arguments passing into the function. 
+Where Ret returns exit code `r0`. "main" is name of the starting function, `8` is number of registers in it, `0` is number of arguments passing into the function. 
 This script compiled to chai-bytecode should print "0", because '0' == 48.
 ## Chai file format
 Our file format is similar to jvm ClassFile Structure. Its content is the following:
