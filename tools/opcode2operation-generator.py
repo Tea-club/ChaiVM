@@ -26,12 +26,16 @@ def main() -> int:
     # print(max(opcodes))
     tpl = """{{ disclaimer }}
 #pragma once
+#include <string_view>
 namespace chai::interpreter {
 enum Operation {
     Inv = 0,
 {% for n, item in enumerate(items, 1) %}
     {{ item.mnemonic }} = {{ item.fixedvalue }},
 {% endfor %}
+};
+constexpr std::string_view OP_TO_STR[] = {
+{% for op in operations %}"{{ op }}", {% endfor %}
 };
 } // namespace chai::interpreter
 
@@ -41,6 +45,7 @@ enum Operation {
             sys.argv[0] + ' at ' + datetime.now().strftime("%d.%m.%Y %H:%M:%S") + ' */',
         'items': instructions,
         'enumerate': enumerate,
+        'operations': opcodes_arr
     }
     directory = os.path.dirname(sys.argv[1])
     if not os.path.exists(directory):
@@ -53,13 +58,7 @@ enum Operation {
     )
     fp.close()
 
-    print("{", end=" ")
-    for operation in opcodes_arr:
-        print('"' + operation + '"' + ",", end=" ")
-    print("}")
-
     return 0
-
 
 if __name__ == '__main__':
     sys.exit(main())
