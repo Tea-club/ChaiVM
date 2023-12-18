@@ -220,10 +220,30 @@ instructions:
   -
     fixedvalue: 42
     mnemonic: NewI64Array
-    format: R
-    description: "Allocates array of type i64 with number of elements from r1 register. A reference to this new array is stored in acc."
+    format: N
+    description: "Allocates array of type i64 with number of elements from acc register. A reference to this new array is stored in acc."
   -
     fixedvalue: 43
-    mnemonic: NewF64Array
+    mnemonic: GetI64FromArr
     format: R
-    description: "Allocates array of type f64 with number of elements from r1 register. A reference to this new array is stored in acc."
+    description: "Gets i64 from i64 array in acc and puts it to acc."
+  -
+    fixedvalue: 44
+    mnemonic: SetI64InArr
+    format: RR
+    description: "Sets i64 value to i64 array in acc and puts it to acc."
+  -
+    fixedvalue: 45
+    mnemonic: NewF64Array
+    format: N
+    description: "Allocates array of type f64 with number of elements from acc register. A reference to this new array is stored in acc."
+  -
+    fixedvalue: 46
+    mnemonic: GetF64FromArr
+    format: R
+    description: "Gets f64 from f64 array in acc and puts it to acc."
+  -
+    fixedvalue: 47
+    mnemonic: SetF64InArr
+    format: RR
+    description: "Sets f64 value to f64 array in acc and puts it to acc."

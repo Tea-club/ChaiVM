@@ -74,7 +74,11 @@ private:
     void g0t0(Instruction ins);
     void call(Instruction ins);
     void newi64array(Instruction ins);
+    void get_i64from_arr(Instruction ins);
+    void set_i64in_arr(Instruction ins);
     void newf64array(Instruction ins);
+    void get_f64from_arr(Instruction ins);
+    void set_f64in_arr(Instruction ins);
 
     static constexpr Handler HANDLER_ARR[] = {
         &Executor::inv,         &Executor::nop,        &Executor::ret,
@@ -91,7 +95,7 @@ private:
         &Executor::if_icmpge,   &Executor::if_icmplt,  &Executor::if_icmple,
         &Executor::if_acmpeq,   &Executor::if_acmpne,  &Executor::cmpgf,
         &Executor::cmplf,       &Executor::g0t0,       &Executor::call,
-        &Executor::newi64array, &Executor::newf64array};
+        &Executor::newi64array, &Executor::get_i64from_arr, &Executor::set_i64in_arr, &Executor::newf64array, &Executor::get_f64from_arr, &Executor::set_f64in_arr};
 
 private:
     chsize_t acc_;

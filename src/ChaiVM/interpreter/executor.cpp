@@ -48,6 +48,7 @@ void Executor::inv(Instruction ins) {
                              std::to_string(pc()));
 }
 void Executor::nop(Instruction ins) {
+    std::cout << "nop" << std::endl;
     advancePc();
     DO_NEXT_INS()
 }
@@ -69,6 +70,7 @@ void Executor::mov(Instruction ins) {
 void Executor::ldia(Instruction ins) {
     acc() = codeManager_->getCnst(ins.immidiate);
     advancePc();
+    std::cout << "ldia" << std::endl;
     DO_NEXT_INS()
 }
 void Executor::ldra(Instruction ins) {
@@ -77,7 +79,10 @@ void Executor::ldra(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::star(Instruction ins) {
+    std::cout << "star:  ins.r1 = " << (int)ins.r1 << std::endl;
     (*currentFrame_)[ins.r1] = acc();
+    std::cout << "star:  (*currentFrame_)[ins.r1] = " << std::bit_cast<double>((*currentFrame_)[ins.r1])  << std::endl;
+
     advancePc();
     DO_NEXT_INS()
 }
@@ -313,8 +318,78 @@ void Executor::call(Instruction ins) {
     pc() = 0;
     DO_NEXT_INS();
 }
-void Executor::newi64array(Instruction ins) {}
-void Executor::newf64array(Instruction ins) {}
+void Executor::newi64array(Instruction ins) {
+    std::cout << "newi64array1: acc = " << acc() << std::endl;
+    int n = static_cast<int64_t>(acc());
+    memory::LinearAllocator<int64_t> allocator{buffer_};
+    assert(n >= 0);
+    auto *arr = new (allocator.allocate(n)) int64_t[n]();
+    for (int i = 0; i < n; ++i) {
+        std::cout << "newi64array: arr[" << i << "] = " << arr[i] << std::endl;
+    }
+    std::cout << "newi64array: arr[0] = " << arr[0] << std::endl;
+    std::cout << "arr = " << arr << std::endl;
+    acc() = reinterpret_cast<chsize_t>(arr);
+    std::cout << "newi64array2" << std::endl;
+    advancePc();
+    DO_NEXT_INS();
+}
+void Executor::get_i64from_arr(Instruction ins) {
+    std::cout << "get_i64from_arr: ins.r1 = " << (int)ins.r1 << std::endl;
+    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    std::cout << "get_i64from_arr: i = " << i << std::endl;
+    auto *arr = reinterpret_cast<int64_t *>(acc());
+    acc() = arr[i];
+    std::cout << "arr = " << arr << std::endl;
+    std::cout << "arr[" << i << "] = " << arr[i] << std::endl;
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::set_i64in_arr(Instruction ins) {
+    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto *arr = reinterpret_cast<int64_t *>(acc());
+    arr[i] = static_cast<int64_t>((*currentFrame_)[ins.r2]);
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::newf64array(Instruction ins) {
+    std::cout << "newi64array1: acc = " << acc() << std::endl;
+    int n = static_cast<int64_t>(acc());
+    memory::LinearAllocator<double> allocator{buffer_};
+    assert(n >= 0);
+    auto *arr = new (allocator.allocate(n)) double [n]();
+    for (int i = 0; i < n; ++i) {
+        std::cout << "newi64array: arr[" << i << "] = " << arr[i] << std::endl;
+    }
+    std::cout << "newi64array: arr[0] = " << arr[0] << std::endl;
+    std::cout << "arr = " << arr << std::endl;
+    acc() = reinterpret_cast<chsize_t>(arr);
+    std::cout << "newi64array2" << std::endl;
+    advancePc();
+    DO_NEXT_INS();
+}
+void Executor::get_f64from_arr(Instruction ins) {
+    std::cout << "get_i64from_arr: ins.r1 = " << (int)ins.r1 << std::endl;
+    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    std::cout << "get_i64from_arr: i = " << i << std::endl;
+    auto *arr = reinterpret_cast<double *>(acc());
+    acc() = std::bit_cast<int64_t>(arr[i]);
+    std::cout << "arr = " << arr << std::endl;
+    std::cout << "arr[" << i << "] = " << arr[i] << std::endl;
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::set_f64in_arr(Instruction ins) {
+    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto *arr = reinterpret_cast<double *>(acc());
+    arr[i] = std::bit_cast<double >((*currentFrame_)[ins.r2]);
+    std::cout << "set_f64in_arr: arr[i] = " << arr[i] << std::endl;
+    advancePc();
+    DO_NEXT_INS();
+}
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)

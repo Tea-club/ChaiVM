@@ -64,6 +64,13 @@ TEST_F(ExecutorTest, SquareEquation) {
     EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.acc()), 2.0);
 }
 
+/*
+ * factorial(i):
+ *   return i != 1 ?
+ *     factorial(i-1)
+ *     :
+ *     1
+ */
 TEST_F(ExecutorTest, Factorial) {
     int64_t n = static_cast<int64_t>(5);
     Immidiate one = chaiFile_.addConst(std::make_unique<ConstI64>(1));
