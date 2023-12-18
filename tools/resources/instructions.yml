@@ -15,115 +15,205 @@ instructions:
     fixedvalue: 1
     mnemonic: Nop
     format: N
+    description: "Does nothing"
   -
     fixedvalue: 2
     mnemonic: Ret
     format: N
+    description: "Returns a value via acc"
   -
     fixedvalue: 3
     mnemonic: Mov
     format: RR
+    description: "i64, moves value from ri to rj"
   -
     fixedvalue: 4
     mnemonic: Ldia
     format: R
+    description: "i64, loads constant [i] to acc"
   -
     fixedvalue: 5
     mnemonic: Ldra
     format: R
+    description: "i64, loads the R1 to acc"
   -
     fixedvalue: 6
     mnemonic: Star
     format: R
+    description: "i64, copies val of acc into register ri"
   -
     fixedvalue: 7
     mnemonic: Add
     format: R
+    description: "i64, Adds R1 to acc"
   -
     fixedvalue: 8
     mnemonic: Addi
     format: I
+    description: "i64, Adds [imm] to acc"
   -
     fixedvalue: 9
     mnemonic: Sub
     format: R
+    description: "i64, sub R1 from acc"
   -
     fixedvalue: 10
     mnemonic: Subi
     format: I
+    description: "i64, sub [imm] from acc"
   -
     fixedvalue: 11
     mnemonic: Mul
     format: R
+    description: "i64, mul acc by R1"
   -
     fixedvalue: 12
     mnemonic: Muli
     format: I
+    description: "i64, mul acc by [imm]"
   -
     fixedvalue: 13
     mnemonic: Div
     format: R
+    description: "i64, divides acc by R1"
   -
     fixedvalue: 14
     mnemonic: Divi
     format: I
+    description: "i64, divides acc by [imm]"
   -
     fixedvalue: 15
     mnemonic: Ldiaf
     format: R
+    description: "f64, loads constant [i] to acc"
   -
     fixedvalue: 16
     mnemonic: Addf
     format: R
+    description: "f64, Adds R1 to acc"
   -
     fixedvalue: 17
     mnemonic: Addif
     format: I
+    description: "f64, Adds [imm] to acc"
   -
     fixedvalue: 18
     mnemonic: Subf
     format: R
+    description: "f64, sub R1 from acc"
   -
     fixedvalue: 19
     mnemonic: Subif
     format: I
+    description: "i64, sub [imm] from acc"
   -
     fixedvalue: 20
     mnemonic: Mulf
     format: R
+    description: "f64, mul acc by R1"
   -
     fixedvalue: 21
     mnemonic: Mulif
     format: I
+    description: "f64, mul acc by [imm]"
   -
     fixedvalue: 22
     mnemonic: Divf
     format: R
+    description: "f64, divides acc by R1"
   -
     fixedvalue: 23
     mnemonic: Divif
     format: I
+    description: "f64, divides acc by [imm]"
   -
     fixedvalue: 24
     mnemonic: IcPrint
     format: N
+    description: "Intrinsic. Prints char, containing by the first byte of acc"
   -
     fixedvalue: 25
     mnemonic: IcScani
     format: N
+    description: "Intrinsic. Scans i64 from stdin"
   -
     fixedvalue: 26
     mnemonic: IcScanf
     format: N
+    description: "Intrinsic. Scans f64 from stdin"
   -
     fixedvalue: 27
     mnemonic: IcSqrt
     format: N
+    description: "f64, Intrinsic. Calculates sqrt of acc."
   -
     fixedvalue: 28
     mnemonic: IcSin
     format: N
+    description: "f64, Intrinsic. Calculates sin of acc."
   -
     fixedvalue: 29
     mnemonic: IcCos
     format: N
+    description: "f64, Intrinsic. Calculates cos of acc."
+  -
+    fixedvalue: 30
+    mnemonic: If_icmpeq
+    format: N
+    description: "i64, if acc == r1 then branch to instruction at offset [imm] otherwise just next instr"
+  -
+    fixedvalue: 31
+    mnemonic: If_icmpne
+    format: RI
+    description: "i64, if acc != r1 then branch to instruction at offset [imm] otherwise just next instr"
+  -
+    fixedvalue: 32
+    mnemonic: If_icmpgt
+    format: RI
+    description: "i64, if acc > r1 then branch to instruction at offset [imm] otherwise just next instr"
+  -
+    fixedvalue: 33
+    mnemonic: If_icmpge
+    format: RI
+    description: "i64, if acc >= r1 then branch to instruction at offset [imm] otherwise just next instr"
+  -
+    fixedvalue: 34
+    mnemonic: If_icmplt
+    format: RI
+    description: "i64, if acc < r1 then branch to instruction at offset [imm] otherwise just next instr"
+  -
+    fixedvalue: 35
+    mnemonic: If_icmple
+    format: RI
+
+    description: "i64, if acc <= r1 then branch to instruction at offset [imm] otherwise just next instr"
+  -
+    fixedvalue: 36
+    mnemonic: If_acmpeq
+    format: RI
+    description: "ref, if references are equal, branch to instruction at offset [imm]"
+  -
+    fixedvalue: 37
+    mnemonic: If_acmpne
+    format: RI
+    description: "ref, if references are not equal, branch to instruction at offset [imm]"
+  -
+    fixedvalue: 38
+    mnemonic: Сmpgf
+    format: R
+    description: "f64 -> i64, compare acc with r1. Acc became 1 i64 if greater than r1, 0 if equal, otherwise -1"
+  -
+    fixedvalue: 39
+    mnemonic: Cmplf
+    format: R
+    description: "f64 -> i64, compare acc with r1. Acc became 1 i64 if less than r1, 0 if equal, otherwise -1"
+  -
+    fixedvalue: 40
+    mnemonic: Goto
+    format: I
+    description: "Goes to another instruction at branchoffset [imm]"
+  -
+    fixedvalue: 41
+    mnemonic: Call
+    format: I
+    description: "Calls function [imm]. Imm is reference to function in constant pool named constant_func_name_and_type."

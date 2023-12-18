@@ -2,9 +2,9 @@
 
 #include <bit>
 
-#include "code-manager.hpp"
+#include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "decoder.hpp"
-#include "reg-file.hpp"
+#include "frame.hpp"
 
 namespace chai::interpreter {
 
@@ -12,12 +12,23 @@ class Executor {
 public:
     using Handler = void (Executor::*)(Instruction);
 
-    Executor(CodeManager *manager);
+    Executor(CodeManager *manager, memory::LinearBuffer &buffer);
+
+    /**
+     * Loads the first frame (public static void main).
+     */
+    void init();
+
     void run();
-    void restart();
-    const RegisterFile &getState() const &;
+
+    chsize_t &acc();
+    chsize_t acc() const;
+
+    Frame const *getCurrentFrame() const;
 
 private:
+    chsize_t &pc();
+    chsize_t pc() const;
     inline void advancePc();
     void inv(Instruction ins);
     void nop(Instruction ins);
@@ -50,25 +61,43 @@ private:
     void icsqrt(Instruction ins);
     void icsin(Instruction ins);
     void iccos(Instruction ins);
+    void if_icmpeq(Instruction ins);
+    void if_icmpne(Instruction ins);
+    void if_icmpgt(Instruction ins);
+    void if_icmpge(Instruction ins);
+    void if_icmplt(Instruction ins);
+    void if_icmple(Instruction ins);
+    void if_acmpeq(Instruction ins);
+    void if_acmpne(Instruction ins);
+    void cmpgf(Instruction ins);
+    void cmplf(Instruction ins);
+    void g0t0(Instruction ins);
+    void call(Instruction ins);
 
-    static constexpr Handler handlerArr[] = {
-        &Executor::inv,     &Executor::nop,     &Executor::ret,
-        &Executor::mov,     &Executor::ldia,    &Executor::ldra,
-        &Executor::star,    &Executor::add,     &Executor::addi,
-        &Executor::sub,     &Executor::subi,    &Executor::mul,
-        &Executor::muli,    &Executor::div,     &Executor::divi,
-        &Executor::ldiaf,   &Executor::addf,    &Executor::addif,
-        &Executor::subf,    &Executor::subif,   &Executor::mulf,
-        &Executor::mulif,   &Executor::divf,    &Executor::divif,
-        &Executor::icprint, &Executor::icscani, &Executor::icscanf,
-        &Executor::icsqrt,  &Executor::icsin,   &Executor::iccos};
+    static constexpr Handler HANDLER_ARR[] = {
+        &Executor::inv,       &Executor::nop,       &Executor::ret,
+        &Executor::mov,       &Executor::ldia,      &Executor::ldra,
+        &Executor::star,      &Executor::add,       &Executor::addi,
+        &Executor::sub,       &Executor::subi,      &Executor::mul,
+        &Executor::muli,      &Executor::div,       &Executor::divi,
+        &Executor::ldiaf,     &Executor::addf,      &Executor::addif,
+        &Executor::subf,      &Executor::subif,     &Executor::mulf,
+        &Executor::mulif,     &Executor::divf,      &Executor::divif,
+        &Executor::icprint,   &Executor::icscani,   &Executor::icscanf,
+        &Executor::icsqrt,    &Executor::icsin,     &Executor::iccos,
+        &Executor::if_icmpeq, &Executor::if_icmpne, &Executor::if_icmpgt,
+        &Executor::if_icmpge, &Executor::if_icmplt, &Executor::if_icmple,
+        &Executor::if_acmpeq, &Executor::if_acmpne, &Executor::cmpgf,
+        &Executor::cmplf,     &Executor::g0t0,      &Executor::call};
 
 private:
+    chsize_t acc_;
     CodeManager *codeManager_;
-    RegisterFile regFile_;
+    memory::LinearBuffer &buffer_;
+    Frame *currentFrame_ = nullptr;
 };
 
-inline void Executor::advancePc() { regFile_.pc() += sizeof(bytecode_t); }
+inline void Executor::advancePc() { pc() += sizeof(bytecode_t); }
 
 /**
  * @todo #8:30m>/DEV make this exception to take RegisterFile and return it's

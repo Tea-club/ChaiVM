@@ -2,6 +2,7 @@ add_library(chai_benchif INTERFACE)
 target_link_libraries(chai_benchif INTERFACE
     chai_include
     chai_interpreter
+    chai_memory
     chai_utils
     benchmark
 )

@@ -10,10 +10,12 @@ static void BM_SinCos(benchmark::State &state) {
     // Perform setup here
     CodeManWrapper wrapper{};
     initSinPlusCos(wrapper);
-    Executor executor{&wrapper.manager_};
     for (auto _ : state) {
+        chai::memory::LinearBuffer buffer_ =
+            chai::memory::LinearBuffer(1024 * 256);
+        ;
+        Executor executor{&wrapper.manager_, buffer_};
         executor.run();
-        executor.restart();
     }
 }
 BENCHMARK(BM_SinCos);
@@ -24,13 +26,12 @@ static void initSinPlusCos(CodeManWrapper &codeman) {
     const RegisterId r3 = 3;
     const RegisterId r4 = 4;
 
-    assert(sizeof(Immidiate) == sizeof(float));
     // r1 = 314, r2 = 271, r3 = 60
-    codeman.loadi(Ldiaf, std::bit_cast<Immidiate>(314.0f));
+    codeman.loadWithConst(Ldiaf, 314.0);
     codeman.load(Star, r1);
-    codeman.loadi(Ldiaf, std::bit_cast<Immidiate>(271.0f));
+    codeman.loadWithConst(Ldiaf, 271.0);
     codeman.load(Star, r2);
-    codeman.loadi(Ldiaf, std::bit_cast<Immidiate>(60.0f));
+    codeman.loadWithConst(Ldiaf, 60.0);
     codeman.load(Star, r3);
 
     // r4 = sin(r3) * r1
@@ -47,4 +48,5 @@ static void initSinPlusCos(CodeManWrapper &codeman) {
     // acc += r4
     codeman.load(Addf, r4);
     codeman.load(Ret);
+    codeman.update();
 }
