@@ -7,4 +7,4 @@ build/
 
 # ide stuff
 .idea
-cmake-build-debug
+cmake-build-*
