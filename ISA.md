@@ -1,6 +1,6 @@
 There is ChaiVM's accumulator(acc) based ISA.
 
-| Operatoin | Format | Description |
+| Operation | Format | Description |
 |:---------:|:------:|:------------|
 | Nop | N | Does nothing |
 | Ret | N | Returns a value via acc |
