@@ -30,3 +30,16 @@ TEST_F(AssemblerTest, run) {
     EXPECT_EQ(exec_.acc(), 48);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
+
+TEST_F(AssemblerTest, runWithStrings) {
+    write_input_ << "Ldia \" world\"\n"
+                 << "Star r2\n"
+                 << "Ldia \"Hello\"\n"
+                 << "StringConcat r2\n"
+                 << "Ret" << std::endl;
+    Assembler asM{input_, output_};
+    asM.assemble();
+    codeManager_.load(output_);
+    exec_.run();
+    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "Hello world");
+}

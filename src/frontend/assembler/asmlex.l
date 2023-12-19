@@ -14,6 +14,7 @@ INT             [+-]?[1-9][0-9]*
 FLOAT           [+-]?([1-9][0-9]*\.?[0-9]*|0\.[0-9]*|0)
 IDENTIFIER      [a-zA-Z_][a-zA-Z0-9_.]*
 FUNC            "fn"
+STRING          \"(\\.|[^"\\])*\"
 COMMA           ,
 
 %%
@@ -27,6 +28,7 @@ COMMA           ,
 "{"                 return processOpCurlyBracket();
 "}"                 return processClCurlyBracket();
 {COMMA}             return processComma();
+{STRING}            return processString();
 .                   return processUnknown();
 
 %%

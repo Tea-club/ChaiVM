@@ -79,7 +79,9 @@ private:
             return processRI(op);
         case chai::interpreter::Unknown:
         default:
-            throw AssembleError("Unknown instruction type", lex_.lineno());
+            throw AssembleError(
+                "Unknown instruction type in processInstruction",
+                lex_.lineno());
             break;
         }
     }
@@ -107,8 +109,17 @@ private:
             return chaiFile_.getWithConst(
                 op, (static_cast<AsmLex::Float *>(lex_.currentLexem().get())
                          ->value));
+        } else if (lex_.currentLexem()->type == AsmLex::STRING) {
+            std::string str =
+                static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
+            auto bytecode = chai::utils::instr2Raw(op, imm);
+            chaiFile_.addInstr(bytecode);
+            return bytecode;
         } else {
-            throw AssembleError("Unknown instruction type", lex_.lineno());
+            throw AssembleError("Unknown instruction type in ProcessI",
+                                lex_.lineno());
         }
     }
     chai::bytecode_t processRI(chai::interpreter::Operation op) {
@@ -125,8 +136,18 @@ private:
             return chai::utils::inst2RawRI(
                 op, regId,
                 static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value);
+        } else if (lex_.currentLexem()->type == AsmLex::STRING) {
+            std::string str =
+                static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
+            std::cout << "[ABOBA]: str = " << str << std::endl;
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
+            auto bytecode = chai::utils::inst2RawRI(op, regId, imm);
+            chaiFile_.addInstr(bytecode);
+            return bytecode;
         } else {
-            throw AssembleError("Unknown instruction type", lex_.lineno());
+            throw AssembleError("Unknown instruction type in processRI",
+                                lex_.lineno());
         }
     }
 

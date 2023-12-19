@@ -17,6 +17,7 @@ public:
         FLOAT,
         IDENTIFIER,
         FUNC,
+        STRING,
         OP_CURLY_BRACKET,
         CL_CURLY_BRACKET,
         COMMA,
@@ -51,6 +52,12 @@ public:
     public:
         Func(LexemType t) : Lexem(t) {}
         ~Func() override {}
+    };
+    class String final : public Lexem {
+    public:
+        String(LexemType t, std::string str) : Lexem(t), value(str) {}
+        std::string value;
+        ~String() override {}
     };
     class OpCurlyBracket final : public Lexem {
     public:
@@ -113,6 +120,12 @@ private:
     }
     int processComma() {
         currentLexem_ = std::make_unique<Coma>(LexemType::COMMA);
+        return 0;
+    }
+    int processString() {
+        std::string withQuotes(yytext);
+        currentLexem_ = std::make_unique<String>(
+            LexemType::STRING, withQuotes.substr(1, withQuotes.size() - 2));
         return 0;
     }
     int processUnknown() {
