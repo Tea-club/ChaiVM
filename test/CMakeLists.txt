@@ -4,6 +4,7 @@ target_link_libraries(chai_testif INTERFACE
     chai_include
     chai_interpreter
     chai_utils
+    front_asm
     chai_memory
     gmock_main
     gmock
@@ -31,3 +32,4 @@ include (CTest)
 chai_test(./dummy_test.cpp)
 
 add_subdirectory(ChaiVM)
+add_subdirectory(frontend)

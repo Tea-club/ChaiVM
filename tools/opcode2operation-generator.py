@@ -24,14 +24,31 @@ def main() -> int:
             raise RuntimeError("opcode " + str(instruction["fixedvalue"]) + " repeats")
         opcodes_arr[instruction["fixedvalue"]] = instruction["mnemonic"]
     # print(max(opcodes))
+    # @todo #41:90min OP_TO_FORMAT is generated incorrectly. Need to be fixed (add Unknown type for all possible instructions)!
+    # @todo #41:90min Generate OperationFormat enum automatically
     tpl = """{{ disclaimer }}
 #pragma once
+#include <string_view>
 namespace chai::interpreter {
+enum OperationFormat {
+    Unknown,
+    N,
+    R,
+    RR,
+    I,
+    RI
+};
 enum Operation {
     Inv = 0,
 {% for n, item in enumerate(items, 1) %}
     {{ item.mnemonic }} = {{ item.fixedvalue }},
 {% endfor %}
+};
+constexpr std::string_view OP_TO_STR[] = {
+{% for op in operations %}"{{ op }}", {% endfor %}
+};
+constexpr OperationFormat OP_TO_FORMAT[] = {
+Unknown, {% for n, item in enumerate(items, 1) %}{{ item.format }}, {% endfor %}
 };
 } // namespace chai::interpreter
 
@@ -41,8 +58,8 @@ enum Operation {
             sys.argv[0] + ' at ' + datetime.now().strftime("%d.%m.%Y %H:%M:%S") + ' */',
         'items': instructions,
         'enumerate': enumerate,
+        'operations': opcodes_arr
     }
-
     directory = os.path.dirname(sys.argv[1])
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -53,8 +70,8 @@ enum Operation {
         .render(content)
     )
     fp.close()
-    return 0
 
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main())

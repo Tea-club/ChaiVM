@@ -1,0 +1,30 @@
+%option yyclass="front::assembler::AsmLex"
+%option c++
+
+%{
+
+#include "frontend/assembler/asmlex.hpp"
+
+%}
+
+WS      [ \n\t\v]+
+COMMENT #.*
+
+INT             [+-]?[1-9][0-9]*
+FLOAT           [+-]?([1-9][0-9]*\.?[0-9]*|0\.[0-9]*|0)
+IDENTIFIER      [a-zA-Z_][a-zA-Z0-9_.]*
+COMMA           ,
+
+%%
+
+{WS}                /* skip */
+{COMMENT}           /* skip */
+{INT}               return processInt();
+{FLOAT}             return processFloat();
+{IDENTIFIER}        return processIdentifier();
+{COMMA}             return processComma();
+.                   return processUnknown();
+
+%%
+
+// nothing
