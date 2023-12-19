@@ -40,6 +40,18 @@ void ChaiFile::addWithConst(chai::interpreter::Operation op, double data) {
     addInstr(chai::utils::instr2Raw(op, id));
 }
 
+chai::bytecode_t ChaiFile::getWithConst(chai::interpreter::Operation op,
+                                        int64_t data) {
+    chai::chsize_t id = addConst(std::make_unique<ConstI64>(data));
+    return chai::utils::instr2Raw(op, id);
+}
+
+chai::bytecode_t ChaiFile::getWithConst(chai::interpreter::Operation op,
+                                        double data) {
+    chai::chsize_t id = addConst(std::make_unique<ConstF64>(data));
+    return chai::utils::instr2Raw(op, id);
+}
+
 chai::interpreter::Immidiate
 ChaiFile::addFunction(chai::interpreter::Immidiate access_flags,
                       const std::string &name, const std::string &descriptor,

@@ -18,8 +18,11 @@ public:
     chai::interpreter::Immidiate addConst(std::unique_ptr<Constant> &&constant);
 
     void addWithConst(chai::interpreter::Operation op, int64_t data);
-
     void addWithConst(chai::interpreter::Operation op, double data);
+
+    chai::bytecode_t getWithConst(chai::interpreter::Operation op,
+                                  int64_t data);
+    chai::bytecode_t getWithConst(chai::interpreter::Operation op, double data);
 
     /**
      * A more or less convenient way to add a function to the file

@@ -48,18 +48,18 @@ private:
         checkError();
         while (lex_.currentLexem()->type == AsmLex::IDENTIFIER) {
             checkError();
-            processInstruction();
+            chaiFile_.addInstr(processInstruction());
             lex_.nextLexem();
             if (lex_.currentLexem()->type == AsmLex::IDENTIFIER &&
                 OpString(
                     static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                         ->value) == chai::interpreter::Ret) {
-                processInstruction();
+                chaiFile_.addInstr(processInstruction());
                 break;
             }
         }
     }
-    void processInstruction() {
+    chai::bytecode_t processInstruction() {
         chai::interpreter::Operation op = OpString(
             static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                 ->value);
@@ -68,84 +68,63 @@ private:
         }
         switch (opToFormat(op)) {
         case chai::interpreter::N:
-            processN();
-            break;
+            return processN(op);
         case chai::interpreter::R:
-            processR();
-            break;
+            return processR(op);
         case chai::interpreter::RR:
-            processRR();
-            break;
+            return processRR(op);
         case chai::interpreter::I:
-            processI();
-            break;
+            return processI(op);
         case chai::interpreter::RI:
-            processRI();
-            break;
+            return processRI(op);
         case chai::interpreter::Unknown:
         default:
             throw AssembleError("Unknown instruction type", lex_.lineno());
             break;
         }
     }
-    void processN() {
-        chai::interpreter::Operation op = OpString(
-            static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
-                ->value);
-        chaiFile_.addInstr(chai::utils::instr2Raw(op, 0, 0));
+    chai::bytecode_t processN(chai::interpreter::Operation op) {
+        return chai::utils::instr2Raw(op, 0, 0);
     }
-    void processR() {
-        chai::interpreter::Operation op = OpString(
-            static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
-                ->value);
+    chai::bytecode_t processR(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId regId = processReg();
-        chaiFile_.addInstr(chai::utils::instr2Raw(op, regId, 0));
+        return chai::utils::instr2Raw(op, regId, 0);
     }
-    void processRR() {
-        chai::interpreter::Operation op = OpString(
-            static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
-                ->value);
+    chai::bytecode_t processRR(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId reg1Id = processReg();
         expectComma();
         chai::interpreter::RegisterId reg2Id = processReg();
-        chaiFile_.addInstr(chai::utils::instr2Raw(op, reg1Id, reg2Id));
+        return chai::utils::instr2Raw(op, reg1Id, reg2Id);
     }
-    void processI() {
-        chai::interpreter::Operation op = OpString(
-            static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
-                ->value);
+    chai::bytecode_t processI(chai::interpreter::Operation op) {
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
-            chaiFile_.addWithConst(
+            return chaiFile_.getWithConst(
                 op, static_cast<int64_t>(
                         static_cast<AsmLex::Int *>(lex_.currentLexem().get())
                             ->value));
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            chaiFile_.addWithConst(
+            return chaiFile_.getWithConst(
                 op, (static_cast<AsmLex::Float *>(lex_.currentLexem().get())
                          ->value));
         } else {
             throw AssembleError("Unknown instruction type", lex_.lineno());
         }
     }
-    void processRI() {
-        chai::interpreter::Operation op = OpString(
-            static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
-                ->value);
+    chai::bytecode_t processRI(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId regId = processReg();
         expectComma();
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
-            chaiFile_.addInstr(chai::utils::inst2RawRI(
+            return chai::utils::inst2RawRI(
                 op, regId,
                 static_cast<int64_t>(
                     static_cast<AsmLex::Int *>(lex_.currentLexem().get())
-                        ->value)));
+                        ->value));
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            chaiFile_.addInstr(chai::utils::inst2RawRI(
+            return chai::utils::inst2RawRI(
                 op, regId,
-                static_cast<AsmLex::Float *>(lex_.currentLexem().get())
-                    ->value));
+                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value);
         } else {
             throw AssembleError("Unknown instruction type", lex_.lineno());
         }
@@ -156,7 +135,7 @@ private:
         if (lex_.currentLexem()->type != AsmLex::IDENTIFIER) {
             throw AssembleError("Expected register", lex_.lineno());
         }
-        return RegNameToRegId(
+        return regNameToRegId(
             static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                 ->value);
     }
@@ -180,7 +159,7 @@ private:
     opToFormat(chai::interpreter::Operation op) {
         return chai::interpreter::OP_TO_FORMAT[op];
     }
-    chai::interpreter::RegisterId RegNameToRegId(std::string regName) {
+    chai::interpreter::RegisterId regNameToRegId(std::string regName) {
         chai::interpreter::RegisterId regId;
         if (regName.length() > 1 && regName[0] == 'r') {
             std::string digits = regName.substr(1);

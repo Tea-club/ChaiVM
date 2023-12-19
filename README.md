@@ -11,7 +11,7 @@ $ build/chai <app.chai>
 ### Chai bytecode currently is just a Sequence of instructions.
 For instance, there is disassembler of simple app.chai
 ```
-fn main 8 0:
+fn main 8 0 {
   Ldia 6
   Star r2
   Ldia 8
@@ -21,6 +21,7 @@ fn main 8 0:
   Printc acc
   Mov 0 r0
   Ret
+}
 ```
 Where Ret returns exit code `r0`. "main" is name of the starting function, `8` is number of registers in it, `0` is number of arguments passing into the function. 
 This script compiled to chai-bytecode should print "0", because '0' == 48.

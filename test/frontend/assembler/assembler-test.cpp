@@ -10,19 +10,19 @@ protected:
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);
     chai::interpreter::Executor exec_{&codeManager_, buffer_};
-    std::filesystem::path input_ = "./run.chai";
+    std::filesystem::path input_ = "./asm.chai";
+    std::ofstream write_input_{input_, std::ios::out};
     std::filesystem::path output_ = "./bytecode.ch";
 };
 
 TEST_F(AssemblerTest, run) {
-    std::ofstream write_input{input_, std::ios::out};
-    write_input << "Ldia 6\n"
-                << "Star r2\n"
-                << "Ldia 8\n"
-                << "Star r3\n"
-                << "Ldra r3\n"
-                << "Mul r2\n"
-                << "Ret" << std::endl;
+    write_input_ << "Ldia 6\n"
+                 << "Star r2\n"
+                 << "Ldia 8\n"
+                 << "Star r3\n"
+                 << "Ldra r3\n"
+                 << "Mul r2\n"
+                 << "Ret" << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
