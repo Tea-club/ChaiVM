@@ -249,9 +249,9 @@ instructions:
     description: "Sets f64 value to f64 array in acc and puts it to acc."
   -
     fixedvalue: 48
-    mnemonic: StringNew
+    mnemonic: StringPrint
     format: N
-    description: "Create new String from ConstRawStr constant by its id in ConstantPool. Id is in acc."
+    description: "Prints String in acc"
   -
     fixedvalue: 49
     mnemonic: StringConcat

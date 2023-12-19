@@ -96,3 +96,37 @@ TEST_F(ExecutorTest, Factorial) {
     exec_.run();
     EXPECT_EQ(static_cast<int64_t>(exec_.acc()), 120);
 }
+
+
+
+/*
+ * let str1 = "Hello World"
+ * let str2 = "dungeons and dragons"
+ * let substr1 = str1.substr(0, 5) //Hello
+ * let substr2 = str2.substr(13, 20) //dragons
+ * concat(substr1, substr2)
+ */
+TEST_F(ExecutorTest, StringDemo) {
+    Immidiate str1 = chaiFile_.addConst(std::make_unique<ConstRawStr>("Hello World"));
+    Immidiate str2 = chaiFile_.addConst(std::make_unique<ConstRawStr>("dungeons and dragons"));
+    loadWithConst(Ldia, static_cast<int64_t>(0));
+    loadRR(Star, R1); // R1 = 0
+    loadWithConst(Ldia, static_cast<int64_t>(5));
+    loadRR(Star, R2); // R2 = 5
+    loadWithConst(Ldia, static_cast<int64_t>(13));
+    loadRR(Star, R3); // R3 = 13
+    loadWithConst(Ldia, static_cast<int64_t>(20));
+    loadRR(Star, R4); // R4 = 20
+    loadI(Ldia, str1);
+    loadRR(StringSlice, R1, R2);
+    loadRR(Star, R10); // R10 = substr1 = "Hello"
+    loadI(Ldia, str2);
+    loadRR(StringSlice, R3, R4);
+    loadRR(Star, R11); // R11 = substr2 = "dragons"
+    loadRR(Ldra, R10);
+    loadRR(StringConcat, R11);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "Hellodragons");
+}

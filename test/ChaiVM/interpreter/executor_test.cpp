@@ -647,7 +647,7 @@ TEST_F(ExecutorTest, SetF64SetArr) {
 TEST_F(ExecutorTest, StringPrint) {
     Immidiate raw = chaiFile_.addConst(std::make_unique<ConstRawStr>("ABOBA"));
     loadI(Ldia, raw);
-    load(StringNew);
+    load(StringPrint);
     load(Ret);
     update();
     exec_.run();
@@ -660,9 +660,9 @@ TEST_F(ExecutorTest, StringConcat) {
     Immidiate raw2 = chaiFile_.addConst(std::make_unique<ConstRawStr>(" Yeash"));
     loadI(Ldia, raw2);
     loadRR(Star, R2);
-    load(StringNew);
+    load(StringPrint);
     loadI(Ldia, raw1);
-    load(StringNew);
+    load(StringPrint);
     loadRR(StringConcat, R2);
     load(Ret);
     update();
@@ -690,7 +690,7 @@ TEST_F(ExecutorTest, StringSlice) {
     loadWithConst(Ldia, end);
     loadRR(Star, R3);
     loadI(Ldia, raw);
-    load(chai::interpreter::StringNew);
+    load(chai::interpreter::StringPrint);
     loadRR(StringSlice, R2, R3);
     load(Ret);
     update();

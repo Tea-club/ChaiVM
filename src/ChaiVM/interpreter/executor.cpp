@@ -412,22 +412,25 @@ void Executor::string_concat(Instruction ins) {
     const std::string & str2 = codeManager_->getCnstString((*currentFrame_)[ins.r1]);
     std::string concated = str1 + str2;
     acc() = codeManager_->addCnstString(std::move(concated));
+    advancePc();
+    DO_NEXT_INS();
 }
 
 void Executor::string_len(Instruction ins) {
     acc() = codeManager_->getCnstString(acc()).size();
+    advancePc();
+    DO_NEXT_INS();
 }
 void Executor::string_slice(Instruction ins) {
     const std::string &str = codeManager_->getCnstString(acc());
-    std::cout << "string_slice: " << str << std::endl;
-    std::cout << (int)ins.r1 << " " << (int)ins.r2 << std::endl;
     std::cout << (*currentFrame_)[ins.r1] << " " << (*currentFrame_)[ins.r2] << std::endl;
     acc() = codeManager_->addCnstString(str.substr(
         (*currentFrame_)[ins.r1],
         (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1]
     ));
     std::cout << "string_slice: " << codeManager_->getCnstString(acc()) << std::endl;
-    std::cout << "string_slice: " << str << std::endl;
+    advancePc();
+    DO_NEXT_INS();
 }
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
