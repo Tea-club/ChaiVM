@@ -40,7 +40,8 @@ private:
     std::filesystem::path outPath_;
 
     /*
-     * @todo #41:90min Refactor this function. Or maybe it is better to kill myself?
+     * @todo #41:90min Refactor this function. Or maybe it is better to kill
+     * myself?
      */
     void processMain() {
         lex_.nextLexem();
