@@ -3,7 +3,6 @@
 
 #include "ChaiVM/interpreter/executor.hpp"
 #include "ChaiVM/interpreter/frame.hpp"
-#include "ChaiVM/lang/string.hpp"
 
 namespace chai::interpreter {
 
@@ -367,8 +366,6 @@ void Executor::set_f64in_arr(Instruction ins) {
 void Executor::string_print(Instruction ins) {
     const std::string &str = codeManager_->getCnstString(acc());
     std::cout << str;
-    memory::LinearAllocator<lang::String> stringAllocator{buffer_};
-    memory::LinearAllocator<char> charAllocator{buffer_};
     advancePc();
     DO_NEXT_INS();
 }
