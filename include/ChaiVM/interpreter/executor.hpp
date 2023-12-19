@@ -79,23 +79,28 @@ private:
     void newf64array(Instruction ins);
     void get_f64from_arr(Instruction ins);
     void set_f64in_arr(Instruction ins);
+    void string_print(Instruction ins);
+    void string_concat(Instruction ins);
+    void string_len(Instruction ins);
+    void string_slice(Instruction ins);
 
     static constexpr Handler HANDLER_ARR[] = {
-        &Executor::inv,         &Executor::nop,        &Executor::ret,
-        &Executor::mov,         &Executor::ldia,       &Executor::ldra,
-        &Executor::star,        &Executor::add,        &Executor::addi,
-        &Executor::sub,         &Executor::subi,       &Executor::mul,
-        &Executor::muli,        &Executor::div,        &Executor::divi,
-        &Executor::ldiaf,       &Executor::addf,       &Executor::addif,
-        &Executor::subf,        &Executor::subif,      &Executor::mulf,
-        &Executor::mulif,       &Executor::divf,       &Executor::divif,
-        &Executor::icprint,     &Executor::icscani,    &Executor::icscanf,
-        &Executor::icsqrt,      &Executor::icsin,      &Executor::iccos,
-        &Executor::if_icmpeq,   &Executor::if_icmpne,  &Executor::if_icmpgt,
-        &Executor::if_icmpge,   &Executor::if_icmplt,  &Executor::if_icmple,
-        &Executor::if_acmpeq,   &Executor::if_acmpne,  &Executor::cmpgf,
-        &Executor::cmplf,       &Executor::g0t0,       &Executor::call,
-        &Executor::newi64array, &Executor::get_i64from_arr, &Executor::set_i64in_arr, &Executor::newf64array, &Executor::get_f64from_arr, &Executor::set_f64in_arr};
+        &Executor::inv, &Executor::nop, &Executor::ret,
+        &Executor::mov, &Executor::ldia, &Executor::ldra,
+        &Executor::star, &Executor::add, &Executor::addi,
+        &Executor::sub, &Executor::subi, &Executor::mul,
+        &Executor::muli, &Executor::div, &Executor::divi,
+        &Executor::ldiaf, &Executor::addf, &Executor::addif,
+        &Executor::subf, &Executor::subif, &Executor::mulf,
+        &Executor::mulif, &Executor::divf, &Executor::divif,
+        &Executor::icprint, &Executor::icscani, &Executor::icscanf,
+        &Executor::icsqrt, &Executor::icsin, &Executor::iccos,
+        &Executor::if_icmpeq, &Executor::if_icmpne, &Executor::if_icmpgt,
+        &Executor::if_icmpge, &Executor::if_icmplt, &Executor::if_icmple,
+        &Executor::if_acmpeq, &Executor::if_acmpne, &Executor::cmpgf,
+        &Executor::cmplf, &Executor::g0t0, &Executor::call,
+        &Executor::newi64array, &Executor::get_i64from_arr, &Executor::set_i64in_arr, &Executor::newf64array, &Executor::get_f64from_arr, &Executor::set_f64in_arr,
+        &Executor::string_print, &Executor::string_concat, &Executor::string_len, &Executor::string_slice};
 
 private:
     chsize_t acc_;

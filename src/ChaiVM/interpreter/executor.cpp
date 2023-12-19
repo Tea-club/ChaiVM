@@ -3,6 +3,7 @@
 
 #include "ChaiVM/interpreter/executor.hpp"
 #include "ChaiVM/interpreter/frame.hpp"
+#include "ChaiVM/lang/string.hpp"
 
 namespace chai::interpreter {
 
@@ -70,7 +71,7 @@ void Executor::mov(Instruction ins) {
 void Executor::ldia(Instruction ins) {
     acc() = codeManager_->getCnst(ins.immidiate);
     advancePc();
-    std::cout << "ldia" << std::endl;
+    std::cout << "ldia: acc = " << acc() << std::endl;
     DO_NEXT_INS()
 }
 void Executor::ldra(Instruction ins) {
@@ -81,7 +82,7 @@ void Executor::ldra(Instruction ins) {
 void Executor::star(Instruction ins) {
     std::cout << "star:  ins.r1 = " << (int)ins.r1 << std::endl;
     (*currentFrame_)[ins.r1] = acc();
-    std::cout << "star:  (*currentFrame_)[ins.r1] = " << std::bit_cast<double>((*currentFrame_)[ins.r1])  << std::endl;
+    std::cout << "star:  (*currentFrame_)[ins.r1] = " << std::bit_cast<int64_t>((*currentFrame_)[ins.r1])  << std::endl;
 
     advancePc();
     DO_NEXT_INS()
@@ -389,6 +390,44 @@ void Executor::set_f64in_arr(Instruction ins) {
     std::cout << "set_f64in_arr: arr[i] = " << arr[i] << std::endl;
     advancePc();
     DO_NEXT_INS();
+}
+
+void Executor::string_print(Instruction ins) {
+    //Immidiate raw_str_ref = acc();
+    std::cout << "string_print: " << std::endl;
+    const std::string & str = codeManager_->getCnstString(acc());
+    std::cout << str;
+    std::cout << "string_print: " << str << std::endl;
+    //chsize_t size = 10;
+    memory::LinearAllocator<lang::String> stringAllocator{buffer_};
+    memory::LinearAllocator<char> charAllocator{buffer_};
+    //auto *arr = new (charAllocator.allocate(size)) char [size]();
+    //auto* string = new (stringAllocator.allocate(1)) lang::String{.size_ = size, .content_ = arr};
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::string_concat(Instruction ins) {
+    const std::string & str1 = codeManager_->getCnstString(acc());
+    const std::string & str2 = codeManager_->getCnstString((*currentFrame_)[ins.r1]);
+    std::string concated = str1 + str2;
+    acc() = codeManager_->addCnstString(std::move(concated));
+}
+
+void Executor::string_len(Instruction ins) {
+    acc() = codeManager_->getCnstString(acc()).size();
+}
+void Executor::string_slice(Instruction ins) {
+    const std::string &str = codeManager_->getCnstString(acc());
+    std::cout << "string_slice: " << str << std::endl;
+    std::cout << (int)ins.r1 << " " << (int)ins.r2 << std::endl;
+    std::cout << (*currentFrame_)[ins.r1] << " " << (*currentFrame_)[ins.r2] << std::endl;
+    acc() = codeManager_->addCnstString(str.substr(
+        (*currentFrame_)[ins.r1],
+        (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1]
+    ));
+    std::cout << "string_slice: " << codeManager_->getCnstString(acc()) << std::endl;
+    std::cout << "string_slice: " << str << std::endl;
 }
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
