@@ -24,6 +24,10 @@ chai::interpreter::Immidiate ChaiFile::addInstr(chai::bytecode_t raw) {
     return rawInstrs_.size() - 1;
 }
 
+/*
+ * @todo #78:90min Check if the constant is already in pool_. Then not add it
+ *  again in order to avoid duplication of constant.
+ */
 chai::interpreter::Immidiate
 ChaiFile::addConst(std::unique_ptr<Constant> &&constant) {
     pool_.push_back(std::move(constant));
@@ -38,6 +42,18 @@ void ChaiFile::addWithConst(chai::interpreter::Operation op, int64_t data) {
 void ChaiFile::addWithConst(chai::interpreter::Operation op, double data) {
     chai::chsize_t id = addConst(std::make_unique<ConstF64>(data));
     addInstr(chai::utils::instr2Raw(op, id));
+}
+
+chai::bytecode_t ChaiFile::getWithConst(chai::interpreter::Operation op,
+                                        int64_t data) {
+    chai::chsize_t id = addConst(std::make_unique<ConstI64>(data));
+    return chai::utils::instr2Raw(op, id);
+}
+
+chai::bytecode_t ChaiFile::getWithConst(chai::interpreter::Operation op,
+                                        double data) {
+    chai::chsize_t id = addConst(std::make_unique<ConstF64>(data));
+    return chai::utils::instr2Raw(op, id);
 }
 
 chai::interpreter::Immidiate

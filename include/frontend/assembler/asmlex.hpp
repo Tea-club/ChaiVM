@@ -12,7 +12,17 @@ namespace front::assembler {
 
 class AsmLex final : public yyFlexLexer {
 public:
-    enum LexemType { INTEGER, FLOAT, IDENTIFIER, COMMA, UNKNOWN };
+    enum LexemType {
+        INTEGER,
+        FLOAT,
+        IDENTIFIER,
+        FUNC,
+        STRING,
+        OP_CURLY_BRACKET,
+        CL_CURLY_BRACKET,
+        COMMA,
+        UNKNOWN
+    };
 
     class Lexem {
     public:
@@ -37,6 +47,27 @@ public:
         Identifier(LexemType t, std::string v) : Lexem(t), value(v) {}
         std::string value;
         ~Identifier() override {}
+    };
+    class Func final : public Lexem {
+    public:
+        Func(LexemType t) : Lexem(t) {}
+        ~Func() override {}
+    };
+    class String final : public Lexem {
+    public:
+        String(LexemType t, std::string str) : Lexem(t), value(str) {}
+        std::string value;
+        ~String() override {}
+    };
+    class OpCurlyBracket final : public Lexem {
+    public:
+        OpCurlyBracket(LexemType t) : Lexem(t) {}
+        ~OpCurlyBracket() override {}
+    };
+    class ClCurlyBracket final : public Lexem {
+    public:
+        ClCurlyBracket(LexemType t) : Lexem(t) {}
+        ~ClCurlyBracket() override {}
     };
     class Coma final : public Lexem {
     public:
@@ -63,29 +94,42 @@ private:
     int processInt() {
         currentLexem_ =
             std::make_unique<Int>(LexemType::INTEGER, std::atol(yytext));
-        std::string a = yytext;
         return 0;
     }
     int processFloat() {
         currentLexem_ =
             std::make_unique<Float>(LexemType::FLOAT, std::atof(yytext));
-        std::string a = yytext;
         return 0;
     }
     int processIdentifier() {
         currentLexem_ =
             std::make_unique<Identifier>(LexemType::IDENTIFIER, yytext);
-        std::string a = yytext;
+        return 0;
+    }
+    int processFunc() {
+        currentLexem_ = std::make_unique<Coma>(LexemType::FUNC);
+        return 0;
+    }
+    int processOpCurlyBracket() {
+        currentLexem_ = std::make_unique<Coma>(LexemType::OP_CURLY_BRACKET);
+        return 0;
+    }
+    int processClCurlyBracket() {
+        currentLexem_ = std::make_unique<Coma>(LexemType::CL_CURLY_BRACKET);
         return 0;
     }
     int processComma() {
         currentLexem_ = std::make_unique<Coma>(LexemType::COMMA);
-        std::string a = yytext;
+        return 0;
+    }
+    int processString() {
+        std::string withQuotes(yytext);
+        currentLexem_ = std::make_unique<String>(
+            LexemType::STRING, withQuotes.substr(1, withQuotes.size() - 2));
         return 0;
     }
     int processUnknown() {
         currentLexem_ = std::make_unique<Unknown>(LexemType::UNKNOWN);
-        std::string a = yytext;
         return 1;
     }
 };
