@@ -49,7 +49,6 @@ void Executor::inv(Instruction ins) {
                              std::to_string(pc()));
 }
 void Executor::nop(Instruction ins) {
-    std::cout << "nop" << std::endl;
     advancePc();
     DO_NEXT_INS()
 }
@@ -71,7 +70,6 @@ void Executor::mov(Instruction ins) {
 void Executor::ldia(Instruction ins) {
     acc() = codeManager_->getCnst(ins.immidiate);
     advancePc();
-    std::cout << "ldia: acc = " << acc() << std::endl;
     DO_NEXT_INS()
 }
 void Executor::ldra(Instruction ins) {
@@ -80,10 +78,7 @@ void Executor::ldra(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::star(Instruction ins) {
-    std::cout << "star:  ins.r1 = " << (int)ins.r1 << std::endl;
     (*currentFrame_)[ins.r1] = acc();
-    std::cout << "star:  (*currentFrame_)[ins.r1] = " << std::bit_cast<int64_t>((*currentFrame_)[ins.r1])  << std::endl;
-
     advancePc();
     DO_NEXT_INS()
 }
@@ -320,29 +315,18 @@ void Executor::call(Instruction ins) {
     DO_NEXT_INS();
 }
 void Executor::newi64array(Instruction ins) {
-    std::cout << "newi64array1: acc = " << acc() << std::endl;
     int n = static_cast<int64_t>(acc());
     memory::LinearAllocator<int64_t> allocator{buffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) int64_t[n]();
-    for (int i = 0; i < n; ++i) {
-        std::cout << "newi64array: arr[" << i << "] = " << arr[i] << std::endl;
-    }
-    std::cout << "newi64array: arr[0] = " << arr[0] << std::endl;
-    std::cout << "arr = " << arr << std::endl;
     acc() = reinterpret_cast<chsize_t>(arr);
-    std::cout << "newi64array2" << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::get_i64from_arr(Instruction ins) {
-    std::cout << "get_i64from_arr: ins.r1 = " << (int)ins.r1 << std::endl;
     int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    std::cout << "get_i64from_arr: i = " << i << std::endl;
     auto *arr = reinterpret_cast<int64_t *>(acc());
     acc() = arr[i];
-    std::cout << "arr = " << arr << std::endl;
-    std::cout << "arr[" << i << "] = " << arr[i] << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
@@ -356,29 +340,18 @@ void Executor::set_i64in_arr(Instruction ins) {
 }
 
 void Executor::newf64array(Instruction ins) {
-    std::cout << "newi64array1: acc = " << acc() << std::endl;
     int n = static_cast<int64_t>(acc());
     memory::LinearAllocator<double> allocator{buffer_};
     assert(n >= 0);
-    auto *arr = new (allocator.allocate(n)) double [n]();
-    for (int i = 0; i < n; ++i) {
-        std::cout << "newi64array: arr[" << i << "] = " << arr[i] << std::endl;
-    }
-    std::cout << "newi64array: arr[0] = " << arr[0] << std::endl;
-    std::cout << "arr = " << arr << std::endl;
+    auto *arr = new (allocator.allocate(n)) double[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
-    std::cout << "newi64array2" << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::get_f64from_arr(Instruction ins) {
-    std::cout << "get_i64from_arr: ins.r1 = " << (int)ins.r1 << std::endl;
     int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    std::cout << "get_i64from_arr: i = " << i << std::endl;
     auto *arr = reinterpret_cast<double *>(acc());
     acc() = std::bit_cast<int64_t>(arr[i]);
-    std::cout << "arr = " << arr << std::endl;
-    std::cout << "arr[" << i << "] = " << arr[i] << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
@@ -386,30 +359,24 @@ void Executor::get_f64from_arr(Instruction ins) {
 void Executor::set_f64in_arr(Instruction ins) {
     int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     auto *arr = reinterpret_cast<double *>(acc());
-    arr[i] = std::bit_cast<double >((*currentFrame_)[ins.r2]);
-    std::cout << "set_f64in_arr: arr[i] = " << arr[i] << std::endl;
+    arr[i] = std::bit_cast<double>((*currentFrame_)[ins.r2]);
     advancePc();
     DO_NEXT_INS();
 }
 
 void Executor::string_print(Instruction ins) {
-    //Immidiate raw_str_ref = acc();
-    std::cout << "string_print: " << std::endl;
-    const std::string & str = codeManager_->getCnstString(acc());
+    const std::string &str = codeManager_->getCnstString(acc());
     std::cout << str;
-    std::cout << "string_print: " << str << std::endl;
-    //chsize_t size = 10;
     memory::LinearAllocator<lang::String> stringAllocator{buffer_};
     memory::LinearAllocator<char> charAllocator{buffer_};
-    //auto *arr = new (charAllocator.allocate(size)) char [size]();
-    //auto* string = new (stringAllocator.allocate(1)) lang::String{.size_ = size, .content_ = arr};
     advancePc();
     DO_NEXT_INS();
 }
 
 void Executor::string_concat(Instruction ins) {
-    const std::string & str1 = codeManager_->getCnstString(acc());
-    const std::string & str2 = codeManager_->getCnstString((*currentFrame_)[ins.r1]);
+    const std::string &str1 = codeManager_->getCnstString(acc());
+    const std::string &str2 =
+        codeManager_->getCnstString((*currentFrame_)[ins.r1]);
     std::string concated = str1 + str2;
     acc() = codeManager_->addCnstString(std::move(concated));
     advancePc();
@@ -423,12 +390,9 @@ void Executor::string_len(Instruction ins) {
 }
 void Executor::string_slice(Instruction ins) {
     const std::string &str = codeManager_->getCnstString(acc());
-    std::cout << (*currentFrame_)[ins.r1] << " " << (*currentFrame_)[ins.r2] << std::endl;
-    acc() = codeManager_->addCnstString(str.substr(
-        (*currentFrame_)[ins.r1],
-        (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1]
-    ));
-    std::cout << "string_slice: " << codeManager_->getCnstString(acc()) << std::endl;
+    acc() = codeManager_->addCnstString(
+        str.substr((*currentFrame_)[ins.r1],
+                   (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1]));
     advancePc();
     DO_NEXT_INS();
 }

@@ -97,7 +97,24 @@ TEST_F(ExecutorTest, Factorial) {
     EXPECT_EQ(static_cast<int64_t>(exec_.acc()), 120);
 }
 
-
+TEST_F(ExecutorTest, ArraysDemo) {
+    constexpr auto i = static_cast<int64_t>(23);
+    constexpr auto size = static_cast<int64_t>(50);
+    constexpr auto value = static_cast<int64_t>(12345);
+    loadWithConst(Ldia, i);
+    loadRR(Star, R3);
+    loadWithConst(Ldia, value);
+    loadRR(Star, R4);
+    loadWithConst(Ldia, size);
+    load(NewI64Array);
+    loadRR(SetI64InArr, R3, R4);
+    loadRR(GetI64FromArr, R3);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), value);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
 
 /*
  * let str1 = "Hello World"
@@ -107,8 +124,10 @@ TEST_F(ExecutorTest, Factorial) {
  * concat(substr1, substr2)
  */
 TEST_F(ExecutorTest, StringDemo) {
-    Immidiate str1 = chaiFile_.addConst(std::make_unique<ConstRawStr>("Hello World"));
-    Immidiate str2 = chaiFile_.addConst(std::make_unique<ConstRawStr>("dungeons and dragons"));
+    Immidiate str1 =
+        chaiFile_.addConst(std::make_unique<ConstRawStr>("Hello World"));
+    Immidiate str2 = chaiFile_.addConst(
+        std::make_unique<ConstRawStr>("dungeons and dragons"));
     loadWithConst(Ldia, static_cast<int64_t>(0));
     loadRR(Star, R1); // R1 = 0
     loadWithConst(Ldia, static_cast<int64_t>(5));

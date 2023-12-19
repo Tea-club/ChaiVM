@@ -42,11 +42,9 @@ public:
 
     chsize_t getCnst(Immidiate id);
 
-    const std::string& getCnstString(Immidiate id) {
-        return stringPool_[id];
-    }
+    const std::string &getCnstString(Immidiate id) { return stringPool_[id]; }
 
-    Immidiate addCnstString(std::string && str) {
+    Immidiate addCnstString(std::string &&str) {
         stringPool_.emplace_back(str);
         return stringPool_.size() - 1;
     }
