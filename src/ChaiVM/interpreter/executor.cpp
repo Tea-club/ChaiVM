@@ -313,6 +313,86 @@ void Executor::call(Instruction ins) {
     pc() = 0;
     DO_NEXT_INS();
 }
+void Executor::newi64array(Instruction ins) {
+    int n = static_cast<int64_t>(acc());
+    memory::LinearAllocator<int64_t> allocator{buffer_};
+    assert(n >= 0);
+    auto *arr = new (allocator.allocate(n)) int64_t[n]();
+    acc() = reinterpret_cast<chsize_t>(arr);
+    advancePc();
+    DO_NEXT_INS();
+}
+void Executor::get_i64from_arr(Instruction ins) {
+    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto *arr = reinterpret_cast<int64_t *>(acc());
+    acc() = arr[i];
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::set_i64in_arr(Instruction ins) {
+    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto *arr = reinterpret_cast<int64_t *>(acc());
+    arr[i] = static_cast<int64_t>((*currentFrame_)[ins.r2]);
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::newf64array(Instruction ins) {
+    int n = static_cast<int64_t>(acc());
+    memory::LinearAllocator<double> allocator{buffer_};
+    assert(n >= 0);
+    auto *arr = new (allocator.allocate(n)) double[n]();
+    acc() = reinterpret_cast<chsize_t>(arr);
+    advancePc();
+    DO_NEXT_INS();
+}
+void Executor::get_f64from_arr(Instruction ins) {
+    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto *arr = reinterpret_cast<double *>(acc());
+    acc() = std::bit_cast<int64_t>(arr[i]);
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::set_f64in_arr(Instruction ins) {
+    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto *arr = reinterpret_cast<double *>(acc());
+    arr[i] = std::bit_cast<double>((*currentFrame_)[ins.r2]);
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::string_print(Instruction ins) {
+    const std::string &str = codeManager_->getCnstString(acc());
+    std::cout << str;
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::string_concat(Instruction ins) {
+    const std::string &str1 = codeManager_->getCnstString(acc());
+    const std::string &str2 =
+        codeManager_->getCnstString((*currentFrame_)[ins.r1]);
+    std::string concated = str1 + str2;
+    acc() = codeManager_->addCnstString(std::move(concated));
+    advancePc();
+    DO_NEXT_INS();
+}
+
+void Executor::string_len(Instruction ins) {
+    acc() = codeManager_->getCnstString(acc()).size();
+    advancePc();
+    DO_NEXT_INS();
+}
+void Executor::string_slice(Instruction ins) {
+    const std::string &str = codeManager_->getCnstString(acc());
+    acc() = codeManager_->addCnstString(
+        str.substr((*currentFrame_)[ins.r1],
+                   (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1]));
+    advancePc();
+    DO_NEXT_INS();
+}
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)

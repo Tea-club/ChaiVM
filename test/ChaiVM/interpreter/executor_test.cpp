@@ -548,3 +548,154 @@ TEST_F(ExecutorTest, Call) {
     EXPECT_EQ(static_cast<int64_t>(exec_.acc()), val2 - val1);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
+
+/*
+ * r3 = 23
+ * acc = 100
+ * i64[] acc = new i64[acc]
+ * acc = acc[r3]
+ */
+TEST_F(ExecutorTest, GetI64FromArr) {
+    constexpr auto i = static_cast<int64_t>(23);
+    constexpr auto size = static_cast<int64_t>(50);
+    loadWithConst(Ldia, i);
+    loadRR(Star, R3);
+    loadWithConst(Ldia, size);
+    load(NewI64Array);
+    loadRR(GetI64FromArr, R3);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), 0);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+/*
+ * r3 = 23 //i
+ * r4 = 12345
+ * acc = 100
+ * i64[] acc = new i64[acc]
+ * acc = acc[r3]
+ */
+TEST_F(ExecutorTest, SetI64SetArr) {
+    constexpr auto i = static_cast<int64_t>(23);
+    constexpr auto size = static_cast<int64_t>(50);
+    constexpr auto value = static_cast<int64_t>(12345);
+    loadWithConst(Ldia, i);
+    loadRR(Star, R3);
+    loadWithConst(Ldia, value);
+    loadRR(Star, R4);
+    loadWithConst(Ldia, size);
+    load(NewI64Array);
+    loadRR(SetI64InArr, R3, R4);
+    loadRR(GetI64FromArr, R3);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), value);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+/*
+ * r3 = 23
+ * acc = 100
+ * i64[] acc = new а64[acc]
+ * acc = acc[r3]
+ * acc == 0.0?
+ */
+TEST_F(ExecutorTest, GetF64FromArr) {
+    constexpr auto i = static_cast<int64_t>(23);
+    constexpr auto size = static_cast<int64_t>(50);
+    loadWithConst(Ldia, i);
+    loadRR(Star, R3);
+    loadWithConst(Ldia, size);
+    load(NewF64Array);
+    loadRR(GetF64FromArr, R3);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), 0.0);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+/*
+ * r3 = 23 //i
+ * r4 = 12.345
+ * acc = 100
+ * i64[] acc = new f64[acc]
+ * acc = acc[r3]
+ */
+TEST_F(ExecutorTest, SetF64SetArr) {
+    constexpr auto i = static_cast<int64_t>(23);
+    constexpr auto size = static_cast<int64_t>(50);
+    constexpr auto value = static_cast<double>(12.345);
+    loadWithConst(Ldia, i);
+    loadRR(Star, R3);
+    loadWithConst(Ldiaf, value);
+    loadRR(Star, R4);
+    loadWithConst(Ldia, size);
+    load(NewF64Array);
+    loadRR(SetF64InArr, R3, R4);
+    loadRR(GetF64FromArr, R3);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(std::bit_cast<double>(exec_.acc()), value);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+TEST_F(ExecutorTest, StringPrint) {
+    Immidiate raw = chaiFile_.addConst(std::make_unique<ConstRawStr>("ABOBA"));
+    loadI(Ldia, raw);
+    load(StringPrint);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "ABOBA");
+    EXPECT_EQ(codeManager_.getCnstString(codeManager_.getCnst(raw)), "ABOBA");
+}
+
+TEST_F(ExecutorTest, StringConcat) {
+    Immidiate raw1 = chaiFile_.addConst(std::make_unique<ConstRawStr>("ABOBA"));
+    Immidiate raw2 =
+        chaiFile_.addConst(std::make_unique<ConstRawStr>(" Yeash"));
+    loadI(Ldia, raw2);
+    loadRR(Star, R2);
+    load(StringPrint);
+    loadI(Ldia, raw1);
+    load(StringPrint);
+    loadRR(StringConcat, R2);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "ABOBA Yeash");
+    EXPECT_EQ(codeManager_.getCnstString(codeManager_.getCnst(raw1)), "ABOBA");
+}
+
+TEST_F(ExecutorTest, StringSize) {
+    Immidiate raw = chaiFile_.addConst(std::make_unique<ConstRawStr>("ABOBA"));
+    loadI(Ldia, raw);
+    load(StringLen);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(exec_.acc(), 5);
+}
+
+TEST_F(ExecutorTest, StringSlice) {
+    Immidiate raw = chaiFile_.addConst(std::make_unique<ConstRawStr>("ABOBA"));
+    constexpr auto start = static_cast<int64_t>(1);
+    constexpr auto end = static_cast<int64_t>(4);
+    loadWithConst(Ldia, start);
+    loadRR(Star, R2);
+    loadWithConst(Ldia, end);
+    loadRR(Star, R3);
+    loadI(Ldia, raw);
+    load(chai::interpreter::StringPrint);
+    loadRR(StringSlice, R2, R3);
+    load(Ret);
+    update();
+    exec_.run();
+    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "BOB");
+    EXPECT_EQ(codeManager_.getCnstString(codeManager_.getCnst(raw)), "ABOBA");
+}

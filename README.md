@@ -49,3 +49,6 @@ func_info {
   u1[] code                    // Instructions, byte array.
 }         
 ```
+
+## Strings
+All strings are contained in CodeManager.stringPool_. Some of them initialized with starting of VM but you also can create own string in runtime via `StringConcat` or `StringSlice` instructions. 

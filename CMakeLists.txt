@@ -23,7 +23,7 @@ add_custom_target(gen_operations_header
         COMMENT "Generating ${OPERATIONS_DIR}"
         OUTPUT ${OPERATIONS_DIR}
         COMMAND python3 ${CMAKE_SOURCE_DIR}/tools/opcode2operation-generator.py ${OPERATIONS_DIR} ${CMAKE_SOURCE_DIR}/tools/resources/instructions.yml
-        )
+)
 
 add_library(chai_include INTERFACE)
 add_dependencies(chai_include gen_operations_header)

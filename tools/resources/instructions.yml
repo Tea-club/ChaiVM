@@ -217,3 +217,54 @@ instructions:
     mnemonic: Call
     format: I
     description: "Calls function [imm]. Imm is reference to function in constant pool named constant_func_name_and_type."
+  -
+    fixedvalue: 42
+    mnemonic: NewI64Array
+    format: N
+    description: "Allocates array of type i64 with number of elements from acc register. A reference to this new array is stored in acc."
+  -
+    fixedvalue: 43
+    mnemonic: GetI64FromArr
+    format: R
+    description: "Gets i64 from i64 array in acc and puts it to acc."
+  -
+    fixedvalue: 44
+    mnemonic: SetI64InArr
+    format: RR
+    description: "Sets i64 value to i64 array in acc and puts it to acc."
+  -
+    fixedvalue: 45
+    mnemonic: NewF64Array
+    format: N
+    description: "Allocates array of type f64 with number of elements from acc register. A reference to this new array is stored in acc."
+  -
+    fixedvalue: 46
+    mnemonic: GetF64FromArr
+    format: R
+    description: "Gets f64 from f64 array in acc and puts it to acc."
+  -
+    fixedvalue: 47
+    mnemonic: SetF64InArr
+    format: RR
+    description: "Sets f64 value to f64 array in acc and puts it to acc."
+  -
+    fixedvalue: 48
+    mnemonic: StringPrint
+    format: N
+    description: "Prints String in acc"
+  -
+    fixedvalue: 49
+    mnemonic: StringConcat
+    format: R
+    description: "Create new String, concatenating String in acc and String in r1. Result in acc."
+  -
+    fixedvalue: 50
+    mnemonic: StringLen
+    format: N
+    description: "Puts len of String to acc"
+  -
+    fixedvalue: 51
+    mnemonic: StringSlice
+    format: RR
+    description: "Create new String slicing String placed in acc. r1 is start and r2 is finish of slicing"
+

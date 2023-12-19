@@ -42,6 +42,13 @@ public:
 
     chsize_t getCnst(Immidiate id);
 
+    const std::string &getCnstString(Immidiate id) { return stringPool_[id]; }
+
+    Immidiate addCnstString(std::string &&str) {
+        stringPool_.emplace_back(str);
+        return stringPool_.size() - 1;
+    }
+
     bytecode_t getBytecode(size_t func, chsize_t pc);
 
     const Function &getFunc(Immidiate imm) const;
