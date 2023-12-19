@@ -13,9 +13,9 @@ target_link_libraries(front_asm PRIVATE
         chai_include
 )
 target_sources(front_asm PRIVATE
-        assembler.cpp
+    assembler.cpp
     ${FLEX_scanner_OUTPUTS}
 )
 target_include_directories(front_asm PUBLIC
-        ${LEXER_DIR}
+    ${LEXER_DIR}
 )

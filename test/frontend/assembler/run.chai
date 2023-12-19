@@ -1,0 +1,7 @@
+Ldia 6
+Star r2
+Ldia 8
+Star r3
+Ldra r3
+Mul r2
+Ret

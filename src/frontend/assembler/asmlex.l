@@ -10,21 +10,20 @@
 WS      [ \n\t\v]+
 COMMENT #.*
 
-DIGIT   [0-9]
-DIGIT1  [1-9]
-NUMBER  {DIGIT1}{DIGIT}*
-INT     [+-]?({DIGIT1}{DIGIT}*\.?[0-9]*|0\.[0-9]*)
+INT             [+-]?[1-9][0-9]*
+FLOAT           [+-]?([1-9][0-9]*\.?[0-9]*|0\.[0-9]*|0)
 IDENTIFIER      [a-zA-Z_][a-zA-Z0-9_.]*
-
 COMMA           ,
-COLON           :
 
 %%
 
-{WS}              /* skip blanks and tabs */
-{DIGIT1}{DIGIT}*  return processDigit();
-IDENTIFIER        return processIdentifier();
-.                 return processUnknown();
+{WS}                /* skip */
+{COMMENT}           /* skip */
+{INT}               return processInt();
+{FLOAT}             return processFloat();
+{IDENTIFIER}        return processIdentifier();
+{COMMA}             return processComma();
+.                   return processUnknown();
 
 %%
 

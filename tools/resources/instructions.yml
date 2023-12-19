@@ -29,7 +29,7 @@ instructions:
   -
     fixedvalue: 4
     mnemonic: Ldia
-    format: R
+    format: I
     description: "i64, loads constant [i] to acc"
   -
     fixedvalue: 5

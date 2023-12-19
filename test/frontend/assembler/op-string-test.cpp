@@ -18,7 +18,8 @@ TEST(OpString, toString) {
 
 TEST(OpString, CastToValue) {
     OpString op(chai::interpreter::Add);
-    EXPECT_EQ(static_cast<chai::interpreter::Operation>(op), chai::interpreter::Add);
+    EXPECT_EQ(static_cast<chai::interpreter::Operation>(op),
+              chai::interpreter::Add);
 }
 
 TEST(OpString, SpaceshipOperator) {
