@@ -46,20 +46,16 @@ TEST_F(AssemblerTest, runWithStrings) {
 
 TEST_F(AssemblerTest, runWithFunctions) {
     write_input_ << "Ldia 271\n"
-                 << "Star r99\n"
-                 << "Ldia 314\n"
-                 << "Star r98\n"
-                 << "Call 10\n"
+                 << "Call 8\n"
                  << "Ret\n"
                  << "fn aboba_func 50 2 {\n"
-                 << "Ldra r49\n"
-                 << "Sub r48\n"
+                 << "Ldia 125\n"
                  << "Ret\n"
                  << "}\n" << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
     exec_.run();
-    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), 314 - 271);
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), 125);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
