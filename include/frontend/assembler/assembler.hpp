@@ -79,7 +79,9 @@ private:
             return processRI(op);
         case chai::interpreter::Unknown:
         default:
-            throw AssembleError("Unknown instruction type", lex_.lineno());
+            throw AssembleError(
+                "Unknown instruction type in processInstruction",
+                lex_.lineno());
             break;
         }
     }
@@ -99,16 +101,22 @@ private:
     chai::bytecode_t processI(chai::interpreter::Operation op) {
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
-            return chaiFile_.getWithConst(
-                op, static_cast<int64_t>(
-                        static_cast<AsmLex::Int *>(lex_.currentLexem().get())
-                            ->value));
+            auto val = static_cast<int64_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+            auto imm = chaiFile_.addConst(std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            return chaiFile_.getWithConst(
-                op, (static_cast<AsmLex::Float *>(lex_.currentLexem().get())
-                         ->value));
+            auto val = static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            return chai::utils::instr2Raw(op, imm);
+        } else if (lex_.currentLexem()->type == AsmLex::STRING) {
+            std::string str =
+                static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
+            return chai::utils::instr2Raw(op, imm);
         } else {
-            throw AssembleError("Unknown instruction type", lex_.lineno());
+            throw AssembleError("Unknown instruction type in ProcessI",
+                                lex_.lineno());
         }
     }
     chai::bytecode_t processRI(chai::interpreter::Operation op) {
@@ -116,17 +124,22 @@ private:
         expectComma();
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
-            return chai::utils::inst2RawRI(
-                op, regId,
-                static_cast<int64_t>(
-                    static_cast<AsmLex::Int *>(lex_.currentLexem().get())
-                        ->value));
+            auto val = static_cast<int64_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+            auto imm = chaiFile_.addConst(std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            return chai::utils::instr2RawRI(op, regId, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            return chai::utils::inst2RawRI(
-                op, regId,
-                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value);
+            auto val = static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            return chai::utils::instr2RawRI(op, regId, imm);
+        } else if (lex_.currentLexem()->type == AsmLex::STRING) {
+            std::string str =
+                static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
+            return chai::utils::instr2RawRI(op, regId, imm);
         } else {
-            throw AssembleError("Unknown instruction type", lex_.lineno());
+            throw AssembleError("Unknown instruction type in processRI",
+                                lex_.lineno());
         }
     }
 
