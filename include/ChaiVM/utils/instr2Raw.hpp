@@ -17,8 +17,8 @@ chai::bytecode_t instr2Raw(interpreter::Operation op,
 
 chai::bytecode_t instr2Raw(interpreter::Operation op);
 
-chai::bytecode_t inst2RawRI(interpreter::Operation op,
-                            interpreter::RegisterId r1,
-                            interpreter::Immidiate imm);
+chai::bytecode_t instr2RawRI(interpreter::Operation op,
+                             interpreter::RegisterId r1,
+                             interpreter::Immidiate imm);
 
 } // namespace chai::utils

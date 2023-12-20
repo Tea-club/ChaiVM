@@ -101,12 +101,16 @@ private:
     chai::bytecode_t processI(chai::interpreter::Operation op) {
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
-            auto val = static_cast<int64_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
-            auto imm = chaiFile_.addConst(std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            auto val = static_cast<int64_t>(
+                static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstI64>(val));
             return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            auto val = static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
-            auto imm = chaiFile_.addConst(std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            auto val =
+                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstI64>(val));
             return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
@@ -124,12 +128,16 @@ private:
         expectComma();
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
-            auto val = static_cast<int64_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
-            auto imm = chaiFile_.addConst(std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            auto val = static_cast<int64_t>(
+                static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstI64>(val));
             return chai::utils::instr2RawRI(op, regId, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            auto val = static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
-            auto imm = chaiFile_.addConst(std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            auto val =
+                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstI64>(val));
             return chai::utils::instr2RawRI(op, regId, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
