@@ -49,7 +49,7 @@ TEST_F(AssemblerTest, runWithFunctions) {
                  << "Star r99\n"
                  << "Ldia 314\n"
                  << "Star r98\n"
-                 << "Call 5\n"
+                 << "Call 10\n"
                  << "Ret\n"
                  << "fn aboba_func 50 2 {\n"
                  << "Ldra r49\n"

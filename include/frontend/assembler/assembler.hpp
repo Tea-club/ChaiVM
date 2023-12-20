@@ -88,6 +88,9 @@ private:
         if (op == chai::interpreter::Inv) {
             throw AssembleError("Invalid instruction", lex_.lineno());
         }
+        if (op == chai::interpreter::Call) {
+            return processCall(op);
+        }
         switch (opToFormat(op)) {
         case chai::interpreter::N:
             return processN(op);
@@ -106,6 +109,11 @@ private:
                 lex_.lineno());
             break;
         }
+    }
+    chai::bytecode_t processCall(chai::interpreter::Operation op) {
+        auto val = static_cast<uint64_t>(
+            static_cast<AsmLex::Int *>(lex_.nextLexem().get())->value);
+        return chai::utils::instr2Raw(op, val, 0);
     }
     chai::bytecode_t processN(chai::interpreter::Operation op) {
         return chai::utils::instr2Raw(op, 0, 0);
