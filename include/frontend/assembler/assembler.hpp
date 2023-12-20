@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include <utility>
 
 #include "ChaiVM/interpreter/autogen/operations.hpp"
 #include "ChaiVM/utils/file-format/chai-file.hpp"
@@ -30,6 +31,10 @@ public:
      */
     void assemble() {
         processMain();
+        while (lex_.currentLexem()->type != AsmLex::EOF_) {
+            processFunction();
+            lex_.nextLexem();
+        }
         chaiFile_.toFile(outPath_);
     }
 
@@ -50,14 +55,31 @@ private:
             checkError();
             chaiFile_.addInstr(processInstruction());
             lex_.nextLexem();
-            if (lex_.currentLexem()->type == AsmLex::IDENTIFIER &&
-                OpString(
-                    static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
-                        ->value) == chai::interpreter::Ret) {
-                chaiFile_.addInstr(processInstruction());
-                break;
-            }
         }
+    }
+    /*
+     * @todo #76:90min Add function description to assembler
+     */
+    /*
+     * @todo #76:90min Add function to constant pool before parsing instructions (for recursion)
+     */
+    void processFunction() {
+        expectCurrentLexem(AsmLex::FUNC, "Expected function declaration");
+        expectNextLexem(AsmLex::IDENTIFIER, "Expected function name");
+        std::string func_name = static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())->value;
+        expectNextLexem(AsmLex::INTEGER, "Expected number of registers in function frame");
+        auto num_regs = static_cast<uint8_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+        expectNextLexem(AsmLex::INTEGER, "Expected number of function arguments");
+        auto num_args = static_cast<uint8_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+        expectNextLexem(AsmLex::OP_CURLY_BRACKET, "Expected opening curly bracket");
+        std::vector<chai::bytecode_t> instrs;
+        lex_.nextLexem();
+        while (lex_.currentLexem()->type != AsmLex::CL_CURLY_BRACKET) {
+            instrs.push_back(processInstruction());
+            lex_.nextLexem();
+        }
+        expectCurrentLexem(AsmLex::CL_CURLY_BRACKET, "Expected closing curly bracket");
+        chaiFile_.addFunction(UINT16_MAX, func_name, "V(V)", instrs, num_args, num_regs);
     }
     chai::bytecode_t processInstruction() {
         chai::interpreter::Operation op = OpString(
@@ -94,7 +116,7 @@ private:
     }
     chai::bytecode_t processRR(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId reg1Id = processReg();
-        expectComma();
+        expectNextLexem(AsmLex::COMMA, "Expected coma");
         chai::interpreter::RegisterId reg2Id = processReg();
         return chai::utils::instr2Raw(op, reg1Id, reg2Id);
     }
@@ -125,7 +147,7 @@ private:
     }
     chai::bytecode_t processRI(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId regId = processReg();
-        expectComma();
+        expectNextLexem(AsmLex::COMMA, "Expected coma");
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
             auto val = static_cast<int64_t>(
@@ -152,10 +174,7 @@ private:
     }
 
     chai::interpreter::RegisterId processReg() {
-        lex_.nextLexem();
-        if (lex_.currentLexem()->type != AsmLex::IDENTIFIER) {
-            throw AssembleError("Expected register", lex_.lineno());
-        }
+        expectNextLexem(AsmLex::IDENTIFIER, "Expected register name");
         return regNameToRegId(
             static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                 ->value);
@@ -166,10 +185,15 @@ private:
             throw AssembleError("Unknown lexem", lex_.lineno());
         }
     }
-    void expectComma() {
+    void expectNextLexem(AsmLex::LexemType type, std::string msg) {
         lex_.nextLexem();
-        if (lex_.currentLexem()->type != AsmLex::COMMA) {
-            throw AssembleError("Expected comma", lex_.lineno());
+        if (lex_.currentLexem()->type != type) {
+            throw AssembleError(std::move(msg), lex_.lineno());
+        }
+    }
+    void expectCurrentLexem(AsmLex::LexemType type, std::string msg) {
+        if (lex_.currentLexem()->type != type) {
+            throw AssembleError(std::move(msg), lex_.lineno());
         }
     }
     /*

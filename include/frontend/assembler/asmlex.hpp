@@ -21,6 +21,7 @@ public:
         OP_CURLY_BRACKET,
         CL_CURLY_BRACKET,
         COMMA,
+        EOF_,
         UNKNOWN
     };
 
@@ -74,6 +75,11 @@ public:
         Coma(LexemType t) : Lexem(t) {}
         ~Coma() override {}
     };
+    class Eof final : public Lexem {
+    public:
+        Eof(LexemType t) : Lexem(t) {}
+        ~Eof() override {}
+    };
     class Unknown final : public Lexem {
     public:
         Unknown(LexemType t) : Lexem(t) {}
@@ -107,15 +113,15 @@ private:
         return 0;
     }
     int processFunc() {
-        currentLexem_ = std::make_unique<Coma>(LexemType::FUNC);
+        currentLexem_ = std::make_unique<Func>(LexemType::FUNC);
         return 0;
     }
     int processOpCurlyBracket() {
-        currentLexem_ = std::make_unique<Coma>(LexemType::OP_CURLY_BRACKET);
+        currentLexem_ = std::make_unique<OpCurlyBracket>(LexemType::OP_CURLY_BRACKET);
         return 0;
     }
     int processClCurlyBracket() {
-        currentLexem_ = std::make_unique<Coma>(LexemType::CL_CURLY_BRACKET);
+        currentLexem_ = std::make_unique<ClCurlyBracket>(LexemType::CL_CURLY_BRACKET);
         return 0;
     }
     int processComma() {
@@ -126,6 +132,10 @@ private:
         std::string withQuotes(yytext);
         currentLexem_ = std::make_unique<String>(
             LexemType::STRING, withQuotes.substr(1, withQuotes.size() - 2));
+        return 0;
+    }
+    int processEOF() {
+        currentLexem_ = std::make_unique<Eof>(LexemType::EOF_);
         return 0;
     }
     int processUnknown() {
