@@ -10,7 +10,7 @@
 
 class ExecutorTest : public ::testing::Test {
 protected:
-    static constexpr chai::interpreter::RegisterId R0 = 1;
+    static constexpr chai::interpreter::RegisterId R0 = 0;
     static constexpr chai::interpreter::RegisterId R1 = 1;
     static constexpr chai::interpreter::RegisterId R2 = 2;
     static constexpr chai::interpreter::RegisterId R3 = 3;
@@ -22,48 +22,54 @@ protected:
     static constexpr chai::interpreter::RegisterId R9 = 9;
     static constexpr chai::interpreter::RegisterId R10 = 10;
     static constexpr chai::interpreter::RegisterId R11 = 11;
-    std::filesystem::path PATH;
+    std::filesystem::path path_;
 
-    template<chai::interpreter::Operation op>
-    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] == chai::interpreter::R, void>::type
+    /**
+     * These methods loads the operation in template parameter with the
+     * corresponding parameters.
+     * @param op Operation.
+     * @return Number of added instruction among all instructions.
+     */
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::R,
+                            chai::interpreter::Immidiate>::type
     load(chai::interpreter::RegisterId reg1) {
-        loadRR(op, reg1, 0);
+        return loadRR(op, reg1, 0);
     }
-
-    template<chai::interpreter::Operation op>
-    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] == chai::interpreter::RR, void>::type
-    load(chai::interpreter::RegisterId reg1, chai::interpreter::RegisterId reg2) {
-        loadRR(op, reg1, reg2);
-    }
-
-    template<chai::interpreter::Operation op>
-    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] == chai::interpreter::RI, void>::type
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::RR,
+                            chai::interpreter::Immidiate>::type
     load(chai::interpreter::RegisterId reg1,
-              chai::interpreter::Immidiate imm) {
-        loadRI(op, reg1, imm);
+         chai::interpreter::RegisterId reg2) {
+        return loadRR(op, reg1, reg2);
     }
-
-    template<chai::interpreter::Operation op>
-    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] == chai::interpreter::N, void>::type
-    load() {loadN(op);}
-
-private:
-    void loadRR(chai::interpreter::Operation op,
-                chai::interpreter::RegisterId reg1,
-                chai::interpreter::RegisterId reg2 = 0);
-protected:
-    void loadRI(chai::interpreter::Operation op,
-                chai::interpreter::RegisterId reg1,
-                chai::interpreter::Immidiate imm);
-
-    int loadI(chai::interpreter::Operation op,
-              chai::interpreter::Immidiate imm);
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::RI,
+                            chai::interpreter::Immidiate>::type
+    load(chai::interpreter::RegisterId reg1, chai::interpreter::Immidiate imm) {
+        return loadRI(op, reg1, imm);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::I,
+                            chai::interpreter::Immidiate>::type
+    load(chai::interpreter::Immidiate imm) {
+        return loadI(op, imm);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::N,
+                            chai::interpreter::Immidiate>::type
+    load() {
+        return loadN(op);
+    }
 
     void loadWithConst(chai::interpreter::Operation op, int64_t data);
 
     void loadWithConst(chai::interpreter::Operation op, double data);
-
-    int loadN(chai::interpreter::Operation op);
 
     void update();
 
@@ -71,6 +77,18 @@ protected:
 
     void TearDown() override;
 
+private:
+    chai::interpreter::Immidiate loadRR(chai::interpreter::Operation op,
+                                        chai::interpreter::RegisterId reg1,
+                                        chai::interpreter::RegisterId reg2 = 0);
+    chai::interpreter::Immidiate loadRI(chai::interpreter::Operation op,
+                                        chai::interpreter::RegisterId reg1,
+                                        chai::interpreter::Immidiate imm);
+    chai::interpreter::Immidiate loadI(chai::interpreter::Operation op,
+                                       chai::interpreter::Immidiate imm);
+    chai::interpreter::Immidiate loadN(chai::interpreter::Operation op);
+
+protected:
     chai::utils::fileformat::ChaiFile chaiFile_;
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);
