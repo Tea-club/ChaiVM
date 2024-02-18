@@ -24,12 +24,34 @@ protected:
     static constexpr chai::interpreter::RegisterId R11 = 11;
     std::filesystem::path PATH;
 
-    /*
-     * @todo #42:60min Rename all load methods to more appropriate names.
-     */
+    template<chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] == chai::interpreter::R, void>::type
+    load(chai::interpreter::RegisterId reg1) {
+        loadRR(op, reg1, 0);
+    }
+
+    template<chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] == chai::interpreter::RR, void>::type
+    load(chai::interpreter::RegisterId reg1, chai::interpreter::RegisterId reg2) {
+        loadRR(op, reg1, reg2);
+    }
+
+    template<chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] == chai::interpreter::RI, void>::type
+    load(chai::interpreter::RegisterId reg1,
+              chai::interpreter::Immidiate imm) {
+        loadRI(op, reg1, imm);
+    }
+
+    template<chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] == chai::interpreter::N, void>::type
+    load() {loadN(op);}
+
+private:
     void loadRR(chai::interpreter::Operation op,
                 chai::interpreter::RegisterId reg1,
                 chai::interpreter::RegisterId reg2 = 0);
+protected:
     void loadRI(chai::interpreter::Operation op,
                 chai::interpreter::RegisterId reg1,
                 chai::interpreter::Immidiate imm);
@@ -41,7 +63,7 @@ protected:
 
     void loadWithConst(chai::interpreter::Operation op, double data);
 
-    int load(chai::interpreter::Operation op);
+    int loadN(chai::interpreter::Operation op);
 
     void update();
 

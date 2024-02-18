@@ -28,7 +28,7 @@ void ExecutorTest::loadWithConst(chai::interpreter::Operation op, double data) {
     chaiFile_.addWithConst(op, data);
 }
 
-int ExecutorTest::load(chai::interpreter::Operation op) {
+int ExecutorTest::loadN(chai::interpreter::Operation op) {
     return chaiFile_.addInstr(chai::utils::instr2Raw(op));
 }
 
