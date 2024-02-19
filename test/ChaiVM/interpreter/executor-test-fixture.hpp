@@ -67,6 +67,7 @@ protected:
         return loadN(op);
     }
 
+    // @todo #54:60min do something to add this functionality to load Immediate
     void loadWithConst(chai::interpreter::Operation op, int64_t data);
 
     void loadWithConst(chai::interpreter::Operation op, double data);
