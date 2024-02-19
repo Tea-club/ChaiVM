@@ -159,7 +159,7 @@ instructions:
   -
     fixedvalue: 30
     mnemonic: If_icmpeq
-    format: N
+    format: RI
     description: "i64, if acc == r1 then branch to instruction at offset [imm] otherwise just next instr"
   -
     fixedvalue: 31

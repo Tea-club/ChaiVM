@@ -1,22 +1,27 @@
 #include "executor-test-fixture.hpp"
 
+using chai::interpreter::Immidiate;
 using namespace chai::utils::fileformat;
 
-void ExecutorTest::loadRR(chai::interpreter::Operation op,
-                          chai::interpreter::RegisterId reg1,
-                          chai::interpreter::RegisterId reg2) {
-    chaiFile_.addInstr(chai::utils::instr2Raw(op, reg1, reg2));
+Immidiate ExecutorTest::loadRR(chai::interpreter::Operation op,
+                               chai::interpreter::RegisterId reg1,
+                               chai::interpreter::RegisterId reg2) {
+    return chaiFile_.addInstr(chai::utils::instr2Raw(op, reg1, reg2));
 }
 
-void ExecutorTest::loadRI(chai::interpreter::Operation op,
-                          chai::interpreter::RegisterId reg1,
-                          chai::interpreter::Immidiate imm) {
-    chaiFile_.addInstr(chai::utils::inst2RawRI(op, reg1, imm));
+Immidiate ExecutorTest::loadRI(chai::interpreter::Operation op,
+                               chai::interpreter::RegisterId reg1,
+                               chai::interpreter::Immidiate imm) {
+    return chaiFile_.addInstr(chai::utils::inst2RawRI(op, reg1, imm));
 }
 
-int ExecutorTest::loadI(chai::interpreter::Operation op,
-                        chai::interpreter::Immidiate imm) {
+Immidiate ExecutorTest::loadI(chai::interpreter::Operation op,
+                              chai::interpreter::Immidiate imm) {
     return chaiFile_.addInstr(chai::utils::instr2Raw(op, imm));
+}
+
+Immidiate ExecutorTest::loadN(chai::interpreter::Operation op) {
+    return chaiFile_.addInstr(chai::utils::instr2Raw(op));
 }
 
 void ExecutorTest::loadWithConst(chai::interpreter::Operation op,
@@ -28,19 +33,15 @@ void ExecutorTest::loadWithConst(chai::interpreter::Operation op, double data) {
     chaiFile_.addWithConst(op, data);
 }
 
-int ExecutorTest::load(chai::interpreter::Operation op) {
-    return chaiFile_.addInstr(chai::utils::instr2Raw(op));
-}
-
 void ExecutorTest::update() {
-    chaiFile_.toFile(PATH);
-    codeManager_.load(PATH);
+    chaiFile_.toFile(path_);
+    codeManager_.load(path_);
 }
 
 void ExecutorTest::SetUp() {
-    PATH = std::string{"test_"}.append(std::string{
+    path_ = std::string{"test_"}.append(std::string{
         testing::UnitTest::GetInstance()->current_test_info()->name()});
-    std::remove(PATH.c_str());
+    std::remove(path_.c_str());
 }
 
-void ExecutorTest::TearDown() { std::remove(PATH.c_str()); }
+void ExecutorTest::TearDown() { std::remove(path_.c_str()); }

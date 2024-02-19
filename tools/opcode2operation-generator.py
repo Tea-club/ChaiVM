@@ -48,7 +48,7 @@ constexpr std::string_view OP_TO_STR[] = {
 {% for op in operations %}"{{ op }}", {% endfor %}
 };
 constexpr OperationFormat OP_TO_FORMAT[] = {
-Unknown, {% for n, item in enumerate(items, 1) %}{{ item.format }}, {% endfor %}
+N, {% for n, item in enumerate(items, 1) %}{{ item.format }}, {% endfor %}
 };
 } // namespace chai::interpreter
 

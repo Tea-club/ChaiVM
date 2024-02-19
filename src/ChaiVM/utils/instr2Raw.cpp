@@ -8,6 +8,7 @@ static uint8_t operation2opcode(Operation operation) {
     return (uint8_t)operation;
 }
 
+// @todo #54:60min add template parameter by format and refactor naming
 chai::bytecode_t instr2Raw(Operation op, RegisterId r1, RegisterId r2) {
     return (operation2opcode(op)) | (r1 << 8) | (r2 << 16);
 }

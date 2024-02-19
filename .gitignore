@@ -4,6 +4,8 @@
 
 # CMake build files
 build/
+third_party/benchmark
+third_party/googletest
 
 # ide stuff
 .idea
