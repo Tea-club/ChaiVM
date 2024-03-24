@@ -33,7 +33,8 @@ public:
 
 private:
     constexpr int findString(const std::string &strOp) {
-        for (unsigned int i = 0; i < sizeof(chai::interpreter::OP_TO_STR);
+        for (int i = 0; i < sizeof(chai::interpreter::OP_TO_STR) /
+                                         sizeof(std::string_view);
              i++) {
             if (strOp == chai::interpreter::OP_TO_STR[i]) {
                 return i;
