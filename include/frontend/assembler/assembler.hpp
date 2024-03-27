@@ -139,7 +139,6 @@ private:
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
                 static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
-            std::cout << "[ABOBA]: str = " << str << std::endl;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
             auto bytecode = chai::utils::inst2RawRI(op, regId, imm);

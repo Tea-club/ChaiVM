@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <utility>
 
 namespace front::assembler {
 
@@ -44,39 +45,39 @@ public:
     };
     class Identifier final : public Lexem {
     public:
-        Identifier(LexemType t, std::string v) : Lexem(t), value(v) {}
+        Identifier(LexemType t, std::string v) : Lexem(t), value(std::move(v)) {}
         std::string value;
         ~Identifier() override {}
     };
-    class Func final : public Lexem {
-    public:
-        Func(LexemType t) : Lexem(t) {}
-        ~Func() override {}
-    };
     class String final : public Lexem {
     public:
-        String(LexemType t, std::string str) : Lexem(t), value(str) {}
+        String(LexemType t, std::string str) : Lexem(t), value(std::move(str)) {}
         std::string value;
         ~String() override {}
     };
+    class Func final : public Lexem {
+    public:
+        Func() : Lexem(LexemType::FUNC) {}
+        ~Func() override {}
+    };
     class OpCurlyBracket final : public Lexem {
     public:
-        OpCurlyBracket(LexemType t) : Lexem(t) {}
+        OpCurlyBracket() : Lexem(LexemType::OP_CURLY_BRACKET) {}
         ~OpCurlyBracket() override {}
     };
     class ClCurlyBracket final : public Lexem {
     public:
-        ClCurlyBracket(LexemType t) : Lexem(t) {}
+        ClCurlyBracket() : Lexem(LexemType::CL_CURLY_BRACKET) {}
         ~ClCurlyBracket() override {}
     };
-    class Coma final : public Lexem {
+    class Comma final : public Lexem {
     public:
-        Coma(LexemType t) : Lexem(t) {}
-        ~Coma() override {}
+        Comma() : Lexem(LexemType::COMMA) {}
+        ~Comma() override {}
     };
     class Unknown final : public Lexem {
     public:
-        Unknown(LexemType t) : Lexem(t) {}
+        Unknown() : Lexem(LexemType::UNKNOWN) {}
         ~Unknown() override {}
     };
 
@@ -107,19 +108,19 @@ private:
         return 0;
     }
     int processFunc() {
-        currentLexem_ = std::make_unique<Coma>(LexemType::FUNC);
+        currentLexem_ = std::make_unique<Func>();
         return 0;
     }
     int processOpCurlyBracket() {
-        currentLexem_ = std::make_unique<Coma>(LexemType::OP_CURLY_BRACKET);
+        currentLexem_ = std::make_unique<OpCurlyBracket>();
         return 0;
     }
     int processClCurlyBracket() {
-        currentLexem_ = std::make_unique<Coma>(LexemType::CL_CURLY_BRACKET);
+        currentLexem_ = std::make_unique<ClCurlyBracket>();
         return 0;
     }
     int processComma() {
-        currentLexem_ = std::make_unique<Coma>(LexemType::COMMA);
+        currentLexem_ = std::make_unique<Comma>();
         return 0;
     }
     int processString() {
@@ -129,7 +130,7 @@ private:
         return 0;
     }
     int processUnknown() {
-        currentLexem_ = std::make_unique<Unknown>(LexemType::UNKNOWN);
+        currentLexem_ = std::make_unique<Unknown>();
         return 1;
     }
 };
