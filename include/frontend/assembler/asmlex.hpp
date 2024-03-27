@@ -45,13 +45,15 @@ public:
     };
     class Identifier final : public Lexem {
     public:
-        Identifier(LexemType t, std::string v) : Lexem(t), value(std::move(v)) {}
+        Identifier(LexemType t, std::string v)
+            : Lexem(t), value(std::move(v)) {}
         std::string value;
         ~Identifier() override {}
     };
     class String final : public Lexem {
     public:
-        String(LexemType t, std::string str) : Lexem(t), value(std::move(str)) {}
+        String(LexemType t, std::string str)
+            : Lexem(t), value(std::move(str)) {}
         std::string value;
         ~String() override {}
     };
