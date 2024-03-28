@@ -51,7 +51,7 @@ private:
             chaiFile_.addInstr(processInstruction());
             lex_.nextLexem();
             if (lex_.currentLexem()->type == AsmLex::IDENTIFIER &&
-                OperationWithInfo(
+                SmartOperation(
                     static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                         ->value) == chai::interpreter::Ret) {
                 chaiFile_.addInstr(processInstruction());
@@ -60,7 +60,7 @@ private:
         }
     }
     chai::bytecode_t processInstruction() {
-        OperationWithInfo op = OperationWithInfo(
+        SmartOperation op = SmartOperation(
             static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                 ->value);
         if (op == chai::interpreter::Inv) {

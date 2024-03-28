@@ -9,10 +9,10 @@
  * Class that encapsulates chai::interpreter::Operation and provides some
  *  useful methods.
  */
-class OperationWithInfo {
+class SmartOperation final {
 public:
-    OperationWithInfo(chai::interpreter::Operation val) : val_(val) {}
-    explicit OperationWithInfo(const std::string &strOp) {
+    SmartOperation(chai::interpreter::Operation val) : val_(val) {}
+    explicit SmartOperation(const std::string &strOp) {
         int ind = findString(strOp);
         if (ind == -1) {
             throw std::invalid_argument(
@@ -30,10 +30,6 @@ public:
     }
 
     constexpr operator chai::interpreter::Operation() const { return val_; }
-    constexpr auto operator<=>(const OperationWithInfo &rhs) const = default;
-    constexpr auto operator==(const chai::interpreter::Operation &rhs) const {
-        return this->val_ == rhs;
-    }
 
 private:
     constexpr int findString(const std::string &strOp) {
