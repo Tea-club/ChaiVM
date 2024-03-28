@@ -6,7 +6,7 @@
 #include "ChaiVM/utils/file-format/chai-file.hpp"
 #include "ChaiVM/utils/instr2Raw.hpp"
 #include "frontend/assembler/asmlex.hpp"
-#include "op-string.hpp"
+#include "op-with-info.hpp"
 
 namespace front::assembler {
 
@@ -51,7 +51,7 @@ private:
             chaiFile_.addInstr(processInstruction());
             lex_.nextLexem();
             if (lex_.currentLexem()->type == AsmLex::IDENTIFIER &&
-                OpString(
+                SmartOperation(
                     static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                         ->value) == chai::interpreter::Ret) {
                 chaiFile_.addInstr(processInstruction());
@@ -60,13 +60,13 @@ private:
         }
     }
     chai::bytecode_t processInstruction() {
-        chai::interpreter::Operation op = OpString(
+        SmartOperation op = SmartOperation(
             static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                 ->value);
         if (op == chai::interpreter::Inv) {
             throw AssembleError("Invalid instruction", lex_.lineno());
         }
-        switch (opToFormat(op)) {
+        switch (op.format()) {
         case chai::interpreter::N:
             return processN(op);
         case chai::interpreter::R:
@@ -139,7 +139,6 @@ private:
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
                 static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
-            std::cout << "[ABOBA]: str = " << str << std::endl;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
             auto bytecode = chai::utils::inst2RawRI(op, regId, imm);
@@ -171,14 +170,6 @@ private:
         if (lex_.currentLexem()->type != AsmLex::COMMA) {
             throw AssembleError("Expected comma", lex_.lineno());
         }
-    }
-    /*
-     * @todo #41:90min Implement it in OpString class. Also rename OpString
-     * class
-     */
-    chai::interpreter::OperationFormat
-    opToFormat(chai::interpreter::Operation op) {
-        return chai::interpreter::OP_TO_FORMAT[op];
     }
     chai::interpreter::RegisterId regNameToRegId(std::string regName) {
         chai::interpreter::RegisterId regId;

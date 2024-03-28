@@ -5,13 +5,14 @@
 #include "ChaiVM/interpreter/autogen/operations.hpp"
 #include "ChaiVM/interpreter/instruction.hpp"
 
-/*
- * @todo #41:90min Rename this class
+/**
+ * Class that encapsulates chai::interpreter::Operation and provides some
+ *  useful methods.
  */
-class OpString {
+class SmartOperation final {
 public:
-    OpString(chai::interpreter::Operation val) : val_(val) {}
-    explicit OpString(const std::string &strOp) {
+    SmartOperation(chai::interpreter::Operation val) : val_(val) {}
+    explicit SmartOperation(const std::string &strOp) {
         int ind = findString(strOp);
         if (ind == -1) {
             throw std::invalid_argument(
@@ -24,12 +25,11 @@ public:
     std::string_view toString() const {
         return chai::interpreter::OP_TO_STR[val_];
     }
+    chai::interpreter::OperationFormat format() {
+        return chai::interpreter::OP_TO_FORMAT[val_];
+    }
 
     constexpr operator chai::interpreter::Operation() const { return val_; }
-    constexpr auto operator<=>(const OpString &rhs) const = default;
-    constexpr auto operator==(const chai::interpreter::Operation &rhs) const {
-        return this->val_ == rhs;
-    }
 
 private:
     constexpr int findString(const std::string &strOp) {
