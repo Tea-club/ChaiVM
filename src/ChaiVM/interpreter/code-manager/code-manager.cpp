@@ -34,18 +34,18 @@ void CodeManager::loadPool(std::istream &istream) {
         ConstantTag type;
         istream.read(reinterpret_cast<char *>(&type), sizeof type);
         switch (type) {
-        case CNST_I64:
+        case CNST_I64: {
             int64_t next_long;
             istream.read(reinterpret_cast<char *>(&next_long),
                          sizeof next_long);
             constantPool_.push_back(next_long);
             break;
-        case CNST_F64:
+        } case CNST_F64: {
             double next_d;
             istream.read(reinterpret_cast<char *>(&next_d), sizeof next_d);
             constantPool_.push_back(std::bit_cast<chsize_t>(next_d));
             break;
-        case CNST_FUNC_NAME_AND_TYPE:
+        } case CNST_FUNC_NAME_AND_TYPE: {
             Immidiate name_index;
             istream.read(reinterpret_cast<char *>(&name_index),
                          sizeof name_index);
@@ -57,18 +57,16 @@ void CodeManager::loadPool(std::istream &istream) {
                 (static_cast<chsize_t>(name_index) << 16) |
                 (static_cast<chsize_t>(descriptor_index) << 0));
             break;
-        case CNST_RAW_STR:
+        } case CNST_RAW_STR: {
             uint16_t len;
             istream.read(reinterpret_cast<char *>(&len), sizeof len);
-            char *buf;
-            buf = new char[len + 1];
-            istream.read(buf, len);
+            std::unique_ptr<char[]> buf{new char[len + 1]};
+            istream.read(buf.get(), len);
             buf[len] = 0;
-            stringPool_.emplace_back(buf);
+            stringPool_.emplace_back(buf.get());
             constantPool_.push_back(stringPool_.size() - 1);
-            delete[] buf;
             break;
-        default:
+        } default:
             throw std::invalid_argument(std::string{"Type cannot be "} +
                                         std::to_string(type));
             break;
@@ -121,6 +119,10 @@ void CodeManager::loadFunction(std::istream &istream) {
 chsize_t CodeManager::getCnst(Immidiate id) {
     assert(id < constantPool_.size());
     return constantPool_[id];
+}
+
+const std::string &CodeManager::getCnstString(Immidiate id) {
+    return stringPool_[id];
 }
 
 bytecode_t CodeManager::getBytecode(size_t func, chsize_t pc) {

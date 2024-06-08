@@ -44,10 +44,6 @@ private:
     std::ifstream inputFile_;
     std::filesystem::path outPath_;
 
-    /*
-     * @todo #41:90min Refactor this function. Or maybe it is better to kill
-     * myself?
-     */
     void processMain() {
         lex_.nextLexem();
         checkError();
@@ -66,11 +62,11 @@ private:
     void processFunction() {
         expectCurrentLexem(AsmLex::FUNC, "Expected function declaration");
         expectNextLexem(AsmLex::IDENTIFIER, "Expected function name");
-        std::string func_name = static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())->value;
+        std::string func_name = dynamic_cast<AsmLex::Identifier *>(lex_.currentLexem().get())->value;
         expectNextLexem(AsmLex::INTEGER, "Expected number of registers in function frame");
-        auto num_regs = static_cast<uint8_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+        auto num_regs = static_cast<uint8_t>(dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
         expectNextLexem(AsmLex::INTEGER, "Expected number of function arguments");
-        auto num_args = static_cast<uint8_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+        auto num_args = static_cast<uint8_t>(dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
         expectNextLexem(AsmLex::OP_CURLY_BRACKET, "Expected opening curly bracket");
         std::vector<chai::bytecode_t> instrs;
         lex_.nextLexem();
@@ -83,7 +79,7 @@ private:
     }
     chai::bytecode_t processInstruction() {
         SmartOperation op = SmartOperation(
-            static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
+            dynamic_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                 ->value);
         if (op == chai::interpreter::Inv) {
             throw AssembleError("Invalid instruction", lex_.lineno());
@@ -133,19 +129,19 @@ private:
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
             auto val = static_cast<int64_t>(
-                static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+                dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstI64>(val));
             return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
             auto val =
-                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
+                dynamic_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstI64>(val));
             return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
-                static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
+                dynamic_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
             return chai::utils::instr2Raw(op, imm);
@@ -160,19 +156,19 @@ private:
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
             auto val = static_cast<int64_t>(
-                static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+                dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstI64>(val));
             return chai::utils::instr2RawRI(op, regId, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
             auto val =
-                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
+                dynamic_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstI64>(val));
             return chai::utils::instr2RawRI(op, regId, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
-                static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
+                dynamic_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
             return chai::utils::instr2RawRI(op, regId, imm);
@@ -185,7 +181,7 @@ private:
     chai::interpreter::RegisterId processReg() {
         expectNextLexem(AsmLex::IDENTIFIER, "Expected register name");
         return regNameToRegId(
-            static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
+            dynamic_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                 ->value);
     }
 

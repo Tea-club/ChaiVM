@@ -46,7 +46,8 @@ TEST_F(AssemblerTest, runWithStrings) {
 
 TEST_F(AssemblerTest, runWithFunctions) {
     write_input_ << "Ldia 271\n"
-                 << "Call 8\n"
+                 << "Ldia 228\n"
+                 << "Call 9\n"
                  << "Ret\n"
                  << "fn aboba_func 50 2 {\n"
                  << "Ldia 125\n"
