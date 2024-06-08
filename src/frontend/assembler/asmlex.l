@@ -23,12 +23,13 @@ COMMA           ,
 {COMMENT}           /* skip */
 {INT}               return processInt();
 {FLOAT}             return processFloat();
-{IDENTIFIER}        return processIdentifier();
 "fn"                return processFunc();
 "{"                 return processOpCurlyBracket();
 "}"                 return processClCurlyBracket();
 {COMMA}             return processComma();
+{IDENTIFIER}        return processIdentifier();
 {STRING}            return processString();
+<<EOF>>             return processEOF();
 .                   return processUnknown();
 
 %%

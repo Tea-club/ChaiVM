@@ -22,6 +22,7 @@ public:
         OP_CURLY_BRACKET,
         CL_CURLY_BRACKET,
         COMMA,
+        EOF_,
         UNKNOWN
     };
 
@@ -77,6 +78,11 @@ public:
         Comma() : Lexem(LexemType::COMMA) {}
         ~Comma() override {}
     };
+    class Eof final : public Lexem {
+    public:
+        Eof(LexemType t) : Lexem(t) {}
+        ~Eof() override {}
+    };
     class Unknown final : public Lexem {
     public:
         Unknown() : Lexem(LexemType::UNKNOWN) {}
@@ -129,6 +135,10 @@ private:
         std::string withQuotes(yytext);
         currentLexem_ = std::make_unique<String>(
             LexemType::STRING, withQuotes.substr(1, withQuotes.size() - 2));
+        return 0;
+    }
+    int processEOF() {
+        currentLexem_ = std::make_unique<Eof>(LexemType::EOF_);
         return 0;
     }
     int processUnknown() {

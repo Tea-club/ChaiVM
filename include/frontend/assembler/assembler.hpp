@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include <utility>
 
 #include "ChaiVM/interpreter/autogen/operations.hpp"
 #include "ChaiVM/utils/file-format/chai-file.hpp"
@@ -30,6 +31,10 @@ public:
      */
     void assemble() {
         processMain();
+        while (lex_.currentLexem()->type != AsmLex::EOF_) {
+            processFunction();
+            lex_.nextLexem();
+        }
         chaiFile_.toFile(outPath_);
     }
 
@@ -50,14 +55,31 @@ private:
             checkError();
             chaiFile_.addInstr(processInstruction());
             lex_.nextLexem();
-            if (lex_.currentLexem()->type == AsmLex::IDENTIFIER &&
-                SmartOperation(
-                    static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
-                        ->value) == chai::interpreter::Ret) {
-                chaiFile_.addInstr(processInstruction());
-                break;
-            }
         }
+    }
+    /*
+     * @todo #76:90min Add function description to assembler
+     */
+    /*
+     * @todo #76:90min Add function to constant pool before parsing instructions (for recursion)
+     */
+    void processFunction() {
+        expectCurrentLexem(AsmLex::FUNC, "Expected function declaration");
+        expectNextLexem(AsmLex::IDENTIFIER, "Expected function name");
+        std::string func_name = static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())->value;
+        expectNextLexem(AsmLex::INTEGER, "Expected number of registers in function frame");
+        auto num_regs = static_cast<uint8_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+        expectNextLexem(AsmLex::INTEGER, "Expected number of function arguments");
+        auto num_args = static_cast<uint8_t>(static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+        expectNextLexem(AsmLex::OP_CURLY_BRACKET, "Expected opening curly bracket");
+        std::vector<chai::bytecode_t> instrs;
+        lex_.nextLexem();
+        while (lex_.currentLexem()->type != AsmLex::CL_CURLY_BRACKET) {
+            instrs.push_back(processInstruction());
+            lex_.nextLexem();
+        }
+        expectCurrentLexem(AsmLex::CL_CURLY_BRACKET, "Expected closing curly bracket");
+        chaiFile_.addFunction(UINT16_MAX, func_name, "V(V)", instrs, num_args, num_regs);
     }
     chai::bytecode_t processInstruction() {
         SmartOperation op = SmartOperation(
@@ -65,6 +87,9 @@ private:
                 ->value);
         if (op == chai::interpreter::Inv) {
             throw AssembleError("Invalid instruction", lex_.lineno());
+        }
+        if (op == chai::interpreter::Call) {
+            return processCall(op);
         }
         switch (op.format()) {
         case chai::interpreter::N:
@@ -85,6 +110,12 @@ private:
             break;
         }
     }
+    chai::bytecode_t processCall(chai::interpreter::Operation op) {
+        auto val = static_cast<uint64_t>(
+            static_cast<AsmLex::Int *>(lex_.nextLexem().get())->value);
+        std::cout << "[Call]: val = " << val << std::endl;
+        return chai::utils::instr2RawRI(op, val, val);
+    }
     chai::bytecode_t processN(chai::interpreter::Operation op) {
         return chai::utils::instr2Raw(op, 0, 0);
     }
@@ -94,29 +125,30 @@ private:
     }
     chai::bytecode_t processRR(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId reg1Id = processReg();
-        expectComma();
+        expectNextLexem(AsmLex::COMMA, "Expected coma");
         chai::interpreter::RegisterId reg2Id = processReg();
         return chai::utils::instr2Raw(op, reg1Id, reg2Id);
     }
     chai::bytecode_t processI(chai::interpreter::Operation op) {
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
-            return chaiFile_.getWithConst(
-                op, static_cast<int64_t>(
-                        static_cast<AsmLex::Int *>(lex_.currentLexem().get())
-                            ->value));
+            auto val = static_cast<int64_t>(
+                static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            return chaiFile_.getWithConst(
-                op, (static_cast<AsmLex::Float *>(lex_.currentLexem().get())
-                         ->value));
+            auto val =
+                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
                 static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
-            auto bytecode = chai::utils::instr2Raw(op, imm);
-            chaiFile_.addInstr(bytecode);
-            return bytecode;
+            return chai::utils::instr2Raw(op, imm);
         } else {
             throw AssembleError("Unknown instruction type in ProcessI",
                                 lex_.lineno());
@@ -124,26 +156,26 @@ private:
     }
     chai::bytecode_t processRI(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId regId = processReg();
-        expectComma();
+        expectNextLexem(AsmLex::COMMA, "Expected coma");
         lex_.nextLexem();
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
-            return chai::utils::inst2RawRI(
-                op, regId,
-                static_cast<int64_t>(
-                    static_cast<AsmLex::Int *>(lex_.currentLexem().get())
-                        ->value));
+            auto val = static_cast<int64_t>(
+                static_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            return chai::utils::instr2RawRI(op, regId, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            return chai::utils::inst2RawRI(
-                op, regId,
-                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value);
+            auto val =
+                static_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
+            auto imm = chaiFile_.addConst(
+                std::make_unique<chai::utils::fileformat::ConstI64>(val));
+            return chai::utils::instr2RawRI(op, regId, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
                 static_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
-            auto bytecode = chai::utils::inst2RawRI(op, regId, imm);
-            chaiFile_.addInstr(bytecode);
-            return bytecode;
+            return chai::utils::instr2RawRI(op, regId, imm);
         } else {
             throw AssembleError("Unknown instruction type in processRI",
                                 lex_.lineno());
@@ -151,10 +183,7 @@ private:
     }
 
     chai::interpreter::RegisterId processReg() {
-        lex_.nextLexem();
-        if (lex_.currentLexem()->type != AsmLex::IDENTIFIER) {
-            throw AssembleError("Expected register", lex_.lineno());
-        }
+        expectNextLexem(AsmLex::IDENTIFIER, "Expected register name");
         return regNameToRegId(
             static_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
                 ->value);
@@ -165,10 +194,15 @@ private:
             throw AssembleError("Unknown lexem", lex_.lineno());
         }
     }
-    void expectComma() {
+    void expectNextLexem(AsmLex::LexemType type, std::string msg) {
         lex_.nextLexem();
-        if (lex_.currentLexem()->type != AsmLex::COMMA) {
-            throw AssembleError("Expected comma", lex_.lineno());
+        if (lex_.currentLexem()->type != type) {
+            throw AssembleError(std::move(msg), lex_.lineno());
+        }
+    }
+    void expectCurrentLexem(AsmLex::LexemType type, std::string msg) {
+        if (lex_.currentLexem()->type != type) {
+            throw AssembleError(std::move(msg), lex_.lineno());
         }
     }
     chai::interpreter::RegisterId regNameToRegId(std::string regName) {

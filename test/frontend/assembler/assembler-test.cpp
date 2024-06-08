@@ -43,3 +43,19 @@ TEST_F(AssemblerTest, runWithStrings) {
     exec_.run();
     EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "Hello world");
 }
+
+TEST_F(AssemblerTest, runWithFunctions) {
+    write_input_ << "Ldia 271\n"
+                 << "Call 8\n"
+                 << "Ret\n"
+                 << "fn aboba_func 50 2 {\n"
+                 << "Ldia 125\n"
+                 << "Ret\n"
+                 << "}\n" << std::endl;
+    Assembler asM{input_, output_};
+    asM.assemble();
+    codeManager_.load(output_);
+    exec_.run();
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), 125);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}

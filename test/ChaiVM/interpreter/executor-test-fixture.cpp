@@ -12,7 +12,7 @@ Immidiate ExecutorTest::loadRR(chai::interpreter::Operation op,
 Immidiate ExecutorTest::loadRI(chai::interpreter::Operation op,
                                chai::interpreter::RegisterId reg1,
                                chai::interpreter::Immidiate imm) {
-    return chaiFile_.addInstr(chai::utils::inst2RawRI(op, reg1, imm));
+    return chaiFile_.addInstr(chai::utils::instr2RawRI(op, reg1, imm));
 }
 
 Immidiate ExecutorTest::loadI(chai::interpreter::Operation op,

@@ -1,8 +1,8 @@
 #include "executor-test-fixture.hpp"
 
 using chai::bytecode_t;
-using chai::utils::inst2RawRI;
 using chai::utils::instr2Raw;
+using chai::utils::instr2RawRI;
 using namespace chai::interpreter;
 using namespace chai::utils::fileformat;
 
@@ -82,8 +82,8 @@ TEST_F(ExecutorTest, Factorial) {
             UINT16_MAX, "factorial", "(I)I",
             std::vector<bytecode_t>{
                 instr2Raw(Ldra, 7, 0), // val2
-                inst2RawRI(If_icmpne, one,
-                           static_cast<Immidiate>(3 * sizeof(bytecode_t))),
+                instr2RawRI(If_icmpne, one,
+                            static_cast<Immidiate>(3 * sizeof(bytecode_t))),
                 instr2Raw(Ldia, one), instr2Raw(Ret), instr2Raw(Star, 2, 0),
                 instr2Raw(Subi, one), instr2Raw(Star, 7, 0),
                 instr2Raw(Call, func_ref), instr2Raw(Mul, 2, 0),
