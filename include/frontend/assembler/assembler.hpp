@@ -137,7 +137,7 @@ private:
     }
     chai::bytecode_t processCall(chai::interpreter::Operation op) {
         auto func_name = static_cast<std::string>(
-            static_cast<AsmLex::String *>(lex_.nextLexem().get())->value);
+            dynamic_cast<AsmLex::Identifier *>(lex_.nextLexem().get())->value);
         uint16_t func_id = funcsIdByName_[func_name];
         return chai::utils::instr2RawRI(op, func_id, func_id);
     }
