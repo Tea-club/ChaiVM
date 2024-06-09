@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <utility>
+#include <unordered_map>
 
 #include "ChaiVM/interpreter/autogen/operations.hpp"
 #include "ChaiVM/utils/file-format/chai-file.hpp"
