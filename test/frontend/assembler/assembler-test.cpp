@@ -15,10 +15,12 @@ protected:
     std::filesystem::path output_ = "./bytecode.ch";
 };
 
-TEST_F(AssemblerTest, run) {
-    write_input_ << "Ldia 6\n"
+TEST_F(AssemblerTest, integerMul) {
+    int a = 10;
+    int b = 8;
+    write_input_ << "Ldia " << a << "\n"
                  << "Star r2\n"
-                 << "Ldia 8\n"
+                 << "Ldia " << b << "\n"
                  << "Star r3\n"
                  << "Ldra r3\n"
                  << "Mul r2\n"
@@ -27,11 +29,29 @@ TEST_F(AssemblerTest, run) {
     asM.assemble();
     codeManager_.load(output_);
     exec_.run();
-    EXPECT_EQ(exec_.acc(), 48);
+    EXPECT_EQ(exec_.acc(), a * b);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
 
-TEST_F(AssemblerTest, runWithStrings) {
+TEST_F(AssemblerTest, floatMul) {
+    double a = 6.54;
+    double b = 12.13;
+    write_input_ << "Ldiaf " << a << "\n"
+                 << "Star r2\n"
+                 << "Ldiaf " << b << "\n"
+                 << "Star r3\n"
+                 << "Ldra r3\n"
+                 << "Mulf r2\n"
+                 << "Ret" << std::endl;
+    Assembler asM{input_, output_};
+    asM.assemble();
+    codeManager_.load(output_);
+    exec_.run();
+    EXPECT_FLOAT_EQ(std::bit_cast<double>(exec_.acc()), a * b);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+TEST_F(AssemblerTest, strings) {
     write_input_ << "Ldia \" world\"\n"
                  << "Star r2\n"
                  << "Ldia \"Hello\"\n"
@@ -44,19 +64,38 @@ TEST_F(AssemblerTest, runWithStrings) {
     EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "Hello world");
 }
 
-TEST_F(AssemblerTest, runWithFunctions) {
+TEST_F(AssemblerTest, simpleFunction) {
     write_input_ << "Ldia 271\n"
                  << "Ldia 228\n"
-                 << "Call 1\n"
+                 << "Call aboba_func\n"
                  << "Ret\n"
-                 << "fn aboba_func 50 2 {\n"
-                 << "Ldia 125\n"
-                 << "Ret\n"
+                 << "fn aboba_func 0 0 {\n"
+                 << "    Ldia 125\n"
+                 << "    Ret\n"
                  << "}\n" << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
     exec_.run();
     EXPECT_EQ(static_cast<int64_t>(exec_.acc()), 125);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+TEST_F(AssemblerTest, squareFunctions) {
+    uint64_t value = 322;
+    write_input_ << "Ldia " << value << "\n"
+                 << "Call aboba_func\n"
+                 << "Ret\n"
+                 << "\n"
+                 << "fn aboba_func 1 0 {\n"
+                 << "    Star r0\n"
+                 << "    Mul r0\n"
+                 << "    Ret\n"
+                 << "}\n" << std::endl;
+    Assembler asM{input_, output_};
+    asM.assemble();
+    codeManager_.load(output_);
+    exec_.run();
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), value * value);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }

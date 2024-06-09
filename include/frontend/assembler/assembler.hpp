@@ -26,10 +26,27 @@ public:
         lex_.switch_streams(&inputFile_);
     }
 
+    void collectFunstions() {
+        uint16_t func_id = 0;
+        while (lex_.nextLexem()->type != AsmLex::EOF_) {
+            if (lex_.currentLexem()->type == AsmLex::FUNC) {
+                func_id++;
+                expectNextLexem(AsmLex::IDENTIFIER, "Expected function name");
+                std::string func_name = dynamic_cast<AsmLex::Identifier *>(
+                        lex_.currentLexem().get()
+                    )->value;
+                funcsIdByName_.insert({func_name, func_id});
+            }
+        }
+        inputFile_.seekg(0);
+        lex_.yyrestart(inputFile_);
+    }
+
     /*
      * @todo #41:90min Implement adequate processing of the main function
      */
     void assemble() {
+        collectFunstions();
         processMain();
         while (lex_.currentLexem()->type != AsmLex::EOF_) {
             processFunction();
@@ -43,6 +60,7 @@ private:
     chai::utils::fileformat::ChaiFile chaiFile_;
     std::ifstream inputFile_;
     std::filesystem::path outPath_;
+    std::unordered_map<std::string, uint16_t> funcsIdByName_;
 
     void processMain() {
         lex_.nextLexem();
@@ -107,10 +125,10 @@ private:
         }
     }
     chai::bytecode_t processCall(chai::interpreter::Operation op) {
-        auto val = static_cast<uint64_t>(
-            static_cast<AsmLex::Int *>(lex_.nextLexem().get())->value);
-        std::cout << "[Call]: val = " << val << std::endl;
-        return chai::utils::instr2RawRI(op, val, val);
+        auto func_name = static_cast<std::string>(
+            static_cast<AsmLex::String *>(lex_.nextLexem().get())->value);
+        uint16_t func_id = funcsIdByName_[func_name];
+        return chai::utils::instr2RawRI(op, func_id, func_id);
     }
     chai::bytecode_t processN(chai::interpreter::Operation op) {
         return chai::utils::instr2Raw(op, 0, 0);
@@ -137,7 +155,7 @@ private:
             auto val =
                 dynamic_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
             auto imm = chaiFile_.addConst(
-                std::make_unique<chai::utils::fileformat::ConstI64>(val));
+                std::make_unique<chai::utils::fileformat::ConstF64>(val));
             return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
@@ -205,10 +223,8 @@ private:
         chai::interpreter::RegisterId regId;
         if (regName.length() > 1 && regName[0] == 'r') {
             std::string digits = regName.substr(1);
+            regId = std::stoi(digits);
             std::istringstream iss(digits);
-            if (!(iss >> regId)) {
-                throw AssembleError("Invalid register number", lex_.lineno());
-            }
         } else {
             throw AssembleError("Invalid register format", lex_.lineno());
         }
