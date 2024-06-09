@@ -1,8 +1,8 @@
 #pragma once
 
 #include <sstream>
-#include <utility>
 #include <unordered_map>
+#include <utility>
 
 #include "ChaiVM/interpreter/autogen/operations.hpp"
 #include "ChaiVM/utils/file-format/chai-file.hpp"
