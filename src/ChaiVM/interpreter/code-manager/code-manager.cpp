@@ -29,7 +29,6 @@ void CodeManager::loadPool(std::istream &istream) {
     Immidiate constant_count;
     istream.read(reinterpret_cast<char *>(&constant_count),
                  sizeof constant_count);
-    dispatch_ = std::vector<Immidiate>(constant_count, -1);
     for (int i = 0; i < constant_count; ++i) {
         ConstantTag type;
         istream.read(reinterpret_cast<char *>(&type), sizeof type);
@@ -113,7 +112,6 @@ void CodeManager::loadFunction(std::istream &istream) {
         istream.read(reinterpret_cast<char *>(&bytecode), sizeof(bytecode_t));
         funcs_[next].code.push_back(bytecode);
     }
-    dispatch_[const_ref] = next;
 }
 
 chsize_t CodeManager::getCnst(Immidiate id) {
@@ -138,7 +136,7 @@ bytecode_t CodeManager::getBytecode(size_t func, chsize_t pc) {
 }
 
 const Function &CodeManager::getFunc(Immidiate imm) const {
-    return funcs_[dispatch_[imm]];
+    return funcs_[imm];
 }
 
 const Function &CodeManager::getStartFunc() const {

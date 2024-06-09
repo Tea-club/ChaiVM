@@ -78,11 +78,11 @@ ChaiFile::addFunction(chai::interpreter::Immidiate access_flags,
                      .nargs_ = num_args,
                      .codeLen_ = code_len,
                      .code_ = instrs});
-    return func_name_and_type_index;
+    return functions_.size();
 }
 
 chai::interpreter::Immidiate ChaiFile::nextFunc() const {
-    return pool_.size() + 2;
+    return functions_.size() + 1;
 }
 
 void ChaiFile::toFile(const std::filesystem::path &path) const {

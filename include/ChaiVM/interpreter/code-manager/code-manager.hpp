@@ -70,13 +70,6 @@ private:
      * here.
      */
     std::vector<std::string> stringPool_;
-
-    /**
-     * Id in appropriate collection by immidiate.
-     *  For example, func by imm is found as funcs_[dispatch_[imm]].
-     * @todo #1:90min We can avoid using dispatch_ anywhere via inheritance.
-     */
-    std::vector<Immidiate> dispatch_;
 };
 
 class BeyondCodeBoundaries : public std::runtime_error {
