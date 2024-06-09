@@ -33,8 +33,8 @@ public:
                 func_id++;
                 expectNextLexem(AsmLex::IDENTIFIER, "Expected function name");
                 std::string func_name = dynamic_cast<AsmLex::Identifier *>(
-                        lex_.currentLexem().get()
-                    )->value;
+                                            lex_.currentLexem().get())
+                                            ->value;
                 funcsIdByName_.insert({func_name, func_id});
             }
         }
@@ -75,25 +75,35 @@ private:
      * @todo #76:90min Add function description to assembler
      */
     /*
-     * @todo #76:90min Add function to constant pool before parsing instructions (for recursion)
+     * @todo #76:90min Add function to constant pool before parsing instructions
+     * (for recursion)
      */
     void processFunction() {
         expectCurrentLexem(AsmLex::FUNC, "Expected function declaration");
         expectNextLexem(AsmLex::IDENTIFIER, "Expected function name");
-        std::string func_name = dynamic_cast<AsmLex::Identifier *>(lex_.currentLexem().get())->value;
-        expectNextLexem(AsmLex::INTEGER, "Expected number of registers in function frame");
-        auto num_regs = static_cast<uint8_t>(dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
-        expectNextLexem(AsmLex::INTEGER, "Expected number of function arguments");
-        auto num_args = static_cast<uint8_t>(dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
-        expectNextLexem(AsmLex::OP_CURLY_BRACKET, "Expected opening curly bracket");
+        std::string func_name =
+            dynamic_cast<AsmLex::Identifier *>(lex_.currentLexem().get())
+                ->value;
+        expectNextLexem(AsmLex::INTEGER,
+                        "Expected number of registers in function frame");
+        auto num_regs = static_cast<uint8_t>(
+            dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+        expectNextLexem(AsmLex::INTEGER,
+                        "Expected number of function arguments");
+        auto num_args = static_cast<uint8_t>(
+            dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
+        expectNextLexem(AsmLex::OP_CURLY_BRACKET,
+                        "Expected opening curly bracket");
         std::vector<chai::bytecode_t> instrs;
         lex_.nextLexem();
         while (lex_.currentLexem()->type != AsmLex::CL_CURLY_BRACKET) {
             instrs.push_back(processInstruction());
             lex_.nextLexem();
         }
-        expectCurrentLexem(AsmLex::CL_CURLY_BRACKET, "Expected closing curly bracket");
-        chaiFile_.addFunction(UINT16_MAX, func_name, "V(V)", instrs, num_args, num_regs);
+        expectCurrentLexem(AsmLex::CL_CURLY_BRACKET,
+                           "Expected closing curly bracket");
+        chaiFile_.addFunction(UINT16_MAX, func_name, "V(V)", instrs, num_args,
+                              num_regs);
     }
     chai::bytecode_t processInstruction() {
         SmartOperation op = SmartOperation(
@@ -159,7 +169,8 @@ private:
             return chai::utils::instr2Raw(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
-                dynamic_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
+                dynamic_cast<AsmLex::String *>(lex_.currentLexem().get())
+                    ->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
             return chai::utils::instr2Raw(op, imm);
@@ -186,7 +197,8 @@ private:
             return chai::utils::instr2RawRI(op, regId, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
-                dynamic_cast<AsmLex::String *>(lex_.currentLexem().get())->value;
+                dynamic_cast<AsmLex::String *>(lex_.currentLexem().get())
+                    ->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
             return chai::utils::instr2RawRI(op, regId, imm);

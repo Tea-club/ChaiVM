@@ -35,11 +35,13 @@ void CodeManager::loadPool(std::istream &istream) {
             int64_t next_long = readBytes<int64_t>(istream);
             constantPool_.push_back(next_long);
             break;
-        } case CNST_F64: {
+        }
+        case CNST_F64: {
             double next_d = readBytes<double>(istream);
             constantPool_.push_back(std::bit_cast<chsize_t>(next_d));
             break;
-        } case CNST_FUNC_NAME_AND_TYPE: {
+        }
+        case CNST_FUNC_NAME_AND_TYPE: {
             Immidiate name_index = readBytes<Immidiate>(istream);
             Immidiate descriptor_index = readBytes<Immidiate>(istream);
             constantPool_.push_back(
@@ -47,7 +49,8 @@ void CodeManager::loadPool(std::istream &istream) {
                 (static_cast<chsize_t>(name_index) << 16) |
                 (static_cast<chsize_t>(descriptor_index) << 0));
             break;
-        } case CNST_RAW_STR: {
+        }
+        case CNST_RAW_STR: {
             uint16_t len = readBytes<uint16_t>(istream);
             std::unique_ptr<char[]> buf{new char[len + 1]};
             istream.read(buf.get(), len);
@@ -55,7 +58,8 @@ void CodeManager::loadPool(std::istream &istream) {
             stringPool_.emplace_back(buf.get());
             constantPool_.push_back(stringPool_.size() - 1);
             break;
-        } default:
+        }
+        default:
             throw std::invalid_argument(std::string{"Type cannot be "} +
                                         std::to_string(type));
             break;
@@ -83,7 +87,7 @@ void CodeManager::loadFunction(std::istream &istream) {
     // read code attribute
     Immidiate att_name_index = readBytes<Immidiate>(istream);
     uint32_t att_len = readBytes<uint32_t>(istream);
-    uint8_t max_regs = readBytes<uint8_t >(istream);
+    uint8_t max_regs = readBytes<uint8_t>(istream);
     uint8_t nargs = readBytes<uint8_t>(istream);
     // size of instructions in function in bytes
     uint32_t code_len = readBytes<uint32_t>(istream);

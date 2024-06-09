@@ -12,7 +12,7 @@ namespace chai::utils {
  * @param os output stream.
  * @param pdata pointer to data.
  */
-template <typename T> void writeBytes(std::ostream &os, const T* pdata) {
+template <typename T> void writeBytes(std::ostream &os, const T *pdata) {
     os.write(reinterpret_cast<const char *>(pdata), sizeof(T));
 }
 
@@ -29,4 +29,4 @@ template <typename T> T readBytes(std::istream &is) {
     return data;
 }
 
-}  // namespace chai::utils
+} // namespace chai::utils

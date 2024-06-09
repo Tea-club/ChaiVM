@@ -72,7 +72,8 @@ TEST_F(AssemblerTest, simpleFunction) {
                  << "fn aboba_func 0 0 {\n"
                  << "    Ldia 125\n"
                  << "    Ret\n"
-                 << "}\n" << std::endl;
+                 << "}\n"
+                 << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
@@ -91,7 +92,8 @@ TEST_F(AssemblerTest, squareFunctions) {
                  << "    Star r0\n"
                  << "    Mul r0\n"
                  << "    Ret\n"
-                 << "}\n" << std::endl;
+                 << "}\n"
+                 << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
