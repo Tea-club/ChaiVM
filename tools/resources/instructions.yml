@@ -84,7 +84,7 @@ instructions:
   -
     fixedvalue: 15
     mnemonic: Ldiaf
-    format: R
+    format: I
     description: "f64, loads constant [i] to acc"
   -
     fixedvalue: 16

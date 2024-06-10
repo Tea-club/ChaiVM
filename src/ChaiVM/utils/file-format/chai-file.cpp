@@ -1,4 +1,5 @@
 #include "ChaiVM/utils/file-format/chai-file.hpp"
+#include "ChaiVM/utils/io-bytes.hpp"
 
 namespace chai::utils::fileformat {
 
@@ -78,26 +79,25 @@ ChaiFile::addFunction(chai::interpreter::Immidiate access_flags,
                      .nargs_ = num_args,
                      .codeLen_ = code_len,
                      .code_ = instrs});
-    return func_name_and_type_index;
+    return functions_.size();
 }
 
 chai::interpreter::Immidiate ChaiFile::nextFunc() const {
-    return pool_.size() + 2;
+    return functions_.size() + 1;
 }
 
 void ChaiFile::toFile(const std::filesystem::path &path) const {
     std::ofstream ofs(path, std::ios::binary | std::ios::out);
     if (ofs.good() && ofs.is_open()) {
-        chai::interpreter::Immidiate constants = pool_.size();
-        ofs.write(reinterpret_cast<const char *>(&constants),
-                  sizeof(constants));
+        chai::interpreter::Immidiate constants_num = pool_.size();
+        writeBytes(ofs, &constants_num);
         for (const std::unique_ptr<Constant> &cnst : pool_) {
             cnst->putType(ofs);
             cnst->write(ofs);
         }
         // since main function too.
-        chai::interpreter::Immidiate funcs = functions_.size() + 1;
-        ofs.write(reinterpret_cast<const char *>(&funcs), sizeof(funcs));
+        chai::interpreter::Immidiate funcs_num = functions_.size() + 1;
+        writeBytes(ofs, &funcs_num);
         dumpMainFunc(ofs);
         for (const auto &func : functions_) {
             func.dump(ofs);
@@ -112,27 +112,23 @@ void ChaiFile::toFile(const std::filesystem::path &path) const {
 void ChaiFile::dumpMainFunc(std::ofstream &ofs) const {
     static_assert(sizeof(chai::interpreter::Immidiate) == 2);
     chai::interpreter::Immidiate access_flags = UINT16_MAX;
-    ofs.write(reinterpret_cast<const char *>(&access_flags),
-              sizeof(access_flags));
+    writeBytes(ofs, &access_flags);
     chai::interpreter::Immidiate const_ref = constFuncNameAndTypeIndex_;
-    ofs.write(reinterpret_cast<const char *>(&const_ref), sizeof(const_ref));
+    writeBytes(ofs, &const_ref);
     chai::interpreter::Immidiate atts_count = 1;
-    ofs.write(reinterpret_cast<const char *>(&atts_count), sizeof(atts_count));
+    writeBytes(ofs, &atts_count);
     chai::interpreter::Immidiate att_name_index = UINT16_MAX;
-    ofs.write(reinterpret_cast<const char *>(&att_name_index),
-              sizeof(att_name_index));
+    writeBytes(ofs, &att_name_index);
     uint32_t att_len = 6 + rawInstrs_.size() * sizeof(chai::bytecode_t);
-    ofs.write(reinterpret_cast<const char *>(&att_len), sizeof(att_len));
+    writeBytes(ofs, &att_len);
     uint8_t max_registers = 100;
-    ofs.write(reinterpret_cast<const char *>(&max_registers),
-              sizeof(max_registers));
+    writeBytes(ofs, &max_registers);
     uint8_t nargs = 100;
-    ofs.write(reinterpret_cast<const char *>(&nargs), sizeof(nargs));
+    writeBytes(ofs, &nargs);
     uint32_t code_len = rawInstrs_.size() * sizeof(chai::bytecode_t);
-    ofs.write(reinterpret_cast<const char *>(&code_len), sizeof(code_len));
+    writeBytes(ofs, &code_len);
     for (const auto &ins : rawInstrs_) {
-        ofs.write(reinterpret_cast<const char *>(&ins),
-                  sizeof(chai::bytecode_t));
+        writeBytes(ofs, &ins);
     }
 }
 

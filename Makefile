@@ -28,7 +28,7 @@ build: init
 
 .PHONY: test
 test: build
-	export GTEST_COLOR=1 && ctest  --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
+	export GTEST_COLOR=1 && ctest --test-dir $(PWD)/$(BUILD_DIR)/test --parallel $(JOBS) --output-on-failure
 
 .PHONY: execute-tests-inside-make
 execute-tests-inside-make:

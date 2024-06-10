@@ -314,7 +314,7 @@ void Executor::call(Instruction ins) {
     DO_NEXT_INS();
 }
 void Executor::newi64array(Instruction ins) {
-    int n = static_cast<int64_t>(acc());
+    auto n = static_cast<int64_t>(acc());
     memory::LinearAllocator<int64_t> allocator{buffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) int64_t[n]();
@@ -323,7 +323,7 @@ void Executor::newi64array(Instruction ins) {
     DO_NEXT_INS();
 }
 void Executor::get_i64from_arr(Instruction ins) {
-    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     auto *arr = reinterpret_cast<int64_t *>(acc());
     acc() = arr[i];
     advancePc();
@@ -331,7 +331,7 @@ void Executor::get_i64from_arr(Instruction ins) {
 }
 
 void Executor::set_i64in_arr(Instruction ins) {
-    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     auto *arr = reinterpret_cast<int64_t *>(acc());
     arr[i] = static_cast<int64_t>((*currentFrame_)[ins.r2]);
     advancePc();
@@ -339,7 +339,7 @@ void Executor::set_i64in_arr(Instruction ins) {
 }
 
 void Executor::newf64array(Instruction ins) {
-    int n = static_cast<int64_t>(acc());
+    auto n = static_cast<int64_t>(acc());
     memory::LinearAllocator<double> allocator{buffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) double[n]();
@@ -348,7 +348,7 @@ void Executor::newf64array(Instruction ins) {
     DO_NEXT_INS();
 }
 void Executor::get_f64from_arr(Instruction ins) {
-    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     auto *arr = reinterpret_cast<double *>(acc());
     acc() = std::bit_cast<int64_t>(arr[i]);
     advancePc();
@@ -356,7 +356,7 @@ void Executor::get_f64from_arr(Instruction ins) {
 }
 
 void Executor::set_f64in_arr(Instruction ins) {
-    int i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     auto *arr = reinterpret_cast<double *>(acc());
     arr[i] = std::bit_cast<double>((*currentFrame_)[ins.r2]);
     advancePc();

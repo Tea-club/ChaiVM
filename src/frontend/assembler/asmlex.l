@@ -10,7 +10,7 @@
 WS      [ \n\t\v]+
 COMMENT #.*
 
-INT             [+-]?[1-9][0-9]*
+INT             [+-]?0|([1-9][0-9]*)
 FLOAT           [+-]?([1-9][0-9]*\.?[0-9]*|0\.[0-9]*|0)
 IDENTIFIER      [a-zA-Z_][a-zA-Z0-9_.]*
 FUNC            "fn"
@@ -23,12 +23,13 @@ COMMA           ,
 {COMMENT}           /* skip */
 {INT}               return processInt();
 {FLOAT}             return processFloat();
-{IDENTIFIER}        return processIdentifier();
 "fn"                return processFunc();
 "{"                 return processOpCurlyBracket();
 "}"                 return processClCurlyBracket();
 {COMMA}             return processComma();
+{IDENTIFIER}        return processIdentifier();
 {STRING}            return processString();
+<<EOF>>             return processEOF();
 .                   return processUnknown();
 
 %%
