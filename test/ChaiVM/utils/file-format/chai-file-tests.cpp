@@ -11,10 +11,10 @@ TEST(ChaiFile, nextFunc) {
     ChaiFile chaiFile{};
     chaiFile.addWithConst(chai::interpreter::Ldiaf, static_cast<double>(0.1));
     Immidiate func_ref = chaiFile.nextFunc();
-    EXPECT_EQ(
-        chaiFile.addFunction(
-            UINT16_MAX, "recursion", "()V", std::vector<bytecode_t>{instr2Raw<Call>(func_ref),}, 2, 8
-        ),
-        func_ref
-    );
+    EXPECT_EQ(chaiFile.addFunction(UINT16_MAX, "recursion", "()V",
+                                   std::vector<bytecode_t>{
+                                       instr2Raw<Call>(func_ref),
+                                   },
+                                   2, 8),
+              func_ref);
 }
