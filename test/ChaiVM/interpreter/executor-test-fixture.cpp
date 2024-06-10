@@ -6,7 +6,7 @@ using namespace chai::utils::fileformat;
 Immidiate ExecutorTest::loadRR(chai::interpreter::Operation op,
                                chai::interpreter::RegisterId reg1,
                                chai::interpreter::RegisterId reg2) {
-    return chaiFile_.addInstr(chai::utils::instr2Raw(op, reg1, reg2));
+    return chaiFile_.addInstr(chai::utils::instr2RawRR(op, reg1, reg2));
 }
 
 Immidiate ExecutorTest::loadRI(chai::interpreter::Operation op,
@@ -17,11 +17,11 @@ Immidiate ExecutorTest::loadRI(chai::interpreter::Operation op,
 
 Immidiate ExecutorTest::loadI(chai::interpreter::Operation op,
                               chai::interpreter::Immidiate imm) {
-    return chaiFile_.addInstr(chai::utils::instr2Raw(op, imm));
+    return chaiFile_.addInstr(chai::utils::instr2RawI(op, imm));
 }
 
 Immidiate ExecutorTest::loadN(chai::interpreter::Operation op) {
-    return chaiFile_.addInstr(chai::utils::instr2Raw(op));
+    return chaiFile_.addInstr(chai::utils::instr2RawN(op));
 }
 
 void ExecutorTest::loadWithConst(chai::interpreter::Operation op,

@@ -13,7 +13,7 @@ TEST(ChaiFile, nextFunc) {
     Immidiate func_ref = chaiFile.nextFunc();
     EXPECT_EQ(chaiFile.addFunction(UINT16_MAX, "recursion", "()V",
                                    std::vector<bytecode_t>{
-                                       instr2Raw(Call, func_ref),
+                                       instr2Raw<Call>(func_ref),
                                    },
                                    2, 8),
               func_ref);

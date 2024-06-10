@@ -526,8 +526,8 @@ TEST_F(ExecutorTest, Goto_forward_and_back) {
  * ret
  */
 TEST_F(ExecutorTest, Call) {
-    int64_t val1 = static_cast<int64_t>(314);
-    int64_t val2 = static_cast<int64_t>(271);
+    auto val1 = static_cast<int64_t>(314);
+    auto val2 = static_cast<int64_t>(271);
     loadWithConst(Ldia, val2);
     load<Star>(99);
     loadWithConst(Ldia, val1);
@@ -535,9 +535,9 @@ TEST_F(ExecutorTest, Call) {
     Immidiate func_ref =
         chaiFile_.addFunction(UINT16_MAX, "aboba_func", "(II)I",
                               std::vector<bytecode_t>{
-                                  instr2Raw(Ldra, 49, 0), // val2
-                                  instr2Raw(Sub, 48, 0),  // val1
-                                  instr2Raw(Ret),
+                                  instr2Raw<Ldra>(49), // val2
+                                  instr2Raw<Sub>(48),  // val1
+                                  instr2Raw<Ret>(),
                               },
                               2, 50);
     load<Call>(func_ref);
