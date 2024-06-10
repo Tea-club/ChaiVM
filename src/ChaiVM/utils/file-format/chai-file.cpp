@@ -89,8 +89,8 @@ chai::interpreter::Immidiate ChaiFile::nextFunc() const {
 void ChaiFile::toFile(const std::filesystem::path &path) const {
     std::ofstream ofs(path, std::ios::binary | std::ios::out);
     if (ofs.good() && ofs.is_open()) {
-        chai::interpreter::Immidiate constants = pool_.size();
-        writeBytes(ofs, &constants);
+        chai::interpreter::Immidiate constants_num = pool_.size();
+        writeBytes(ofs, &constants_num);
         for (const std::unique_ptr<Constant> &cnst : pool_) {
             cnst->putType(ofs);
             cnst->write(ofs);
