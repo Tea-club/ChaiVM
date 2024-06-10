@@ -3,7 +3,7 @@
 #include "ChaiVM/utils/file-format/chai-file.hpp"
 
 using chai::bytecode_t;
-using chai::utils::instr2Raw;
+using chai::utils::instr2RawI;
 using chai::utils::fileformat::ChaiFile;
 using namespace chai::interpreter;
 
@@ -13,7 +13,7 @@ TEST(ChaiFile, nextFunc) {
     Immidiate func_ref = chaiFile.nextFunc();
     EXPECT_EQ(chaiFile.addFunction(UINT16_MAX, "recursion", "()V",
                                    std::vector<bytecode_t>{
-                                       instr2Raw(Call, func_ref),
+                                       instr2RawI(Call, func_ref),
                                    },
                                    2, 8),
               func_ref);

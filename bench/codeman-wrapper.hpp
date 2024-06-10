@@ -15,7 +15,7 @@ public:
     ~CodeManWrapper() { std::remove(PATH.c_str()); }
 
     void load(Operation op, RegisterId r1, RegisterId r2 = 0) {
-        chaiFile_.addInstr(instr2Raw(op, r1, r2));
+        chaiFile_.addInstr(instr2RawRR(op, r1, r2));
     }
 
     void loadWithConst(Operation op, int64_t data) {
@@ -26,7 +26,7 @@ public:
         chaiFile_.addWithConst(op, data);
     }
 
-    void load(Operation op) { chaiFile_.addInstr(instr2Raw(op)); }
+    void load(Operation op) { chaiFile_.addInstr(instr2RawN(op)); }
 
     void update() {
         chaiFile_.toFile(PATH);

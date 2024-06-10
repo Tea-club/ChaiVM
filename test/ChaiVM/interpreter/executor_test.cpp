@@ -1,7 +1,8 @@
 #include "executor-test-fixture.hpp"
 
 using chai::bytecode_t;
-using chai::utils::instr2Raw;
+using chai::utils::instr2RawN;
+using chai::utils::instr2RawRR;
 using namespace chai::interpreter;
 using namespace chai::utils::fileformat;
 
@@ -535,9 +536,9 @@ TEST_F(ExecutorTest, Call) {
     Immidiate func_ref =
         chaiFile_.addFunction(UINT16_MAX, "aboba_func", "(II)I",
                               std::vector<bytecode_t>{
-                                  instr2Raw(Ldra, 49, 0), // val2
-                                  instr2Raw(Sub, 48, 0),  // val1
-                                  instr2Raw(Ret),
+                                  instr2RawRR(Ldra, 49, 0), // val2
+                                  instr2RawRR(Sub, 48, 0),  // val1
+                                  instr2RawN(Ret),
                               },
                               2, 50);
     load<Call>(func_ref);

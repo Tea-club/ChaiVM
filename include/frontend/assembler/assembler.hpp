@@ -142,17 +142,17 @@ private:
         return chai::utils::instr2RawRI(op, func_id, func_id);
     }
     chai::bytecode_t processN(chai::interpreter::Operation op) {
-        return chai::utils::instr2Raw(op, 0, 0);
+        return chai::utils::instr2RawRR(op, 0, 0);
     }
     chai::bytecode_t processR(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId regId = processReg();
-        return chai::utils::instr2Raw(op, regId, 0);
+        return chai::utils::instr2RawRR(op, regId, 0);
     }
     chai::bytecode_t processRR(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId reg1Id = processReg();
         expectNextLexem(AsmLex::COMMA, "Expected coma");
         chai::interpreter::RegisterId reg2Id = processReg();
-        return chai::utils::instr2Raw(op, reg1Id, reg2Id);
+        return chai::utils::instr2RawRR(op, reg1Id, reg2Id);
     }
     chai::bytecode_t processI(chai::interpreter::Operation op) {
         lex_.nextLexem();
@@ -161,20 +161,20 @@ private:
                 dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstI64>(val));
-            return chai::utils::instr2Raw(op, imm);
+            return chai::utils::instr2RawI(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
             auto val =
                 dynamic_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstF64>(val));
-            return chai::utils::instr2Raw(op, imm);
+            return chai::utils::instr2RawI(op, imm);
         } else if (lex_.currentLexem()->type == AsmLex::STRING) {
             std::string str =
                 dynamic_cast<AsmLex::String *>(lex_.currentLexem().get())
                     ->value;
             auto imm = chaiFile_.addConst(
                 std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
-            return chai::utils::instr2Raw(op, imm);
+            return chai::utils::instr2RawI(op, imm);
         } else {
             throw AssembleError("Unknown instruction type in ProcessI",
                                 lex_.lineno());
