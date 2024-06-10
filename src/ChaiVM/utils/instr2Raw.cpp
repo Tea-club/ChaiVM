@@ -5,7 +5,7 @@ using namespace chai::interpreter;
 namespace chai::utils {
 
 static uint8_t operation2opcode(Operation operation) {
-    return (uint8_t)operation;
+    return static_cast<uint8_t>(operation);
 }
 
 // @todo #54:60min add template parameter by format and refactor naming

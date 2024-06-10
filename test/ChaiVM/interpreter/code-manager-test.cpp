@@ -24,9 +24,9 @@ protected:
     void TearDown() override { std::remove(filepath_.c_str()); }
 
     std::vector<chai::bytecode_t> defaultInstructions_ = {
-        instr2RawI(Ldia, 6), instr2RawRR(Star, 2, 0), instr2RawI(Ldia, 8),
-        instr2RawRR(Star, 3, 0), instr2RawRR(Ldra, 3, 0), instr2RawRR(Mul, 2, 0),
-        instr2RawRR(Ret, 0, 0)};
+        instr2Raw<Ldia>(6), instr2Raw<Star>(2), instr2Raw<Ldia>(8),
+        instr2Raw<Star>(3), instr2Raw<Ldra>(3), instr2Raw<Mul>(2),
+        instr2Raw<Ret>()};
     CodeManager codeManager_;
     std::filesystem::path filepath_ = "./example.chai";
 };
