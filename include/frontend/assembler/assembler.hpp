@@ -142,7 +142,7 @@ private:
         return chai::utils::instr2RawRI(op, func_id, func_id);
     }
     chai::bytecode_t processN(chai::interpreter::Operation op) {
-        return chai::utils::instr2RawRR(op, 0, 0);
+        return chai::utils::instr2RawN(op);
     }
     chai::bytecode_t processR(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId regId = processReg();
