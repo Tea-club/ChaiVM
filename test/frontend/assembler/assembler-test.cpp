@@ -61,7 +61,7 @@ TEST_F(AssemblerTest, strings) {
     asM.assemble();
     codeManager_.load(output_);
     exec_.run();
-    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "Hello world");
+    EXPECT_EQ(codeManager_.getCnstStringByReg(exec_.acc()), "Hello world");
 }
 
 TEST_F(AssemblerTest, simpleFunction) {

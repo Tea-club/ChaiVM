@@ -68,6 +68,7 @@ void Executor::mov(Instruction ins) {
 }
 void Executor::ldia(Instruction ins) {
     acc() = codeManager_->getCnst(ins.immidiate);
+    std::cout << "ldia: " << acc() << std::endl;
     advancePc();
     DO_NEXT_INS()
 }
@@ -364,32 +365,33 @@ void Executor::set_f64in_arr(Instruction ins) {
 }
 
 void Executor::string_print(Instruction ins) {
-    const std::string &str = codeManager_->getCnstString(acc());
-    std::cout << str;
+    std::cout << "string_print: acc = " << acc() << std::endl;
+    const std::string &str = codeManager_->getCnstStringByReg(acc());
+    std::cout << str << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
 
 void Executor::string_concat(Instruction ins) {
-    const std::string &str1 = codeManager_->getCnstString(acc());
+    const std::string &str1 = codeManager_->getCnstStringByReg(acc());
     const std::string &str2 =
-        codeManager_->getCnstString((*currentFrame_)[ins.r1]);
+        codeManager_->getCnstStringByReg((*currentFrame_)[ins.r1]);
     std::string concated = str1 + str2;
-    acc() = codeManager_->addCnstString(std::move(concated));
+    std::string copy_conc = concated;
+    acc() = codeManager_->getCnst(codeManager_->addCnstString(std::move(concated)));
+    assert(copy_conc == codeManager_->getCnstStringByReg(acc()));
     advancePc();
     DO_NEXT_INS();
 }
 
 void Executor::string_len(Instruction ins) {
-    acc() = codeManager_->getCnstString(acc()).size();
+    acc() = codeManager_->getCnstStringByReg(acc()).size();
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::string_slice(Instruction ins) {
-    const std::string &str = codeManager_->getCnstString(acc());
-    acc() = codeManager_->addCnstString(
-        str.substr((*currentFrame_)[ins.r1],
-                   (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1]));
+    const std::string &str = codeManager_->getCnstStringByReg(acc());
+    acc() = codeManager_->getCnst(codeManager_->addCnstString(str.substr((*currentFrame_)[ins.r1], (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1])));
     advancePc();
     DO_NEXT_INS();
 }

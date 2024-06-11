@@ -12,7 +12,11 @@ void CodeManager::load(const std::filesystem::path &path) {
     std::ifstream input_file(path, std::ios::binary | std::ios::in);
     if (input_file.good() && input_file.is_open()) {
         loadPool(input_file);
-        Immidiate func_count = readBytes<Immidiate>(input_file);
+        auto klass_count = readBytes<Immidiate>(input_file);
+        for (int i = 0; i < klass_count; ++i) {
+            loadKlass(input_file);
+        }
+        auto func_count = readBytes<Immidiate>(input_file);
         for (int i = 0; i < func_count; ++i) {
             loadFunction(input_file);
         }
@@ -57,6 +61,7 @@ void CodeManager::loadPool(std::istream &istream) {
             buf[len] = 0;
             stringPool_.emplace_back(buf.get());
             constantPool_.push_back(stringPool_.size() - 1);
+            std::cout << constantPool_.size() - 1 << ": " << buf.get() << ",string " << stringPool_.size() - 1 << std::endl;
             break;
         }
         default:
@@ -65,6 +70,38 @@ void CodeManager::loadPool(std::istream &istream) {
             break;
         }
     }
+}
+
+inline bool typeIsPrimitive(uint8_t type) {
+    return type == 0;
+}
+
+Field loadField(std::istream &istream) {
+    auto name = readBytes<Immidiate>(istream);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+    auto type = readBytes<uint8_t>(istream);
+    if (typeIsPrimitive(type)) {
+        readBytes<uint8_t>(istream);
+        char intOrFloat = readBytes<char>(istream);
+    } else {
+        auto klassNum = readBytes<Immidiate>(istream);
+    }
+#pragma GCC diagnostic pop
+    return Field{name};
+}
+
+void CodeManager::loadKlass(std::istream &istream) {
+    auto name = readBytes<Immidiate>(istream);
+    std::cout << "Loading klass " << getCnstStringByImm(name) << std::endl;
+    auto fields_count = readBytes<uint8_t>(istream);
+    Klass klass{name, std::vector<Field>{}};
+    for (int i = 0; i < fields_count; ++i) {
+        klass.fields_.push_back(
+            loadField(istream)
+        );
+    }
+    klasses_.push_back(klass);
 }
 
 /*
@@ -108,8 +145,12 @@ chsize_t CodeManager::getCnst(Immidiate id) {
     return constantPool_[id];
 }
 
-const std::string &CodeManager::getCnstString(Immidiate id) {
-    return stringPool_[id];
+const std::string &CodeManager::getCnstStringByImm(Immidiate id) {
+    return stringPool_[constantPool_[id]];
+}
+
+const std::string &CodeManager::getCnstStringByReg(chsize_t reg_val) {
+    return stringPool_[reg_val];
 }
 
 bytecode_t CodeManager::getBytecode(size_t func, chsize_t pc) {
@@ -122,6 +163,11 @@ bytecode_t CodeManager::getBytecode(size_t func, chsize_t pc) {
     } else {
         return funcs_[func].code[pc / sizeof(bytecode_t)];
     }
+}
+
+const Klass &CodeManager::getKlass(Immidiate imm) const {
+    assert(klasses_.size() > imm);
+    return klasses_[imm];
 }
 
 const Function &CodeManager::getFunc(Immidiate imm) const {

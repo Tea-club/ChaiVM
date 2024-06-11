@@ -95,8 +95,12 @@ void ChaiFile::toFile(const std::filesystem::path &path) const {
             cnst->putType(ofs);
             cnst->write(ofs);
         }
-        // since main function too.
-        chai::interpreter::Immidiate funcs_num = functions_.size() + 1;
+        chai::interpreter::Immidiate klass_num = klasses_.size();
+        writeBytes(ofs, &klass_num);
+        for (const auto &klass: klasses_) {
+            klass.dump(ofs);
+        }
+        chai::interpreter::Immidiate funcs_num = functions_.size() + 1; // since main function too.
         writeBytes(ofs, &funcs_num);
         dumpMainFunc(ofs);
         for (const auto &func : functions_) {

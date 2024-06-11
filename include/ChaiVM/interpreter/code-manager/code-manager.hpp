@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "ChaiVM/interpreter/code-manager/func-struct.hpp"
+#include "ChaiVM/interpreter/oop/klass.hpp"
 #include "ChaiVM/memory/allocator.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
@@ -38,24 +39,38 @@ public:
      */
     void loadPool(std::istream &istream);
 
+    void loadKlass(std::istream &istream);
+
     void loadFunction(std::istream &istream);
 
     chsize_t getCnst(Immidiate id);
 
-    const std::string &getCnstString(Immidiate id);
+    const std::string &getCnstStringByImm(Immidiate id);
+
+    const std::string &getCnstStringByReg(chsize_t reg_val);
 
     Immidiate addCnstString(std::string &&str) {
+        std::cout << constantPool_.size() << ": " << str << std::endl;
+        constantPool_.push_back(stringPool_.size());
         stringPool_.emplace_back(str);
-        return stringPool_.size() - 1;
+        return constantPool_.size() - 1;
     }
 
     bytecode_t getBytecode(size_t func, chsize_t pc);
+
+    const Klass &getKlass(Immidiate imm) const;
 
     const Function &getFunc(Immidiate imm) const;
 
     const Function &getStartFunc() const;
 
 private:
+
+    /**
+     * Loaded klasses.
+     */
+    std::vector<Klass> klasses_;
+
     std::vector<Function> funcs_;
 
     /**

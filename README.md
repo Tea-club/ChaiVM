@@ -26,9 +26,11 @@ fn main 8 0 {
 Where Ret returns exit code `r0`. "main" is name of the starting function, `8` is number of registers in it, `0` is number of arguments passing into the function. 
 This script compiled to chai-bytecode should print "0", because '0' == 48.
 ## Chai file format
-Our file format is similar to jvm ClassFile Structure. Its content is the following:
+Except for classes, our file format is similar to jvm ClassFile Structure. Its content is the following:
 - Constants count (`imm`)
 - Constant[]
+- klass_info count (`imm`)
+- klass_info[]
 - func_info count (`imm`)
 - func_info[]
 
@@ -36,6 +38,23 @@ Where `imm` is 2 bytes.
 
 `Constant` has a 1 byte tag that specifies its type(ConstI64, or ConstFuncNameAndType and so on) and the payload then.
 
+`klass_info` structure:
+```
+klass_info {
+  imm ConstRawStr              // Klass name index in constant pool
+  u1 nFields                   // Count of fields
+  field_info[]                 // field_infos array
+}
+
+field_info {
+  imm ConstRawStr              // Field name index in constant pool
+  u1 type                      // 0 if primitive, some class otherwise
+  union {
+    u1 tag                     // (first byte 0, second determines) 1 for i64, 2 for f64
+    imm klassNum               // Klass number, counting only klasses from top to bottom
+  }
+}
+```
 `func_info` structure:
 ```
 func_info {
