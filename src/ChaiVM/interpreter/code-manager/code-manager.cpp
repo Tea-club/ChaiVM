@@ -147,6 +147,12 @@ const std::string &CodeManager::getCnstStringByReg(chsize_t reg_val) {
     return stringPool_[reg_val];
 }
 
+Immidiate CodeManager::addCnstString(std::string &&str) {
+    constantPool_.push_back(stringPool_.size());
+    stringPool_.emplace_back(str);
+    return constantPool_.size() - 1;
+}
+
 bytecode_t CodeManager::getBytecode(size_t func, chsize_t pc) {
     if (pc / sizeof(bytecode_t) >= funcs_[func].code.size() ||
         pc % sizeof(bytecode_t) != 0) {

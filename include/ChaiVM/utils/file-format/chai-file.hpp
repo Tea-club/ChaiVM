@@ -57,12 +57,7 @@ public:
      * @param name Klass name.
      * @return Number of klass.
      */
-    chai::interpreter::Immidiate registerKlass(const std::string &name) {
-        klasses_.push_back(
-            KlassInfo{addConst(std::make_unique<ConstRawStr>(name)), 0,
-                      std::vector<FieldInfo>{}});
-        return klasses_.size() - 1;
-    }
+    chai::interpreter::Immidiate registerKlass(const std::string &name);
 
     /**
      * Add field to klass.
@@ -74,12 +69,7 @@ public:
      */
     chai::interpreter::Immidiate
     addField(chai::interpreter::Immidiate klass, const std::string &name,
-             uint8_t isObject, chai::interpreter::Immidiate tagOrKlassNum) {
-        chai::interpreter::Immidiate field_name =
-            addConst(std::make_unique<ConstRawStr>(name));
-        return klasses_[klass].addField(
-            FieldInfo{field_name, isObject, tagOrKlassNum});
-    }
+             uint8_t isObject, chai::interpreter::Immidiate tagOrKlassNum);
 
     void toFile(const std::filesystem::path &path) const;
 

@@ -8,10 +8,10 @@
 #include <vector>
 
 #include "ChaiVM/interpreter/code-manager/func-struct.hpp"
-#include "ChaiVM/interpreter/oop/klass.hpp"
 #include "ChaiVM/memory/allocator.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
+#include "klass.hpp"
 
 namespace chai::interpreter {
 
@@ -49,11 +49,7 @@ public:
 
     const std::string &getCnstStringByReg(chsize_t reg_val);
 
-    Immidiate addCnstString(std::string &&str) {
-        constantPool_.push_back(stringPool_.size());
-        stringPool_.emplace_back(str);
-        return constantPool_.size() - 1;
-    }
+    Immidiate addCnstString(std::string &&str);
 
     bytecode_t getBytecode(size_t func, chsize_t pc);
 

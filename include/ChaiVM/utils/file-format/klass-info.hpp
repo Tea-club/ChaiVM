@@ -22,21 +22,9 @@ struct KlassInfo {
     uint8_t nFields_;
     std::vector<FieldInfo> fields_;
 
-    chai::interpreter::Immidiate addField(FieldInfo field) {
-        fields_.push_back(field);
-        nFields_++;
-        return (nFields_ - 1) * sizeof(chsize_t);
-    }
+    chai::interpreter::Immidiate addField(FieldInfo field);
 
-    void dump(std::ofstream &ofs) const {
-        writeBytes(ofs, &name_);
-        writeBytes(ofs, &nFields_);
-        for (const auto &field : fields_) {
-            writeBytes(ofs, &field.name_);
-            writeBytes(ofs, &field.isObject_);
-            writeBytes(ofs, &field.tagOrKlassNum_);
-        }
-    }
+    void dump(std::ofstream &ofs) const;
 };
 
 } // namespace chai::utils::fileformat
