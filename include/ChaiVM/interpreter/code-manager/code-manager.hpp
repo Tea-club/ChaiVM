@@ -54,8 +54,9 @@ public:
 
     /**
      * Get string by constant that provided constant pool.
-     * Usually we take constant from constant pool directly. In case of string there is
-     *  just 64-bit number that encodes String. Use this method to get string by this number.
+     * Usually we take constant from constant pool directly. In case of string
+     * there is just 64-bit number that encodes String. Use this method to get
+     * string by this number.
      * @param reg_val Number from constant pool.
      * @return String.
      */
