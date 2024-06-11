@@ -57,12 +57,10 @@ public:
      * @param name Klass name.
      * @return Number of klass.
      */
-    chai::interpreter::Immidiate registerKlass(const std::string& name) {
+    chai::interpreter::Immidiate registerKlass(const std::string &name) {
         klasses_.push_back(
-            KlassInfo{
-                addConst(std::make_unique<ConstRawStr>(name)), 0, std::vector<FieldInfo>{}
-            }
-        );
+            KlassInfo{addConst(std::make_unique<ConstRawStr>(name)), 0,
+                      std::vector<FieldInfo>{}});
         return klasses_.size() - 1;
     }
 
@@ -74,9 +72,13 @@ public:
      * @param tagOrKlassNum 1 for i64, 2 for f64, or number of klass.
      * @return offset of the field.
      */
-    chai::interpreter::Immidiate addField(chai::interpreter::Immidiate klass, const std::string& name, uint8_t isObject, chai::interpreter::Immidiate tagOrKlassNum) {
-        chai::interpreter::Immidiate field_name = addConst(std::make_unique<ConstRawStr>(name));
-        return klasses_[klass].addField(FieldInfo{field_name, isObject, tagOrKlassNum});
+    chai::interpreter::Immidiate
+    addField(chai::interpreter::Immidiate klass, const std::string &name,
+             uint8_t isObject, chai::interpreter::Immidiate tagOrKlassNum) {
+        chai::interpreter::Immidiate field_name =
+            addConst(std::make_unique<ConstRawStr>(name));
+        return klasses_[klass].addField(
+            FieldInfo{field_name, isObject, tagOrKlassNum});
     }
 
     void toFile(const std::filesystem::path &path) const;
@@ -96,7 +98,8 @@ private:
     std::vector<FunctionInfo> functions_;
 
     /**
-     * @todo #94:90min Figure out why this is necessary and add commentary or remove.
+     * @todo #94:90min Figure out why this is necessary and add commentary or
+     * remove.
      */
     chai::interpreter::Immidiate constFuncNameAndTypeIndex_;
 

@@ -21,10 +21,7 @@ public:
     chai::interpreter::Immidiate name_;
     std::vector<Field> fields_;
 
-    chsize_t size() {
-        return fields_.size();
-    }
-
+    chsize_t size() { return fields_.size(); }
 };
 
 } // namespace chai::interpreter

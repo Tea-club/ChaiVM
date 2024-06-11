@@ -17,7 +17,6 @@ Immidiate ExecutorTest::loadRI(chai::interpreter::Operation op,
 
 Immidiate ExecutorTest::loadI(chai::interpreter::Operation op,
                               chai::interpreter::Immidiate imm) {
-    std::cout << "loadI: " << imm << std::endl;
     return chaiFile_.addInstr(chai::utils::instr2RawI(op, imm));
 }
 

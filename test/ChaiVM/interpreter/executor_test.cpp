@@ -658,7 +658,6 @@ TEST_F(ExecutorTest, StringConcat) {
     Immidiate raw1 = chaiFile_.addConst(std::make_unique<ConstRawStr>("ABOBA"));
     Immidiate raw2 =
         chaiFile_.addConst(std::make_unique<ConstRawStr>(" Yeash"));
-    std::cout << raw2 << std::endl;
     load<Ldia>(raw2);
     load<StringPrint>();
     load<Star>(R2);

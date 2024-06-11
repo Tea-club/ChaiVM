@@ -50,7 +50,6 @@ public:
     const std::string &getCnstStringByReg(chsize_t reg_val);
 
     Immidiate addCnstString(std::string &&str) {
-        std::cout << constantPool_.size() << ": " << str << std::endl;
         constantPool_.push_back(stringPool_.size());
         stringPool_.emplace_back(str);
         return constantPool_.size() - 1;
@@ -65,7 +64,6 @@ public:
     const Function &getStartFunc() const;
 
 private:
-
     /**
      * Loaded klasses.
      */

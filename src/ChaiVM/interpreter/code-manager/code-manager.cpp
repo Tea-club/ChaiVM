@@ -61,7 +61,6 @@ void CodeManager::loadPool(std::istream &istream) {
             buf[len] = 0;
             stringPool_.emplace_back(buf.get());
             constantPool_.push_back(stringPool_.size() - 1);
-            std::cout << constantPool_.size() - 1 << ": " << buf.get() << ",string " << stringPool_.size() - 1 << std::endl;
             break;
         }
         default:
@@ -72,9 +71,7 @@ void CodeManager::loadPool(std::istream &istream) {
     }
 }
 
-inline bool typeIsPrimitive(uint8_t type) {
-    return type == 0;
-}
+inline bool typeIsPrimitive(uint8_t type) { return type == 0; }
 
 Field loadField(std::istream &istream) {
     auto name = readBytes<Immidiate>(istream);
@@ -93,13 +90,10 @@ Field loadField(std::istream &istream) {
 
 void CodeManager::loadKlass(std::istream &istream) {
     auto name = readBytes<Immidiate>(istream);
-    std::cout << "Loading klass " << getCnstStringByImm(name) << std::endl;
     auto fields_count = readBytes<uint8_t>(istream);
     Klass klass{name, std::vector<Field>{}};
     for (int i = 0; i < fields_count; ++i) {
-        klass.fields_.push_back(
-            loadField(istream)
-        );
+        klass.fields_.push_back(loadField(istream));
     }
     klasses_.push_back(klass);
 }
