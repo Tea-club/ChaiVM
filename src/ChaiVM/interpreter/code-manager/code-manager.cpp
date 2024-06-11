@@ -139,8 +139,8 @@ chsize_t CodeManager::getCnst(Immidiate id) {
     return constantPool_[id];
 }
 
-const std::string &CodeManager::getCnstStringByImm(Immidiate id) {
-    return stringPool_[constantPool_[id]];
+const std::string &CodeManager::getCnstStringByImm(Immidiate imm) {
+    return stringPool_[constantPool_[imm]];
 }
 
 const std::string &CodeManager::getCnstStringByReg(chsize_t reg_val) {
