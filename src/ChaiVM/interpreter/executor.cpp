@@ -358,7 +358,6 @@ void Executor::get_f64from_arr(Instruction ins) {
     advancePc();
     DO_NEXT_INS();
 }
-
 void Executor::set_f64in_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     auto *arr = reinterpret_cast<double *>(acc());
@@ -366,7 +365,38 @@ void Executor::set_f64in_arr(Instruction ins) {
     advancePc();
     DO_NEXT_INS();
 }
-
+void Executor::new_ref_arr(Instruction ins) {
+    chsize_t len = acc();
+    std::cout << "new_ref_arr with len =  " << len << std::endl;
+    memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
+    chsize_t num_bytes = sizeof(ObjectHeader) + len * sizeof(chsize_t);
+    auto *object_arr = new (allocator.allocate(num_bytes)) uint8_t[num_bytes]();
+    auto *pheader = reinterpret_cast<ObjectHeader *>(object_arr);
+    auto *members =
+        reinterpret_cast<chsize_t *>(object_arr + sizeof(ObjectHeader));
+    pheader->size_ = num_bytes;
+    pheader->klassId_ = OBJ_ARR_IMM;
+    for (int i = 0; i < len; ++i) {
+        members[i] = CHAI_NULL;
+    }
+    acc() = std::bit_cast<chsize_t>(object_arr);
+    advancePc();
+    DO_NEXT_INS();
+}
+void Executor::get_ref_from_arr(Instruction ins) {
+    auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    Object object{acc()};
+    acc() = object.getMember(i * sizeof(chsize_t));
+    advancePc();
+    DO_NEXT_INS();
+}
+void Executor::set_ref_in_arr(Instruction ins) {
+    auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    chsize_t new_ref = (*currentFrame_)[ins.r2];
+    Object{acc()}.setMember(i * sizeof(chsize_t), new_ref);
+    advancePc();
+    DO_NEXT_INS();
+}
 void Executor::string_print(Instruction ins) {
     const std::string &str = codeManager_->getStringByStringPoolPos(acc());
     std::cout << str << std::endl;
@@ -433,14 +463,14 @@ void Executor::star_ref(Instruction ins) {
 void Executor::get_field(Instruction ins) {
     Immidiate offset = ins.immidiate;
     Object object{acc()};
-    acc() = object.getField(offset);
+    acc() = object.getMember(offset);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::set_field(Instruction ins) {
     Immidiate offset = ins.immidiate;
     Object object{acc()};
-    object.setField(offset, (*currentFrame_)[ins.r1]);
+    object.setMember(offset, (*currentFrame_)[ins.r1]);
     advancePc();
     DO_NEXT_INS()
 }

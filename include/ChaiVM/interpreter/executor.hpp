@@ -5,6 +5,7 @@
 #include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "decoder.hpp"
 #include "frame.hpp"
+#include "objects.hpp"
 
 namespace chai::interpreter {
 
@@ -80,17 +81,9 @@ private:
     void newf64array(Instruction ins);
     void get_f64from_arr(Instruction ins);
     void set_f64in_arr(Instruction ins);
-
-    // @todo #97:90min Implement array of objects.
-    void new_ref_arr(Instruction ins) {
-        std::cout << "new_ref_arr " << ins.operation << std::endl;
-    }
-    void get_ref_from_arr(Instruction ins) {
-        std::cout << "get_ref_from_arr " << ins.operation << std::endl;
-    }
-    void set_ref_in_arr(Instruction ins) {
-        std::cout << "set_ref_in_arr " << ins.operation << std::endl;
-    }
+    void new_ref_arr(Instruction ins);
+    void get_ref_from_arr(Instruction ins);
+    void set_ref_in_arr(Instruction ins);
     void string_print(Instruction ins);
     void string_concat(Instruction ins);
     void string_len(Instruction ins);
