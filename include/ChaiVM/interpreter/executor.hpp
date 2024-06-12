@@ -81,7 +81,7 @@ private:
     void get_f64from_arr(Instruction ins);
     void set_f64in_arr(Instruction ins);
 
-    // @todo:90min Implement array of object.
+    // @todo:90min Implement array of objects.
     void new_ref_arr(Instruction ins) {
         std::cout << "new_ref_arr " << ins.operation << std::endl;
     }
@@ -99,6 +99,8 @@ private:
     void mov_ref(Instruction ins);
     void ldra_ref(Instruction ins);
     void star_ref(Instruction ins);
+    void get_field(Instruction ins);
+    void set_field(Instruction ins);
 
     static constexpr Handler HANDLER_ARR[] = {
         &Executor::inv,
@@ -160,6 +162,8 @@ private:
         &Executor::mov_ref,
         &Executor::ldra_ref,
         &Executor::star_ref,
+        &Executor::get_field,
+        &Executor::set_field,
     };
 
 private:

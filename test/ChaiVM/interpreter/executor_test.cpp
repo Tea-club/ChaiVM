@@ -1,3 +1,4 @@
+#include "ChaiVM/interpreter/objects.hpp"
 #include "executor-test-fixture.hpp"
 
 using chai::bytecode_t;
@@ -699,4 +700,103 @@ TEST_F(ExecutorTest, StringSlice) {
     exec_.run();
     EXPECT_EQ(codeManager_.getStringByStringPoolPos(exec_.acc()), "BOB");
     EXPECT_EQ(codeManager_.getCnstStringByImm(raw), "ABOBA");
+}
+
+TEST_F(ExecutorTest, AllocOneObject) {
+    auto bar_klass = chaiFile_.registerKlass("Bar");
+    chaiFile_.addField(bar_klass, "barNum", 0U, FieldTag::I64);
+    load<AllocRef>(bar_klass);
+    load<Ret>();
+    update();
+    exec_.run();
+    EXPECT_EQ(objectBuffer_.offset(),
+              sizeof(ObjectHeader) + sizeof(chai::chsize_t));
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+TEST_F(ExecutorTest, AllocSeveralObject) {
+    auto bar_klass = chaiFile_.registerKlass("Bar");
+    chaiFile_.addField(bar_klass, "bar.num", 0U, FieldTag::I64);
+    auto foo_klass = chaiFile_.registerKlass("Foo");
+    chaiFile_.addField(foo_klass, "Foo.num", 0U, FieldTag::I64);
+    chaiFile_.addField(foo_klass, "Foo.bar", 1, bar_klass);
+    size_t bar_size = sizeof(ObjectHeader) + 1 * sizeof(chai::chsize_t);
+    size_t foo_size = sizeof(ObjectHeader) + 2 * sizeof(chai::chsize_t);
+
+    int N = 5;
+    for (int i = 0; i < N; ++i) {
+        load<AllocRef>(bar_klass);
+        load<AllocRef>(foo_klass);
+        load<AllocRef>(bar_klass);
+    }
+    load<Ret>();
+    update();
+    exec_.run();
+
+    EXPECT_EQ(objectBuffer_.offset(), N * (2 * bar_size + foo_size));
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+/**
+ * Create Bar object and modify its field.
+ */
+TEST_F(ExecutorTest, SetField1) {
+    auto bar_klass = chaiFile_.registerKlass("Bar");
+    chaiFile_.addField(bar_klass, "barNum", 0U, FieldTag::I64);
+    size_t bar_size = sizeof(ObjectHeader) + 1 * sizeof(chai::chsize_t);
+    chai::chsize_t val = 125;
+    Immidiate imm = chaiFile_.addConst(std::make_unique<ConstI64>(val));
+
+    load<AllocRef>(bar_klass);
+    load<StarRef>(R1);
+    load<Ldia>(imm);
+    load<Star>(R2);
+    load<LdraRef>(R1);
+    load<SetField>(R2, 0); // 0 is offset of field.
+    load<Ret>();
+    update();
+    exec_.run();
+
+    EXPECT_EQ(objectBuffer_.offset(), bar_size);
+
+    EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
+                         (char *)objectBuffer_.currentPosition() - bar_size)}
+                  .getField(0),
+              val);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+/**
+ * Here we create 2 Bar objects and modify value of the second.
+ */
+TEST_F(ExecutorTest, SetField2) {
+    auto bar_klass = chaiFile_.registerKlass("Bar");
+    chaiFile_.addField(bar_klass, "barNum", 0U, FieldTag::I64);
+    size_t bar_size = sizeof(ObjectHeader) + 1 * sizeof(chai::chsize_t);
+    chai::chsize_t val = 125;
+    Immidiate imm = chaiFile_.addConst(std::make_unique<ConstI64>(val));
+
+    load<AllocRef>(bar_klass);
+    load<AllocRef>(bar_klass);
+    load<StarRef>(R1);
+    load<Ldia>(imm);
+    load<Star>(R2);
+    load<LdraRef>(R1);
+    load<SetField>(R2, 0); // 0 is offset of field.
+    load<Ret>();
+    update();
+    exec_.run();
+
+    EXPECT_EQ(objectBuffer_.offset(), 2 * bar_size);
+
+    EXPECT_EQ(
+        Object{std::bit_cast<chai::chsize_t>(
+                   (char *)objectBuffer_.currentPosition() - 2 * bar_size)}
+            .getField(0),
+        0);
+    EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
+                         (char *)objectBuffer_.currentPosition() - bar_size)}
+                  .getField(0),
+              val);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }

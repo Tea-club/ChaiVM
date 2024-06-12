@@ -3,6 +3,7 @@
 #include "ChaiVM/interpreter/code-manager/klass.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
+#include <cassert>
 
 namespace chai::interpreter {
 
@@ -19,16 +20,17 @@ struct ObjectHeader {
 class Object {
 
 public:
-    explicit Object(ObjectHeader *header, chsize_t *fields)
-        : header_(header), fields_(fields) {}
-
+    explicit Object(ObjectHeader *header, chsize_t *fields);
     /**
      * Ctor.
      * Create object from ref to object.
      * @param ref Ref to object (usually contains in register).
      */
-    explicit Object(chsize_t ref) : header_(nullptr), fields_(nullptr) {}
+    explicit Object(chsize_t ref);
 
+    chsize_t getField(Immidiate offset) const;
+
+    void setField(Immidiate offset, chsize_t value) const;
 private:
     ObjectHeader *header_;
     chsize_t *fields_;

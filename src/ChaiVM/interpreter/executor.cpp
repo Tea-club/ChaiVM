@@ -10,8 +10,6 @@ namespace chai::interpreter {
 #define DO_NEXT_INS()                                                          \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
-    std::cout << "NEXT_INS: " << newIns.operation << " = "                     \
-              << OP_TO_STR[newIns.operation] << std::endl;                     \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
@@ -405,10 +403,10 @@ void Executor::alloc_ref(Instruction ins) {
     const Klass &klass = codeManager_->getKlass(ins.immidiate);
     assert(klass.instanceSize() > 0);
     memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
-    uint8_t *object = new (allocator.allocate(klass.instanceSize()))
+    auto *object = new (allocator.allocate(klass.instanceSize()))
         uint8_t[klass.instanceSize()]();
-    ObjectHeader *pheader = reinterpret_cast<ObjectHeader *>(object);
-    chsize_t *fields = reinterpret_cast<chsize_t *>(object + sizeof(*pheader));
+    auto *pheader = reinterpret_cast<ObjectHeader *>(object);
+    auto *fields = reinterpret_cast<chsize_t *>(object + sizeof(*pheader));
     pheader->size_ = klass.instanceSize();
     pheader->klassId_ = ins.immidiate;
     for (int i = 0; i < klass.nFields(); ++i) {
@@ -416,6 +414,7 @@ void Executor::alloc_ref(Instruction ins) {
     }
     acc() = std::bit_cast<chsize_t>(object);
     advancePc();
+    DO_NEXT_INS()
 }
 void Executor::mov_ref(Instruction ins) {
     std::cout << ins.operation << ": mov_ref is not implemented" << std::endl;
@@ -428,6 +427,20 @@ void Executor::ldra_ref(Instruction ins) {
 }
 void Executor::star_ref(Instruction ins) {
     (*currentFrame_)[ins.r1] = acc();
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::get_field(Instruction ins) {
+    Immidiate offset = ins.immidiate;
+    Object object{acc()};
+    acc() = object.getField(offset);
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::set_field(Instruction ins) {
+    Immidiate offset = ins.immidiate;
+    Object object{acc()};
+    object.setField(offset, (*currentFrame_)[ins.r1]);
     advancePc();
     DO_NEXT_INS()
 }
