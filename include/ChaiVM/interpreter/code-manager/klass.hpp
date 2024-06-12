@@ -17,10 +17,14 @@ public:
 
 struct Klass {
 public:
+    /**
+     * Id of string in constant pool.
+     */
     chai::interpreter::Immidiate name_;
     std::vector<Field> fields_;
 
-    chsize_t size();
+    chsize_t nFields() const;
+    chsize_t instanceSize() const;
 };
 
 } // namespace chai::interpreter

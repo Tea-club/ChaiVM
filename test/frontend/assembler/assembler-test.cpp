@@ -11,9 +11,12 @@ protected:
     size_t numOfRegs_ = 50;
     size_t numOfFrames_ = 256;
     chai::interpreter::CodeManager codeManager_;
-    chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(
+    chai::memory::LinearBuffer frameBuffer_ = chai::memory::LinearBuffer(
         numOfFrames_ * (numOfRegs_ * sizeof(chai::chsize_t) + sizeof(Frame)));
-    chai::interpreter::Executor exec_{&codeManager_, buffer_};
+    chai::memory::LinearBuffer objectBuffer_ =
+        chai::memory::LinearBuffer(1024 * 256);
+    chai::interpreter::Executor exec_{&codeManager_, frameBuffer_,
+                                      objectBuffer_};
     std::filesystem::path input_ = "./asm.chai";
     std::ofstream writeInput_{input_, std::ios::out};
     std::filesystem::path output_ = "./bytecode.ch";

@@ -185,7 +185,6 @@ instructions:
     fixedvalue: 35
     mnemonic: If_icmple
     format: RI
-
     description: "i64, if acc <= r1 then branch to instruction at offset [imm] otherwise just next instr"
   -
     fixedvalue: 36
@@ -249,22 +248,66 @@ instructions:
     description: "Sets f64 value to f64 array in acc and puts it to acc."
   -
     fixedvalue: 48
+    mnemonic: NewRefArray
+    format: N
+    description: "Allocates array of objects with number of elements from acc register. A reference to this new array is stored in acc. Value of every object is null."
+  -
+    fixedvalue: 49
+    mnemonic: GetRefFromArr
+    format: R
+    description: "Gets object from object array in acc and puts it to acc."
+  -
+    fixedvalue: 50
+    mnemonic: SetRefInArr
+    format: RR
+    description: "Sets ref value to object array in acc and puts it to acc."
+  -
+    fixedvalue: 51
     mnemonic: StringPrint
     format: N
     description: "Prints String in acc"
   -
-    fixedvalue: 49
+    fixedvalue: 52
     mnemonic: StringConcat
     format: R
     description: "Create new String, concatenating String in acc and String in r1. Result in acc."
   -
-    fixedvalue: 50
+    fixedvalue: 53
     mnemonic: StringLen
     format: N
     description: "Puts len of String to acc"
   -
-    fixedvalue: 51
+    fixedvalue: 54
     mnemonic: StringSlice
     format: RR
     description: "Create new String slicing String placed in acc. r1 is start and r2 is finish of slicing"
-
+  -
+    fixedvalue: 55
+    mnemonic: AllocRef
+    format: I
+    description: "Ref, Creates object of klass imm, leaves ref in acc"
+  -
+    fixedvalue: 56
+    mnemonic: MovRef
+    format: RR
+    description: "Ref, copies ref from ri to rj"
+  -
+    fixedvalue: 57
+    mnemonic: LdraRef
+    format: R
+    description: "Ref, copies ref of the R1 to acc"
+  -
+    fixedvalue: 58
+    mnemonic: StarRef
+    format: R
+    description: "Ref, copies ref of acc into register ri"
+  -
+    fixedvalue: 59
+    mnemonic: GetField
+    format: I
+    description: "Ref, load value of field to acc. imm is offset of field (starting from all fields) Value can be ref, array or String"
+  -
+    fixedvalue: 60
+    mnemonic: SetField
+    format: RI
+    description: "Ref, set value of register to field imm of object in acc. Value should be consistent to field signature. There are no checks in runtime."
