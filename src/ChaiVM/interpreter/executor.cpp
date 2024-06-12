@@ -9,6 +9,7 @@ namespace chai::interpreter {
 #define DO_NEXT_INS()                                                          \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
+    std::cout << "NEXT_INS: " << newIns.operation << " = " << OP_TO_STR[newIns.operation] << std::endl;                                                                           \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &buffer)
@@ -365,7 +366,7 @@ void Executor::set_f64in_arr(Instruction ins) {
 
 void Executor::string_print(Instruction ins) {
     const std::string &str = codeManager_->getStringByStringPoolPos(acc());
-    std::cout << str << std::endl;
+    std::cout << "StringPrint: " << str << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
@@ -388,6 +389,7 @@ void Executor::string_len(Instruction ins) {
 }
 void Executor::string_slice(Instruction ins) {
     const std::string &str = codeManager_->getStringByStringPoolPos(acc());
+    std::cout << "string_slice" << std::endl;
     acc() = codeManager_->getCnst(codeManager_->addCnstString(
         str.substr((*currentFrame_)[ins.r1],
                    (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1])));

@@ -79,6 +79,9 @@ private:
     void newf64array(Instruction ins);
     void get_f64from_arr(Instruction ins);
     void set_f64in_arr(Instruction ins);
+    void new_ref_arr(Instruction ins){std::cout << "new_ref_arr " << ins.operation << std::endl;}
+    void get_ref_from_arr(Instruction ins){std::cout << "get_ref_from_arr " << ins.operation << std::endl;}
+    void set_ref_in_arr(Instruction ins){std::cout << "set_ref_in_arr " << ins.operation << std::endl;}
     void string_print(Instruction ins);
     void string_concat(Instruction ins);
     void string_len(Instruction ins);
@@ -132,6 +135,9 @@ private:
                                               &Executor::newf64array,
                                               &Executor::get_f64from_arr,
                                               &Executor::set_f64in_arr,
+                                              &Executor::new_ref_arr,
+                                              &Executor::get_ref_from_arr,
+                                              &Executor::set_ref_in_arr,
                                               &Executor::string_print,
                                               &Executor::string_concat,
                                               &Executor::string_len,

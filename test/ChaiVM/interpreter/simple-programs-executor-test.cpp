@@ -140,6 +140,7 @@ TEST_F(ExecutorTest, StringDemo) {
     load<Star>(R4); // R4 = 20
     load<Ldia>(str1);
     load<StringSlice>(R1, R2);
+    load<StringPrint>();
     load<Star>(R10); // R10 = substr1 = "Hello"
     load<Ldia>(str2);
     load<StringSlice>(R3, R4);
