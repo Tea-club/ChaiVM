@@ -31,6 +31,7 @@ public:
     chsize_t getField(Immidiate offset) const;
 
     void setField(Immidiate offset, chsize_t value) const;
+
 private:
     ObjectHeader *header_;
     chsize_t *fields_;

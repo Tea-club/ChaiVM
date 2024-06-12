@@ -5,10 +5,12 @@
 
 namespace chai::interpreter {
 
-Object::Object(ObjectHeader *header, chsize_t *fields) : header_(header), fields_(fields) {}
+Object::Object(ObjectHeader *header, chsize_t *fields)
+    : header_(header), fields_(fields) {}
 
-Object::Object(chsize_t ref) : header_(std::bit_cast<ObjectHeader *>(ref)),
-    fields_(std::bit_cast<chsize_t *>(header_ + 1)) {}
+Object::Object(chsize_t ref)
+    : header_(std::bit_cast<ObjectHeader *>(ref)),
+      fields_(std::bit_cast<chsize_t *>(header_ + 1)) {}
 
 chsize_t Object::getField(Immidiate offset) const {
     assert(offset % 8 == 0);

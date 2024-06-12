@@ -802,7 +802,8 @@ TEST_F(ExecutorTest, SetField2) {
 }
 
 /**
- * Here we create 2 Cat objects, modify value of the second and save its value in acc.
+ * Here we create 2 Cat objects, modify value of the second and save its value
+ * in acc.
  */
 TEST_F(ExecutorTest, GetField) {
     auto cat_klass = chaiFile_.registerKlass("Cat");
@@ -828,11 +829,11 @@ TEST_F(ExecutorTest, GetField) {
     EXPECT_EQ(objectBuffer_.offset(), 2 * cat_size);
     EXPECT_EQ(
         Object{std::bit_cast<chai::chsize_t>(
-            (char *)objectBuffer_.currentPosition() - 2 * cat_size)}
+                   (char *)objectBuffer_.currentPosition() - 2 * cat_size)}
             .getField(0),
         0);
     EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
-        (char *)objectBuffer_.currentPosition() - cat_size)}
+                         (char *)objectBuffer_.currentPosition() - cat_size)}
                   .getField(8),
               val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
