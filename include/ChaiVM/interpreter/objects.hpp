@@ -16,6 +16,8 @@ struct ObjectHeader {
 /**
  * Facade to manage object.
  * Note, it does not own header and fields.
+ * @todo #97:30min Consider refactoring object to just cast it from raw pointer.
+ *  It can be faster.
  */
 class Object {
 
