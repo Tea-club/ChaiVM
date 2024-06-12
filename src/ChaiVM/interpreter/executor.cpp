@@ -366,7 +366,7 @@ void Executor::set_f64in_arr(Instruction ins) {
 
 void Executor::string_print(Instruction ins) {
     const std::string &str = codeManager_->getStringByStringPoolPos(acc());
-    std::cout << "StringPrint: " << str << std::endl;
+    std::cout << str << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
