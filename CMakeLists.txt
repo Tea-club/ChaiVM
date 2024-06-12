@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 project(ChaiVM)
 set(CMAKE_CXX_STANDARD 20)
 
-set(COMPILER_WARNINGS "-Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare")
+set(COMPILER_WARNINGS "-Wall -Wextra -Wpedantic -Werror -Wno-missing-field-initializers -Wno-sign-compare")
 set(CMAKE_C_FLAGS ${COMPILER_WARNINGS})
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g ${COMPILER_WARNINGS}")
 set(CMAKE_C_FLAGS_RELEASE "-O2 ${COMPILER_WARNINGS}")
