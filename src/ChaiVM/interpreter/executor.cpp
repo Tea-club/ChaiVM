@@ -364,16 +364,16 @@ void Executor::set_f64in_arr(Instruction ins) {
 }
 
 void Executor::string_print(Instruction ins) {
-    const std::string &str = codeManager_->getCnstStringByReg(acc());
+    const std::string &str = codeManager_->getStringByStringPoolPos(acc());
     std::cout << str << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
 
 void Executor::string_concat(Instruction ins) {
-    const std::string &str1 = codeManager_->getCnstStringByReg(acc());
+    const std::string &str1 = codeManager_->getStringByStringPoolPos(acc());
     const std::string &str2 =
-        codeManager_->getCnstStringByReg((*currentFrame_)[ins.r1]);
+        codeManager_->getStringByStringPoolPos((*currentFrame_)[ins.r1]);
     std::string concated = str1 + str2;
     acc() =
         codeManager_->getCnst(codeManager_->addCnstString(std::move(concated)));
@@ -382,12 +382,12 @@ void Executor::string_concat(Instruction ins) {
 }
 
 void Executor::string_len(Instruction ins) {
-    acc() = codeManager_->getCnstStringByReg(acc()).size();
+    acc() = codeManager_->getStringByStringPoolPos(acc()).size();
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::string_slice(Instruction ins) {
-    const std::string &str = codeManager_->getCnstStringByReg(acc());
+    const std::string &str = codeManager_->getStringByStringPoolPos(acc());
     acc() = codeManager_->getCnst(codeManager_->addCnstString(
         str.substr((*currentFrame_)[ins.r1],
                    (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1])));

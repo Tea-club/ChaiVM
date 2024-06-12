@@ -60,7 +60,7 @@ public:
      * @param reg_val Number from constant pool.
      * @return String.
      */
-    const std::string &getCnstStringByReg(chsize_t reg_val);
+    const std::string &getStringByStringPoolPos(chsize_t reg_val);
 
     Immidiate addCnstString(std::string &&str);
 

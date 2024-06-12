@@ -144,7 +144,7 @@ const std::string &CodeManager::getCnstStringByImm(Immidiate imm) {
     return stringPool_[constantPool_[imm]];
 }
 
-const std::string &CodeManager::getCnstStringByReg(chsize_t reg_val) {
+const std::string &CodeManager::getStringByStringPoolPos(chsize_t reg_val) {
     return stringPool_[reg_val];
 }
 
