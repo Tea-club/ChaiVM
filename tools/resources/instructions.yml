@@ -283,7 +283,7 @@ instructions:
     description: "Create new String slicing String placed in acc. r1 is start and r2 is finish of slicing"
   -
     fixedvalue: 55
-    mnemonic: New
+    mnemonic: AllocRef
     format: I
     description: "Ref, Creates object of klass imm, leaves ref in acc"
   -
@@ -301,3 +301,13 @@ instructions:
     mnemonic: StarRef
     format: R
     description: "Ref, copies ref of acc into register ri"
+  -
+    fixedvalue: 59
+    mnemonic: GetField
+    format: I
+    description: "Ref, load value of field to acc. imm is offset of field (starting from all fields) Value can be ref, array or String"
+  -
+    fixedvalue: 60
+    mnemonic: SetField
+    format: RI
+    description: "Ref, set value of register to field imm of object in acc. Value should be consistent to field signature. There are no checks in runtime."

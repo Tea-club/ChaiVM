@@ -12,7 +12,8 @@ class Executor {
 public:
     using Handler = void (Executor::*)(Instruction);
 
-    Executor(CodeManager *manager, memory::LinearBuffer &buffer);
+    Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
+             memory::LinearBuffer &objectsBuffer);
 
     /**
      * Loads the first frame (public static void main).
@@ -79,74 +80,93 @@ private:
     void newf64array(Instruction ins);
     void get_f64from_arr(Instruction ins);
     void set_f64in_arr(Instruction ins);
-    void new_ref_arr(Instruction ins){std::cout << "new_ref_arr " << ins.operation << std::endl;}
-    void get_ref_from_arr(Instruction ins){std::cout << "get_ref_from_arr " << ins.operation << std::endl;}
-    void set_ref_in_arr(Instruction ins){std::cout << "set_ref_in_arr " << ins.operation << std::endl;}
+
+    // @todo:90min Implement array of object.
+    void new_ref_arr(Instruction ins) {
+        std::cout << "new_ref_arr " << ins.operation << std::endl;
+    }
+    void get_ref_from_arr(Instruction ins) {
+        std::cout << "get_ref_from_arr " << ins.operation << std::endl;
+    }
+    void set_ref_in_arr(Instruction ins) {
+        std::cout << "set_ref_in_arr " << ins.operation << std::endl;
+    }
     void string_print(Instruction ins);
     void string_concat(Instruction ins);
     void string_len(Instruction ins);
     void string_slice(Instruction ins);
+    void alloc_ref(Instruction ins);
+    void mov_ref(Instruction ins);
+    void ldra_ref(Instruction ins);
+    void star_ref(Instruction ins);
 
-    static constexpr Handler HANDLER_ARR[] = {&Executor::inv,
-                                              &Executor::nop,
-                                              &Executor::ret,
-                                              &Executor::mov,
-                                              &Executor::ldia,
-                                              &Executor::ldra,
-                                              &Executor::star,
-                                              &Executor::add,
-                                              &Executor::addi,
-                                              &Executor::sub,
-                                              &Executor::subi,
-                                              &Executor::mul,
-                                              &Executor::muli,
-                                              &Executor::div,
-                                              &Executor::divi,
-                                              &Executor::ldiaf,
-                                              &Executor::addf,
-                                              &Executor::addif,
-                                              &Executor::subf,
-                                              &Executor::subif,
-                                              &Executor::mulf,
-                                              &Executor::mulif,
-                                              &Executor::divf,
-                                              &Executor::divif,
-                                              &Executor::icprint,
-                                              &Executor::icscani,
-                                              &Executor::icscanf,
-                                              &Executor::icsqrt,
-                                              &Executor::icsin,
-                                              &Executor::iccos,
-                                              &Executor::if_icmpeq,
-                                              &Executor::if_icmpne,
-                                              &Executor::if_icmpgt,
-                                              &Executor::if_icmpge,
-                                              &Executor::if_icmplt,
-                                              &Executor::if_icmple,
-                                              &Executor::if_acmpeq,
-                                              &Executor::if_acmpne,
-                                              &Executor::cmpgf,
-                                              &Executor::cmplf,
-                                              &Executor::g0t0,
-                                              &Executor::call,
-                                              &Executor::newi64array,
-                                              &Executor::get_i64from_arr,
-                                              &Executor::set_i64in_arr,
-                                              &Executor::newf64array,
-                                              &Executor::get_f64from_arr,
-                                              &Executor::set_f64in_arr,
-                                              &Executor::new_ref_arr,
-                                              &Executor::get_ref_from_arr,
-                                              &Executor::set_ref_in_arr,
-                                              &Executor::string_print,
-                                              &Executor::string_concat,
-                                              &Executor::string_len,
-                                              &Executor::string_slice};
+    static constexpr Handler HANDLER_ARR[] = {
+        &Executor::inv,
+        &Executor::nop,
+        &Executor::ret,
+        &Executor::mov,
+        &Executor::ldia,
+        &Executor::ldra,
+        &Executor::star,
+        &Executor::add,
+        &Executor::addi,
+        &Executor::sub,
+        &Executor::subi,
+        &Executor::mul,
+        &Executor::muli,
+        &Executor::div,
+        &Executor::divi,
+        &Executor::ldiaf,
+        &Executor::addf,
+        &Executor::addif,
+        &Executor::subf,
+        &Executor::subif,
+        &Executor::mulf,
+        &Executor::mulif,
+        &Executor::divf,
+        &Executor::divif,
+        &Executor::icprint,
+        &Executor::icscani,
+        &Executor::icscanf,
+        &Executor::icsqrt,
+        &Executor::icsin,
+        &Executor::iccos,
+        &Executor::if_icmpeq,
+        &Executor::if_icmpne,
+        &Executor::if_icmpgt,
+        &Executor::if_icmpge,
+        &Executor::if_icmplt,
+        &Executor::if_icmple,
+        &Executor::if_acmpeq,
+        &Executor::if_acmpne,
+        &Executor::cmpgf,
+        &Executor::cmplf,
+        &Executor::g0t0,
+        &Executor::call,
+        &Executor::newi64array,
+        &Executor::get_i64from_arr,
+        &Executor::set_i64in_arr,
+        &Executor::newf64array,
+        &Executor::get_f64from_arr,
+        &Executor::set_f64in_arr,
+        &Executor::new_ref_arr,
+        &Executor::get_ref_from_arr,
+        &Executor::set_ref_in_arr,
+        &Executor::string_print,
+        &Executor::string_concat,
+        &Executor::string_len,
+        &Executor::string_slice,
+        &Executor::alloc_ref,
+        &Executor::mov_ref,
+        &Executor::ldra_ref,
+        &Executor::star_ref,
+    };
 
 private:
     chsize_t acc_;
     CodeManager *codeManager_;
-    memory::LinearBuffer &buffer_;
+    memory::LinearBuffer &framesBuffer_;
+    memory::LinearBuffer &objectsBuffer_;
     Frame *currentFrame_ = nullptr;
 };
 

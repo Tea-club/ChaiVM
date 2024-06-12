@@ -93,5 +93,6 @@ protected:
     chai::utils::fileformat::ChaiFile chaiFile_;
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);
-    chai::interpreter::Executor exec_{&codeManager_, buffer_};
+    // todo pass other buffer
+    chai::interpreter::Executor exec_{&codeManager_, buffer_, buffer_};
 };

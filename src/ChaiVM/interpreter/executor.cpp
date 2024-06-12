@@ -3,22 +3,27 @@
 
 #include "ChaiVM/interpreter/executor.hpp"
 #include "ChaiVM/interpreter/frame.hpp"
+#include "ChaiVM/interpreter/objects.hpp"
 
 namespace chai::interpreter {
 
 #define DO_NEXT_INS()                                                          \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
-    std::cout << "NEXT_INS: " << newIns.operation << " = " << OP_TO_STR[newIns.operation] << std::endl;                                                                           \
+    std::cout << "NEXT_INS: " << newIns.operation << " = "                     \
+              << OP_TO_STR[newIns.operation] << std::endl;                     \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
-Executor::Executor(CodeManager *manager, memory::LinearBuffer &buffer)
-    : codeManager_(manager), buffer_(buffer) {}
+Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
+                   memory::LinearBuffer &objectsBuffer)
+    : codeManager_(manager), framesBuffer_(framesBuffer),
+      objectsBuffer_(objectsBuffer) {}
 
 void Executor::init() {
     assert(currentFrame_ == nullptr); // No current frame
-    currentFrame_ = new (memory::LinearAllocator<Frame>{buffer_}.allocate(1))
-        Frame(nullptr, codeManager_->getStartFunc(), buffer_);
+    currentFrame_ =
+        new (memory::LinearAllocator<Frame>{framesBuffer_}.allocate(1))
+            Frame(nullptr, codeManager_->getStartFunc(), framesBuffer_);
     pc() = 0;
 }
 
@@ -307,16 +312,16 @@ void Executor::g0t0(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::call(Instruction ins) {
-    memory::LinearAllocator<Frame> allocator{buffer_};
-    currentFrame_ = new (allocator.allocate(1))
-        Frame(currentFrame_, codeManager_->getFunc(ins.immidiate), buffer_);
+    memory::LinearAllocator<Frame> allocator{framesBuffer_};
+    currentFrame_ = new (allocator.allocate(1)) Frame(
+        currentFrame_, codeManager_->getFunc(ins.immidiate), framesBuffer_);
     currentFrame_->passArgs();
     pc() = 0;
     DO_NEXT_INS();
 }
 void Executor::newi64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<int64_t> allocator{buffer_};
+    memory::LinearAllocator<int64_t> allocator{framesBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) int64_t[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
@@ -341,7 +346,7 @@ void Executor::set_i64in_arr(Instruction ins) {
 
 void Executor::newf64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<double> allocator{buffer_};
+    memory::LinearAllocator<double> allocator{framesBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) double[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
@@ -395,6 +400,36 @@ void Executor::string_slice(Instruction ins) {
                    (*currentFrame_)[ins.r2] - (*currentFrame_)[ins.r1])));
     advancePc();
     DO_NEXT_INS();
+}
+void Executor::alloc_ref(Instruction ins) {
+    const Klass &klass = codeManager_->getKlass(ins.immidiate);
+    assert(klass.instanceSize() > 0);
+    memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
+    uint8_t *object = new (allocator.allocate(klass.instanceSize()))
+        uint8_t[klass.instanceSize()]();
+    ObjectHeader *pheader = reinterpret_cast<ObjectHeader *>(object);
+    chsize_t *fields = reinterpret_cast<chsize_t *>(object + sizeof(*pheader));
+    pheader->size_ = klass.instanceSize();
+    pheader->klassId_ = ins.immidiate;
+    for (int i = 0; i < klass.nFields(); ++i) {
+        assert(fields[i] == 0);
+    }
+    acc() = std::bit_cast<chsize_t>(object);
+    advancePc();
+}
+void Executor::mov_ref(Instruction ins) {
+    std::cout << ins.operation << ": mov_ref is not implemented" << std::endl;
+    assert(1 == 0);
+}
+void Executor::ldra_ref(Instruction ins) {
+    acc() = (*currentFrame_)[ins.r1];
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::star_ref(Instruction ins) {
+    (*currentFrame_)[ins.r1] = acc();
+    advancePc();
+    DO_NEXT_INS()
 }
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}

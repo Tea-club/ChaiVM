@@ -9,7 +9,8 @@ class AssemblerTest : public ::testing::Test {
 protected:
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);
-    chai::interpreter::Executor exec_{&codeManager_, buffer_};
+    // todo pass other buffer
+    chai::interpreter::Executor exec_{&codeManager_, buffer_, buffer_};
     std::filesystem::path input_ = "./asm.chai";
     std::ofstream write_input_{input_, std::ios::out};
     std::filesystem::path output_ = "./bytecode.ch";
