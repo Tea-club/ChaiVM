@@ -8,4 +8,5 @@ target_sources(chai_interpreter PRIVATE
     ./code-manager/code-manager.cpp
     ./code-manager/klass.cpp
     ./frame.cpp
+    ./objects.cpp
 )

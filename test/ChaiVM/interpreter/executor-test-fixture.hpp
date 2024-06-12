@@ -92,6 +92,10 @@ private:
 protected:
     chai::utils::fileformat::ChaiFile chaiFile_;
     chai::interpreter::CodeManager codeManager_;
-    chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);
-    chai::interpreter::Executor exec_{&codeManager_, buffer_};
+    chai::memory::LinearBuffer frameBuffer_ =
+        chai::memory::LinearBuffer(1024 * 256);
+    chai::memory::LinearBuffer objectBuffer_ =
+        chai::memory::LinearBuffer(1024 * 256);
+    chai::interpreter::Executor exec_{&codeManager_, frameBuffer_,
+                                      objectBuffer_};
 };
