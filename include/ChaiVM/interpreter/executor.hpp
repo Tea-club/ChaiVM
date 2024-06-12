@@ -81,7 +81,7 @@ private:
     void get_f64from_arr(Instruction ins);
     void set_f64in_arr(Instruction ins);
 
-    // @todo:90min Implement array of objects.
+    // @todo #97:90min Implement array of objects.
     void new_ref_arr(Instruction ins) {
         std::cout << "new_ref_arr " << ins.operation << std::endl;
     }

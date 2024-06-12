@@ -800,3 +800,40 @@ TEST_F(ExecutorTest, SetField2) {
               val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
+
+/**
+ * Here we create 2 Cat objects, modify value of the second and save its value in acc.
+ */
+TEST_F(ExecutorTest, GetField) {
+    auto cat_klass = chaiFile_.registerKlass("Cat");
+    chaiFile_.addField(cat_klass, "Cat.id-1", 0U, FieldTag::I64);
+    chaiFile_.addField(cat_klass, "Cat.id-2", 0U, FieldTag::I64);
+    size_t cat_size = sizeof(ObjectHeader) + 2 * sizeof(chai::chsize_t);
+    chai::chsize_t val = 125;
+    Immidiate imm = chaiFile_.addConst(std::make_unique<ConstI64>(val));
+
+    load<AllocRef>(cat_klass);
+    load<AllocRef>(cat_klass);
+    load<StarRef>(R1);
+    load<Ldia>(imm);
+    load<Star>(R2);
+    load<LdraRef>(R1);
+    load<SetField>(R2, 8); // 8 is offset of the second field.
+    load<GetField>(8);
+    load<Ret>();
+    update();
+    exec_.run();
+
+    EXPECT_EQ(exec_.acc(), val);
+    EXPECT_EQ(objectBuffer_.offset(), 2 * cat_size);
+    EXPECT_EQ(
+        Object{std::bit_cast<chai::chsize_t>(
+            (char *)objectBuffer_.currentPosition() - 2 * cat_size)}
+            .getField(0),
+        0);
+    EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
+        (char *)objectBuffer_.currentPosition() - cat_size)}
+                  .getField(8),
+              val);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
