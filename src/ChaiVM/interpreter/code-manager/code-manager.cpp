@@ -71,21 +71,22 @@ void CodeManager::loadPool(std::istream &istream) {
     }
 }
 
-inline bool typeIsPrimitive(uint8_t type) { return type == 0; }
+inline bool typeIsObject(uint8_t type) { return type != 0; }
 
 Field loadField(std::istream &istream) {
     auto name = readBytes<Immidiate>(istream);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
     auto type = readBytes<uint8_t>(istream);
-    if (typeIsPrimitive(type)) {
+    bool isObject = typeIsObject(type);
+    if (isObject) {
+        auto klassNum = readBytes<Immidiate>(istream);
+    } else {
         readBytes<uint8_t>(istream);
         char intOrFloat = readBytes<char>(istream);
-    } else {
-        auto klassNum = readBytes<Immidiate>(istream);
     }
 #pragma GCC diagnostic pop
-    return Field{name};
+    return Field{name, isObject};
 }
 
 void CodeManager::loadKlass(std::istream &istream) {

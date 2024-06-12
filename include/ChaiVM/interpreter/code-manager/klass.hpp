@@ -9,15 +9,10 @@
 
 namespace chai::interpreter {
 
-union Data {
-    int64_t ch_int_;
-    double ch_float_;
-    chsize_t ch_ref_;
-};
-
 struct Field {
 public:
     chai::interpreter::Immidiate name_;
+    bool isObject_;
 };
 
 struct Klass {
