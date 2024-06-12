@@ -11,6 +11,7 @@
 #include "ChaiVM/memory/allocator.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
+#include "klass.hpp"
 
 namespace chai::interpreter {
 
@@ -38,24 +39,45 @@ public:
      */
     void loadPool(std::istream &istream);
 
+    void loadKlass(std::istream &istream);
+
     void loadFunction(std::istream &istream);
 
     chsize_t getCnst(Immidiate id);
 
-    const std::string &getCnstString(Immidiate id);
+    /**
+     * Get string by immediate, i.e. its number in constant pool.
+     * @param imm Number in constant pool.
+     * @return String.
+     */
+    const std::string &getCnstStringByImm(Immidiate imm);
 
-    Immidiate addCnstString(std::string &&str) {
-        stringPool_.emplace_back(str);
-        return stringPool_.size() - 1;
-    }
+    /**
+     * Get string by constant that provided constant pool.
+     * Usually we take constant from constant pool directly. In case of string
+     * there is just 64-bit number that encodes String. Use this method to get
+     * string by this number.
+     * @param reg_val Number from constant pool.
+     * @return String.
+     */
+    const std::string &getStringByStringPoolPos(chsize_t reg_val);
+
+    Immidiate addCnstString(std::string &&str);
 
     bytecode_t getBytecode(size_t func, chsize_t pc);
+
+    const Klass &getKlass(Immidiate imm) const;
 
     const Function &getFunc(Immidiate imm) const;
 
     const Function &getStartFunc() const;
 
 private:
+    /**
+     * Loaded klasses.
+     */
+    std::vector<Klass> klasses_;
+
     std::vector<Function> funcs_;
 
     /**

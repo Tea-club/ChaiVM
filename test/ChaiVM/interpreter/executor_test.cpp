@@ -650,8 +650,8 @@ TEST_F(ExecutorTest, StringPrint) {
     load<Ret>();
     update();
     exec_.run();
-    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "ABOBA");
-    EXPECT_EQ(codeManager_.getCnstString(codeManager_.getCnst(raw)), "ABOBA");
+    EXPECT_EQ(codeManager_.getStringByStringPoolPos(exec_.acc()), "ABOBA");
+    EXPECT_EQ(codeManager_.getCnstStringByImm(raw), "ABOBA");
 }
 
 TEST_F(ExecutorTest, StringConcat) {
@@ -659,16 +659,18 @@ TEST_F(ExecutorTest, StringConcat) {
     Immidiate raw2 =
         chaiFile_.addConst(std::make_unique<ConstRawStr>(" Yeash"));
     load<Ldia>(raw2);
-    load<Star>(R2);
     load<StringPrint>();
+    load<Star>(R2);
     load<Ldia>(raw1);
     load<StringPrint>();
     load<StringConcat>(R2);
     load<Ret>();
     update();
+    EXPECT_EQ(codeManager_.getCnstStringByImm(raw1), "ABOBA");
+    EXPECT_EQ(codeManager_.getCnstStringByImm(raw2), " Yeash");
     exec_.run();
-    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "ABOBA Yeash");
-    EXPECT_EQ(codeManager_.getCnstString(codeManager_.getCnst(raw1)), "ABOBA");
+    EXPECT_EQ(codeManager_.getStringByStringPoolPos(exec_.acc()),
+              "ABOBA Yeash");
 }
 
 TEST_F(ExecutorTest, StringSize) {
@@ -695,6 +697,6 @@ TEST_F(ExecutorTest, StringSlice) {
     load<Ret>();
     update();
     exec_.run();
-    EXPECT_EQ(codeManager_.getCnstString(exec_.acc()), "BOB");
-    EXPECT_EQ(codeManager_.getCnstString(codeManager_.getCnst(raw)), "ABOBA");
+    EXPECT_EQ(codeManager_.getStringByStringPoolPos(exec_.acc()), "BOB");
+    EXPECT_EQ(codeManager_.getCnstStringByImm(raw), "ABOBA");
 }

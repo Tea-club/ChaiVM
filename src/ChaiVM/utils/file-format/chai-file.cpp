@@ -86,6 +86,22 @@ chai::interpreter::Immidiate ChaiFile::nextFunc() const {
     return functions_.size() + 1;
 }
 
+chai::interpreter::Immidiate ChaiFile::registerKlass(const std::string &name) {
+    klasses_.push_back(KlassInfo{addConst(std::make_unique<ConstRawStr>(name)),
+                                 0, std::vector<FieldInfo>{}});
+    return klasses_.size() - 1;
+}
+
+chai::interpreter::Immidiate
+ChaiFile::addField(chai::interpreter::Immidiate klass, const std::string &name,
+                   uint8_t isObject,
+                   chai::interpreter::Immidiate tagOrKlassNum) {
+    chai::interpreter::Immidiate field_name =
+        addConst(std::make_unique<ConstRawStr>(name));
+    return klasses_[klass].addField(
+        FieldInfo{field_name, isObject, tagOrKlassNum});
+}
+
 void ChaiFile::toFile(const std::filesystem::path &path) const {
     std::ofstream ofs(path, std::ios::binary | std::ios::out);
     if (ofs.good() && ofs.is_open()) {
@@ -95,8 +111,13 @@ void ChaiFile::toFile(const std::filesystem::path &path) const {
             cnst->putType(ofs);
             cnst->write(ofs);
         }
-        // since main function too.
-        chai::interpreter::Immidiate funcs_num = functions_.size() + 1;
+        chai::interpreter::Immidiate klass_num = klasses_.size();
+        writeBytes(ofs, &klass_num);
+        for (const auto &klass : klasses_) {
+            klass.dump(ofs);
+        }
+        chai::interpreter::Immidiate funcs_num =
+            functions_.size() + 1; // since main function too.
         writeBytes(ofs, &funcs_num);
         dumpMainFunc(ofs);
         for (const auto &func : functions_) {

@@ -48,3 +48,29 @@ TEST_F(CodeManagerTest, loadFileDefault) {
         codeManager_.getBytecode(MAIN_FUNC_ID, pc + sizeof(chai::bytecode_t)),
         BeyondCodeBoundaries);
 }
+
+TEST_F(CodeManagerTest, loadFileWithKlass) {
+    ChaiFile chai_file{std::vector<chai::bytecode_t>{defaultInstructions_},
+                       std::vector<std::unique_ptr<Constant>>{}};
+    Immidiate bar_klass = chai_file.registerKlass("Bar");
+    Immidiate foo_klass = chai_file.registerKlass("Foo");
+    chai_file.addField(foo_klass, "fooNum", 0U, FieldTag::I64);
+    chai_file.addField(bar_klass, "myFoo", 1U, foo_klass);
+    chai_file.toFile(filepath_);
+
+    codeManager_.load(filepath_);
+    EXPECT_EQ(
+        codeManager_.getCnstStringByImm(codeManager_.getKlass(bar_klass).name_),
+        "Bar");
+    EXPECT_EQ(
+        codeManager_.getCnstStringByImm(codeManager_.getKlass(foo_klass).name_),
+        "Foo");
+    chai::chsize_t pc = 0;
+    for (const auto &ins : defaultInstructions_) {
+        EXPECT_EQ(codeManager_.getBytecode(MAIN_FUNC_ID, pc), ins);
+        pc += sizeof(chai::bytecode_t);
+    }
+    EXPECT_THROW(
+        codeManager_.getBytecode(MAIN_FUNC_ID, pc + sizeof(chai::bytecode_t)),
+        BeyondCodeBoundaries);
+}
