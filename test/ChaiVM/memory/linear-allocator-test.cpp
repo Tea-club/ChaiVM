@@ -142,10 +142,14 @@ TEST_F(LinearAllocatorTest, FrameContainersAllocation) {
      * An extra `regs_` vector (the last term
      * `nregs * sizeof(FrameLikeStub::RegType)`) appears due to extra call of
      * FrameStub constructor when constructing a `vec`
+     * Upd: for some reason extra `regs` vector dissapeard after adding
+     * `deallocate` function to LinearAllocator ¯\_(ツ)_/¯
+     * Upd2: the reason is that after adding `deallocate` function (it was
+     * setup before) std::vector now is able to deallocate allocated space. So
+     * extra FrameStub was simply deallocated.
      */
     EXPECT_EQ(buffer_.offset(),
-              n * (sizeof(FrameStub) + nregs * sizeof(FrameStub::RegType)) +
-                  nregs * sizeof(FrameStub::RegType));
+              n * (sizeof(FrameStub) + nregs * sizeof(FrameStub::RegType)));
 }
 
 TEST_F(LinearAllocatorTest, BadArrayNewLength) {

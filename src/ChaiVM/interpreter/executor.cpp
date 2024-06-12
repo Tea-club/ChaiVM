@@ -59,6 +59,8 @@ void Executor::ret(Instruction ins) {
     Frame *buf = currentFrame_;
     currentFrame_ = currentFrame_->back();
     buf->~Frame();
+    memory::LinearAllocator<Frame> allocator{framesBuffer_};
+    allocator.deallocate(buf, 1);
     if (currentFrame_ != nullptr) {
         advancePc();
         DO_NEXT_INS()
@@ -320,7 +322,7 @@ void Executor::call(Instruction ins) {
 }
 void Executor::newi64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<int64_t> allocator{framesBuffer_};
+    memory::LinearAllocator<int64_t> allocator{objectsBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) int64_t[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
@@ -345,7 +347,7 @@ void Executor::set_i64in_arr(Instruction ins) {
 
 void Executor::newf64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<double> allocator{framesBuffer_};
+    memory::LinearAllocator<double> allocator{objectsBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) double[n]();
     acc() = reinterpret_cast<chsize_t>(arr);

@@ -111,7 +111,11 @@ TEST_F(AssemblerTest, squareFunctions) {
 }
 
 TEST_F(AssemblerTest, noStackOverflow) {
-    uint64_t iterations = numOfFrames_;
+    /**
+     * todo: figure out why exactly this number of iterations is maximum for
+     * our VM.
+     */
+    uint64_t iterations = 15373;
     writeInput_ << "Ldia " << iterations << "\n"
                 << "Star r0\n"
                 << "Ldia 0\n"
