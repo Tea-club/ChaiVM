@@ -669,7 +669,8 @@ TEST_F(ExecutorTest, StringConcat) {
     EXPECT_EQ(codeManager_.getCnstStringByImm(raw1), "ABOBA");
     EXPECT_EQ(codeManager_.getCnstStringByImm(raw2), " Yeash");
     exec_.run();
-    EXPECT_EQ(codeManager_.getStringByStringPoolPos(exec_.acc()), "ABOBA Yeash");
+    EXPECT_EQ(codeManager_.getStringByStringPoolPos(exec_.acc()),
+              "ABOBA Yeash");
 }
 
 TEST_F(ExecutorTest, StringSize) {
