@@ -510,8 +510,7 @@ TEST_F(ExecutorTest, Goto_forward_and_back) {
     load<Inv>();
     load<Inv>();
     load<Inv>();
-    ASSERT_EQ(load<Goto>(static_cast<Immidiate>(-5)),
-              ret2);
+    ASSERT_EQ(load<Goto>(static_cast<Immidiate>(-5)), ret2);
     for (int i = 0; i < 500; ++i) {
         load<Inv>();
     }

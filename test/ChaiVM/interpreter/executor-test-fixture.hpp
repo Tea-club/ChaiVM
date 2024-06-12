@@ -95,7 +95,7 @@ protected:
     chai::utils::fileformat::ChaiFile chaiFile_;
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(
-        numOfFrames * (numOfRegs * sizeof(chai::chsize_t) + sizeof(chai::interpreter::Frame))
-    );
+        numOfFrames * (numOfRegs * sizeof(chai::chsize_t) +
+                       sizeof(chai::interpreter::Frame)));
     chai::interpreter::Executor exec_{&codeManager_, buffer_};
 };

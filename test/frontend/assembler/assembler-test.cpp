@@ -12,8 +12,7 @@ protected:
     size_t numOfFrames_ = 256;
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(
-        numOfFrames_ * (numOfRegs_ * sizeof(chai::chsize_t) + sizeof(Frame))
-    );
+        numOfFrames_ * (numOfRegs_ * sizeof(chai::chsize_t) + sizeof(Frame)));
     chai::interpreter::Executor exec_{&codeManager_, buffer_};
     std::filesystem::path input_ = "./asm.chai";
     std::ofstream writeInput_{input_, std::ios::out};
@@ -24,12 +23,12 @@ TEST_F(AssemblerTest, integerMul) {
     int a = 10;
     int b = 8;
     writeInput_ << "Ldia " << a << "\n"
-                 << "Star r2\n"
-                 << "Ldia " << b << "\n"
-                 << "Star r3\n"
-                 << "Ldra r3\n"
-                 << "Mul r2\n"
-                 << "Ret" << std::endl;
+                << "Star r2\n"
+                << "Ldia " << b << "\n"
+                << "Star r3\n"
+                << "Ldra r3\n"
+                << "Mul r2\n"
+                << "Ret" << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
@@ -42,12 +41,12 @@ TEST_F(AssemblerTest, floatMul) {
     double a = 6.54;
     double b = 12.13;
     writeInput_ << "Ldiaf " << a << "\n"
-                 << "Star r2\n"
-                 << "Ldiaf " << b << "\n"
-                 << "Star r3\n"
-                 << "Ldra r3\n"
-                 << "Mulf r2\n"
-                 << "Ret" << std::endl;
+                << "Star r2\n"
+                << "Ldiaf " << b << "\n"
+                << "Star r3\n"
+                << "Ldra r3\n"
+                << "Mulf r2\n"
+                << "Ret" << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
@@ -58,10 +57,10 @@ TEST_F(AssemblerTest, floatMul) {
 
 TEST_F(AssemblerTest, strings) {
     writeInput_ << "Ldia \" world\"\n"
-                 << "Star r2\n"
-                 << "Ldia \"Hello\"\n"
-                 << "StringConcat r2\n"
-                 << "Ret" << std::endl;
+                << "Star r2\n"
+                << "Ldia \"Hello\"\n"
+                << "StringConcat r2\n"
+                << "Ret" << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
@@ -72,14 +71,14 @@ TEST_F(AssemblerTest, strings) {
 
 TEST_F(AssemblerTest, simpleFunction) {
     writeInput_ << "Ldia 271\n"
-                 << "Ldia 228\n"
-                 << "Call stupid\n"
-                 << "Ret\n"
-                 << "fn stupid 0 0 {\n"
-                 << "    Ldia 125\n"
-                 << "    Ret\n"
-                 << "}\n"
-                 << std::endl;
+                << "Ldia 228\n"
+                << "Call stupid\n"
+                << "Ret\n"
+                << "fn stupid 0 0 {\n"
+                << "    Ldia 125\n"
+                << "    Ret\n"
+                << "}\n"
+                << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
@@ -91,15 +90,15 @@ TEST_F(AssemblerTest, simpleFunction) {
 TEST_F(AssemblerTest, squareFunctions) {
     uint64_t value = 322;
     writeInput_ << "Ldia " << value << "\n"
-                 << "Call square\n"
-                 << "Ret\n"
-                 << "\n"
-                 << "fn square 1 0 {\n"
-                 << "    Star r0\n"
-                 << "    Mul r0\n"
-                 << "    Ret\n"
-                 << "}\n"
-                 << std::endl;
+                << "Call square\n"
+                << "Ret\n"
+                << "\n"
+                << "fn square 1 0 {\n"
+                << "    Star r0\n"
+                << "    Mul r0\n"
+                << "    Ret\n"
+                << "}\n"
+                << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
@@ -111,16 +110,17 @@ TEST_F(AssemblerTest, squareFunctions) {
 TEST_F(AssemblerTest, noStackOverflow) {
     uint64_t iterations = numOfFrames_;
     writeInput_ << "Ldia " << iterations << "\n"
-                 << "Star r0\n"
-                 << "Ldia 0\n"
-                 << "Addi 1\n"
-                 << "Call aboba\n"
-                 << "If_icmplt r0, -2\n"
-                 << "Ret\n"
-                 << "\n"
-                 << "fn aboba " << numOfRegs_ << " 0 {\n"
-                 << "    Ret\n"
-                 << "}\n" << std::endl;
+                << "Star r0\n"
+                << "Ldia 0\n"
+                << "Addi 1\n"
+                << "Call aboba\n"
+                << "If_icmplt r0, -2\n"
+                << "Ret\n"
+                << "\n"
+                << "fn aboba " << numOfRegs_ << " 0 {\n"
+                << "    Ret\n"
+                << "}\n"
+                << std::endl;
     Assembler asM{input_, output_};
     asM.assemble();
     codeManager_.load(output_);
