@@ -150,5 +150,6 @@ TEST_F(ExecutorTest, StringDemo) {
     load<Ret>();
     update();
     exec_.run();
-    EXPECT_EQ(codeManager_.getStringByStringPoolPos(exec_.acc()), "Hellodragons");
+    EXPECT_EQ(codeManager_.getStringByStringPoolPos(exec_.acc()),
+              "Hellodragons");
 }
