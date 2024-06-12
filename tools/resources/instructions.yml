@@ -130,17 +130,17 @@ instructions:
     fixedvalue: 24
     mnemonic: IcPrint
     format: N
-    description: "Intrinsic. Prints char, containing by the first byte of acc"
+    description: "Intrinsic. Prints value of acc"
   -
     fixedvalue: 25
     mnemonic: IcScani
     format: N
-    description: "Intrinsic. Scans i64 from stdin"
+    description: "Intrinsic. Scans i64 from stdin into acc"
   -
     fixedvalue: 26
     mnemonic: IcScanf
     format: N
-    description: "Intrinsic. Scans f64 from stdin"
+    description: "Intrinsic. Scans f64 from stdin into acc"
   -
     fixedvalue: 27
     mnemonic: IcSqrt

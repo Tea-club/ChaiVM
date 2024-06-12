@@ -190,6 +190,7 @@ void Executor::divif(Instruction ins) {
 }
 void Executor::icprint(Instruction ins) {
     assert(acc() <= 0xFF);
+    std::cout << acc();
     advancePc();
     DO_NEXT_INS()
 }
@@ -223,9 +224,9 @@ void Executor::iccos(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::if_icmpeq(Instruction ins) {
+    static_assert(sizeof(Immidiate) == sizeof(int16_t));
     if (acc() == (*currentFrame_)[ins.r1]) {
-        static_assert(sizeof(Immidiate) == sizeof(int16_t));
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -233,7 +234,7 @@ void Executor::if_icmpeq(Instruction ins) {
 }
 void Executor::if_icmpne(Instruction ins) {
     if (acc() != (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -241,7 +242,7 @@ void Executor::if_icmpne(Instruction ins) {
 }
 void Executor::if_icmpgt(Instruction ins) {
     if (acc() > (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -249,7 +250,7 @@ void Executor::if_icmpgt(Instruction ins) {
 }
 void Executor::if_icmpge(Instruction ins) {
     if (acc() >= (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -257,7 +258,7 @@ void Executor::if_icmpge(Instruction ins) {
 }
 void Executor::if_icmplt(Instruction ins) {
     if (acc() < (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -265,7 +266,7 @@ void Executor::if_icmplt(Instruction ins) {
 }
 void Executor::if_icmple(Instruction ins) {
     if (acc() <= (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -302,7 +303,7 @@ void Executor::cmplf(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::g0t0(Instruction ins) {
-    pc() += static_cast<int16_t>(ins.immidiate);
+    pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     DO_NEXT_INS()
 }
 void Executor::call(Instruction ins) {

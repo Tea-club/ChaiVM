@@ -329,7 +329,7 @@ TEST_F(ExecutorTest, If_icmpeq_simple) {
     Immidiate val = chaiFile_.addConst(std::make_unique<ConstI64>(42));
     load<Ldia>(val);
     load<Star>(R1);
-    load<If_icmpeq>(R1, 2 * sizeof(bytecode_t));
+    load<If_icmpeq>(R1, 2);
     load<Inv>();
     load<Ret>();
     update();
@@ -344,7 +344,7 @@ TEST_F(ExecutorTest, If_icmpne_cycle) {
     load<Star>(R10);
     loadWithConst(Ldia, static_cast<int64_t>(0));
     load<Add>(R1);
-    load<If_icmpne>(R10, static_cast<Immidiate>(-1 * sizeof(bytecode_t)));
+    load<If_icmpne>(R10, static_cast<Immidiate>(-1));
     load<Ret>();
     update();
     exec_.run();
@@ -359,7 +359,7 @@ TEST_F(ExecutorTest, If_icmpgt_cycle) {
     load<Star>(R10);
     loadWithConst(Ldia, static_cast<int64_t>(0));
     load<Sub>(R1);
-    load<If_icmpgt>(R10, static_cast<Immidiate>(-1 * sizeof(bytecode_t)));
+    load<If_icmpgt>(R10, static_cast<Immidiate>(-1));
     load<Ret>();
     update();
     exec_.run();
@@ -374,7 +374,7 @@ TEST_F(ExecutorTest, If_icmpge_cycle) {
     load<Star>(R10);
     loadWithConst(Ldia, static_cast<int64_t>(0));
     load<Sub>(R1);
-    load<If_icmpge>(R10, static_cast<Immidiate>(-1 * sizeof(bytecode_t)));
+    load<If_icmpge>(R10, static_cast<Immidiate>(-1));
     load<Ret>();
     update();
     exec_.run();
@@ -389,7 +389,7 @@ TEST_F(ExecutorTest, If_icmplt_cycle) {
     load<Star>(R10);
     loadWithConst(Ldia, static_cast<int64_t>(0));
     load<Add>(R1);
-    load<If_icmplt>(R10, static_cast<Immidiate>(-1 * sizeof(bytecode_t)));
+    load<If_icmplt>(R10, static_cast<Immidiate>(-1));
     load<Ret>();
     update();
     exec_.run();
@@ -404,7 +404,7 @@ TEST_F(ExecutorTest, If_icmple_cycle) {
     load<Star>(R10);
     loadWithConst(Ldia, static_cast<int64_t>(0));
     load<Add>(R1);
-    load<If_icmple>(R10, static_cast<Immidiate>(-1 * sizeof(bytecode_t)));
+    load<If_icmple>(R10, static_cast<Immidiate>(-1));
     load<Ret>();
     update();
     exec_.run();
@@ -485,7 +485,7 @@ TEST_F(ExecutorTest, Cmplf_nan) {
 
 TEST_F(ExecutorTest, Goto_forward) {
     constexpr int ret = 345;
-    load<Goto>((ret) * sizeof(bytecode_t));
+    load<Goto>(ret);
     for (int i = 0; i < ret - 1; ++i) {
         load<Inv>();
     }
@@ -501,7 +501,7 @@ TEST_F(ExecutorTest, Goto_forward_and_back) {
     // jump to
     constexpr int ret1 = 345;
     constexpr int ret2 = ret1 + 5;
-    load<Goto>((ret2) * sizeof(bytecode_t));
+    load<Goto>(ret2);
     for (int i = 0; i < ret1 - 1; ++i) {
         load<Inv>();
     }
@@ -510,7 +510,7 @@ TEST_F(ExecutorTest, Goto_forward_and_back) {
     load<Inv>();
     load<Inv>();
     load<Inv>();
-    ASSERT_EQ(load<Goto>(static_cast<Immidiate>(-5 * sizeof(bytecode_t))),
+    ASSERT_EQ(load<Goto>(static_cast<Immidiate>(-5)),
               ret2);
     for (int i = 0; i < 500; ++i) {
         load<Inv>();

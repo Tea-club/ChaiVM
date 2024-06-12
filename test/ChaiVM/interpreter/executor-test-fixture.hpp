@@ -90,8 +90,12 @@ private:
     chai::interpreter::Immidiate loadN(chai::interpreter::Operation op);
 
 protected:
+    size_t numOfRegs = 50;
+    size_t numOfFrames = 256;
     chai::utils::fileformat::ChaiFile chaiFile_;
     chai::interpreter::CodeManager codeManager_;
-    chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(1024 * 256);
+    chai::memory::LinearBuffer buffer_ = chai::memory::LinearBuffer(
+        numOfFrames * (numOfRegs * sizeof(chai::chsize_t) + sizeof(chai::interpreter::Frame))
+    );
     chai::interpreter::Executor exec_{&codeManager_, buffer_};
 };
