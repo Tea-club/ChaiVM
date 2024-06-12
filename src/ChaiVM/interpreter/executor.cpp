@@ -386,6 +386,11 @@ void Executor::new_ref_arr(Instruction ins) {
 void Executor::get_ref_from_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     Object object{acc()};
+    if (i >= object.countMembers()) {
+        throw IndexOutOfBoundary("index " + std::to_string(i) +
+                                 " is greater than array length " +
+                                 std::to_string(object.countMembers()));
+    }
     acc() = object.getMember(i * sizeof(chsize_t));
     advancePc();
     DO_NEXT_INS();
@@ -479,6 +484,13 @@ InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)
     : runtime_error(msg) {}
 const char *InvalidInstruction::what() const noexcept {
+    return runtime_error::what();
+}
+
+IndexOutOfBoundary::IndexOutOfBoundary(const char *msg) : runtime_error(msg) {}
+IndexOutOfBoundary::IndexOutOfBoundary(const std::string &msg)
+    : runtime_error(msg) {}
+const char *IndexOutOfBoundary::what() const noexcept {
     return runtime_error::what();
 }
 

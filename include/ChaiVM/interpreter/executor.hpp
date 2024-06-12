@@ -180,4 +180,10 @@ public:
     const char *what() const noexcept override;
 };
 
+class IndexOutOfBoundary : public std::runtime_error {
+public:
+    explicit IndexOutOfBoundary(char const *msg);
+    IndexOutOfBoundary(const std::string &msg);
+    const char *what() const noexcept override;
+};
 } // namespace chai::interpreter

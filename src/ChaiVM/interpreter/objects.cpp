@@ -12,14 +12,18 @@ Object::Object(chsize_t ref)
     : header_(std::bit_cast<ObjectHeader *>(ref)),
       members_(std::bit_cast<chsize_t *>(header_ + 1)) {}
 
+chsize_t Object::countMembers() const {
+    return (header_->size_ - sizeof(ObjectHeader)) / sizeof(chsize_t);
+}
+
 chsize_t Object::getMember(Immidiate offset) const {
-    assert(offset % 8 == 0);
-    return members_[offset / 8];
+    assert(offset % sizeof(chsize_t) == 0);
+    return members_[offset / sizeof(chsize_t)];
 }
 
 void Object::setMember(Immidiate offset, chsize_t value) const {
-    assert(offset % 8 == 0);
-    members_[offset / 8] = value;
+    assert(offset % sizeof(chsize_t) == 0);
+    members_[offset / sizeof(chsize_t)] = value;
 }
 
 } // namespace chai::interpreter

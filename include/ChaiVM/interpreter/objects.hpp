@@ -50,6 +50,11 @@ public:
     explicit Object(chsize_t ref);
 
     /**
+     * Get count of members.
+     */
+    chsize_t countMembers() const;
+
+    /**
      * Get member.
      * @param offset Offset starting from {@link members_} (i.e. without
      * header).

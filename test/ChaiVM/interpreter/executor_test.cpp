@@ -947,3 +947,15 @@ TEST_F(ExecutorTest, SetGetInObjectArray_2) {
     EXPECT_EQ(static_cast<int64_t>(exec_.acc()), val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
+
+TEST_F(ExecutorTest, GetOutOfBoundary) {
+    int len = 20;
+    Immidiate imm_len = chaiFile_.addConst(std::make_unique<ConstI64>(len));
+    load<Ldia>(imm_len);
+    load<Star>(R1);
+    load<NewRefArray>();
+    load<GetRefFromArr>(R1);
+    load<Ret>();
+    update();
+    EXPECT_THROW(exec_.run(), IndexOutOfBoundary);
+}
