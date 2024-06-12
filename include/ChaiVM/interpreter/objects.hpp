@@ -7,7 +7,7 @@
 
 namespace chai::interpreter {
 
-// @todo:90min Add allocator here.
+// @todo #97:90min Add allocator here.
 struct ObjectHeader {
     chsize_t size_;
     Immidiate klassId_;
