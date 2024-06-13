@@ -15,6 +15,7 @@ public:
     using Handler = void (Executor::*)(Instruction);
 
     Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
+             memory::LinearBuffer &primitiveBuffer,
              memory::LinearBuffer &objectsBuffer);
 
     /**
@@ -164,6 +165,7 @@ private:
     chsize_t acc_;
     CodeManager *codeManager_;
     memory::LinearBuffer &framesBuffer_;
+    memory::LinearBuffer &primitivesBuffer_;
     memory::LinearBuffer &objectsBuffer_;
     Frame *currentFrame_ = nullptr;
 };

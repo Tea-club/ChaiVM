@@ -13,9 +13,10 @@ namespace chai::interpreter {
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
+                   memory::LinearBuffer &primitivesBuffer,
                    memory::LinearBuffer &objectsBuffer)
     : codeManager_(manager), framesBuffer_(framesBuffer),
-      objectsBuffer_(objectsBuffer) {}
+      primitivesBuffer_(primitivesBuffer), objectsBuffer_(objectsBuffer) {}
 
 void Executor::init() {
     assert(currentFrame_ == nullptr); // No current frame
@@ -322,7 +323,7 @@ void Executor::call(Instruction ins) {
 }
 void Executor::newi64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<int64_t> allocator{objectsBuffer_};
+    memory::LinearAllocator<int64_t> allocator{primitivesBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) int64_t[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
@@ -347,7 +348,7 @@ void Executor::set_i64in_arr(Instruction ins) {
 
 void Executor::newf64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<double> allocator{objectsBuffer_};
+    memory::LinearAllocator<double> allocator{primitivesBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) double[n]();
     acc() = reinterpret_cast<chsize_t>(arr);

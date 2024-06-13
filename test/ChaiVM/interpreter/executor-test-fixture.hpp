@@ -99,6 +99,8 @@ protected:
                        sizeof(chai::interpreter::Frame)));
     chai::memory::LinearBuffer objectBuffer_ =
         chai::memory::LinearBuffer(1024 * 256);
-    chai::interpreter::Executor exec_{&codeManager_, frameBuffer_,
+    chai::memory::LinearBuffer primitivesBuffer =
+        chai::memory::LinearBuffer(1024 * 256);
+    chai::interpreter::Executor exec_{&codeManager_, frameBuffer_, primitivesBuffer,
                                       objectBuffer_};
 };
