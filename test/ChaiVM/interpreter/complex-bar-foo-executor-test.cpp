@@ -67,10 +67,10 @@ protected:
     static constexpr chai::chsize_t N = 400;
     static constexpr chai::chsize_t M = 100;
 
-    Immidiate bar_klass_ = -1;
-    Immidiate foo_klass_ = -1;
-    Immidiate dump_ = -1;
-    Immidiate foo_ = -1;
+    Immidiate bar_klass_ = 0;
+    Immidiate foo_klass_ = 0;
+    Immidiate dump_ = 0;
+    Immidiate foo_ = 0;
 
     /**
      * Init Foo and Bar klasses.
