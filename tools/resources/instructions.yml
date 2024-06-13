@@ -160,42 +160,42 @@ instructions:
     fixedvalue: 30
     mnemonic: If_icmpeq
     format: RI
-    description: "i64, if acc == r1 then branch to instruction at offset [imm] otherwise just next instr"
+    description: "i64, if acc == r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
     fixedvalue: 31
     mnemonic: If_icmpne
     format: RI
-    description: "i64, if acc != r1 then branch to instruction at offset [imm] otherwise just next instr"
+    description: "i64, if acc != r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
     fixedvalue: 32
     mnemonic: If_icmpgt
     format: RI
-    description: "i64, if acc > r1 then branch to instruction at offset [imm] otherwise just next instr"
+    description: "i64, if acc > r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
     fixedvalue: 33
     mnemonic: If_icmpge
     format: RI
-    description: "i64, if acc >= r1 then branch to instruction at offset [imm] otherwise just next instr"
+    description: "i64, if acc >= r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
     fixedvalue: 34
     mnemonic: If_icmplt
     format: RI
-    description: "i64, if acc < r1 then branch to instruction at offset [imm] otherwise just next instr"
+    description: "i64, if acc < r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
     fixedvalue: 35
     mnemonic: If_icmple
     format: RI
-    description: "i64, if acc <= r1 then branch to instruction at offset [imm] otherwise just next instr"
+    description: "i64, if acc <= r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
     fixedvalue: 36
     mnemonic: If_acmpeq
     format: RI
-    description: "ref, if references are equal, branch to instruction at offset [imm]"
+    description: "ref, if references are equal, branch to instruction at offset(instructions) imm"
   -
     fixedvalue: 37
     mnemonic: If_acmpne
     format: RI
-    description: "ref, if references are not equal, branch to instruction at offset [imm]"
+    description: "ref, if references are not equal, branch to instruction at offset(instructions) imm"
   -
     fixedvalue: 38
     mnemonic: Сmpgf
@@ -210,7 +210,7 @@ instructions:
     fixedvalue: 40
     mnemonic: Goto
     format: I
-    description: "Goes to another instruction at branchoffset [imm]"
+    description: "Goes to another instruction at branchoffset(instructions) imm"
   -
     fixedvalue: 41
     mnemonic: Call
