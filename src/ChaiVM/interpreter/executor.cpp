@@ -59,6 +59,8 @@ void Executor::ret(Instruction ins) {
     Frame *buf = currentFrame_;
     currentFrame_ = currentFrame_->back();
     buf->~Frame();
+    memory::LinearAllocator<Frame> allocator{framesBuffer_};
+    allocator.deallocate(buf, 1);
     if (currentFrame_ != nullptr) {
         advancePc();
         DO_NEXT_INS()
@@ -194,6 +196,7 @@ void Executor::divif(Instruction ins) {
 }
 void Executor::icprint(Instruction ins) {
     assert(acc() <= 0xFF);
+    std::cout << acc();
     advancePc();
     DO_NEXT_INS()
 }
@@ -227,9 +230,9 @@ void Executor::iccos(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::if_icmpeq(Instruction ins) {
+    static_assert(sizeof(Immidiate) == sizeof(int16_t));
     if (acc() == (*currentFrame_)[ins.r1]) {
-        static_assert(sizeof(Immidiate) == sizeof(int16_t));
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -237,7 +240,7 @@ void Executor::if_icmpeq(Instruction ins) {
 }
 void Executor::if_icmpne(Instruction ins) {
     if (acc() != (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -245,7 +248,7 @@ void Executor::if_icmpne(Instruction ins) {
 }
 void Executor::if_icmpgt(Instruction ins) {
     if (acc() > (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -253,7 +256,7 @@ void Executor::if_icmpgt(Instruction ins) {
 }
 void Executor::if_icmpge(Instruction ins) {
     if (acc() >= (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -261,7 +264,7 @@ void Executor::if_icmpge(Instruction ins) {
 }
 void Executor::if_icmplt(Instruction ins) {
     if (acc() < (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -269,7 +272,7 @@ void Executor::if_icmplt(Instruction ins) {
 }
 void Executor::if_icmple(Instruction ins) {
     if (acc() <= (*currentFrame_)[ins.r1]) {
-        pc() += static_cast<int16_t>(ins.immidiate);
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
     }
@@ -306,7 +309,7 @@ void Executor::cmplf(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::g0t0(Instruction ins) {
-    pc() += static_cast<int16_t>(ins.immidiate);
+    pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     DO_NEXT_INS()
 }
 void Executor::call(Instruction ins) {
@@ -319,7 +322,7 @@ void Executor::call(Instruction ins) {
 }
 void Executor::newi64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<int64_t> allocator{framesBuffer_};
+    memory::LinearAllocator<int64_t> allocator{objectsBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) int64_t[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
@@ -344,7 +347,7 @@ void Executor::set_i64in_arr(Instruction ins) {
 
 void Executor::newf64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<double> allocator{framesBuffer_};
+    memory::LinearAllocator<double> allocator{objectsBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) double[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
