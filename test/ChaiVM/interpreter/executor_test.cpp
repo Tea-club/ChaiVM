@@ -857,7 +857,7 @@ TEST_F(ExecutorTest, NewRefArray) {
                              (char *)objectBuffer_.currentPosition() -
                              object_array_size)}
                       .getMember(i * sizeof(chai::chsize_t)),
-                  CHAI_NULL);
+                  chai::CHAI_NULL);
     }
     auto buff_start = static_cast<char *>(objectBuffer_.currentPosition()) -
                       object_array_size;
