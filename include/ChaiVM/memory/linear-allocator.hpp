@@ -26,12 +26,15 @@ public:
         }
         return reinterpret_cast<T *>(buffer_.allocate(n * sizeof(T)));
     }
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
     void deallocate(T *p, std::size_t n) override {
         if (n > buffer_.offset() / sizeof(T)) {
             throw std::runtime_error("invalid deallocation size");
         }
-        buffer_.deallocate(p, n * sizeof(T));
+        buffer_.deallocate(n * sizeof(T));
     }
+#pragma GCC diagnostic pop
 
 private:
     LinearBuffer &buffer_;
