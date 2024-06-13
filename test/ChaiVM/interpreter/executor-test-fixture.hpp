@@ -100,6 +100,6 @@ protected:
     chai::memory::TracedByteAllocator objectsAlocator{1024 * 256};
     chai::memory::LinearBuffer primitivesBuffer =
         chai::memory::LinearBuffer(1024 * 256);
-    chai::interpreter::Executor exec_{&codeManager_, frameBuffer_, primitivesBuffer,
-                                      objectsAlocator};
+    chai::interpreter::Executor exec_{&codeManager_, frameBuffer_,
+                                      primitivesBuffer, objectsAlocator};
 };

@@ -16,7 +16,8 @@ Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
                    memory::LinearBuffer &primitivesBuffer,
                    memory::TracedByteAllocator &objectsAllocator_)
     : codeManager_(manager), framesBuffer_(framesBuffer),
-      primitivesBuffer_(primitivesBuffer), objectsAllocator_(objectsAllocator_) {}
+      primitivesBuffer_(primitivesBuffer),
+      objectsAllocator_(objectsAllocator_) {}
 
 void Executor::init() {
     assert(currentFrame_ == nullptr); // No current frame
@@ -372,7 +373,8 @@ void Executor::set_f64in_arr(Instruction ins) {
 void Executor::new_ref_arr(Instruction ins) {
     chsize_t len = acc();
     chsize_t num_bytes = sizeof(ObjectHeader) + len * sizeof(chsize_t);
-    auto *object_arr = new (objectsAllocator_.allocate(num_bytes)) uint8_t[num_bytes]();
+    auto *object_arr =
+        new (objectsAllocator_.allocate(num_bytes)) uint8_t[num_bytes]();
     auto *pheader = reinterpret_cast<ObjectHeader *>(object_arr);
     auto *members =
         reinterpret_cast<chsize_t *>(object_arr + sizeof(ObjectHeader));
