@@ -38,7 +38,8 @@ public:
         // allocations_ are changed by GC
     }
 
-    auto &allocated() noexcept { return allocated_; }
+    auto& allocated() noexcept { return allocated_; }
+    auto const& allocated() const noexcept { return allocated_; }
     auto &allocations() noexcept { return allocations_; }
 
 private:

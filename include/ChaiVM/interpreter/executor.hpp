@@ -15,8 +15,8 @@ public:
     using Handler = void (Executor::*)(Instruction);
 
     Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
-             memory::LinearBuffer &primitiveBuffer,
-             memory::LinearBuffer &objectsBuffer);
+             memory::LinearBuffer &primitivesBuffer,
+             memory::TracedByteAllocator &objectsAllocator_);
 
     /**
      * Loads the first frame (public static void main).
@@ -166,7 +166,7 @@ private:
     CodeManager *codeManager_;
     memory::LinearBuffer &framesBuffer_;
     memory::LinearBuffer &primitivesBuffer_;
-    memory::LinearBuffer &objectsBuffer_;
+    memory::TracedByteAllocator &objectsAllocator_;
     Frame *currentFrame_ = nullptr;
 };
 

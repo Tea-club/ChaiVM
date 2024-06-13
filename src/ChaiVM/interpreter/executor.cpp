@@ -14,9 +14,9 @@ namespace chai::interpreter {
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
                    memory::LinearBuffer &primitivesBuffer,
-                   memory::LinearBuffer &objectsBuffer)
+                   memory::TracedByteAllocator &objectsAllocator_)
     : codeManager_(manager), framesBuffer_(framesBuffer),
-      primitivesBuffer_(primitivesBuffer), objectsBuffer_(objectsBuffer) {}
+      primitivesBuffer_(primitivesBuffer), objectsAllocator_(objectsAllocator_) {}
 
 void Executor::init() {
     assert(currentFrame_ == nullptr); // No current frame
@@ -371,9 +371,8 @@ void Executor::set_f64in_arr(Instruction ins) {
 }
 void Executor::new_ref_arr(Instruction ins) {
     chsize_t len = acc();
-    memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
     chsize_t num_bytes = sizeof(ObjectHeader) + len * sizeof(chsize_t);
-    auto *object_arr = new (allocator.allocate(num_bytes)) uint8_t[num_bytes]();
+    auto *object_arr = new (objectsAllocator_.allocate(num_bytes)) uint8_t[num_bytes]();
     auto *pheader = reinterpret_cast<ObjectHeader *>(object_arr);
     auto *members =
         reinterpret_cast<chsize_t *>(object_arr + sizeof(ObjectHeader));
@@ -440,8 +439,7 @@ void Executor::string_slice(Instruction ins) {
 void Executor::alloc_ref(Instruction ins) {
     const Klass &klass = codeManager_->getKlass(ins.immidiate);
     assert(klass.instanceSize() > 0);
-    memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
-    auto *object = new (allocator.allocate(klass.instanceSize()))
+    auto *object = new (objectsAllocator_.allocate(klass.instanceSize()))
         uint8_t[klass.instanceSize()]();
     auto *pheader = reinterpret_cast<ObjectHeader *>(object);
     auto *fields = reinterpret_cast<chsize_t *>(object + sizeof(*pheader));

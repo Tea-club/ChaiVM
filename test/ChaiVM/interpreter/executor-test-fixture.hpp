@@ -97,10 +97,9 @@ protected:
     chai::memory::LinearBuffer frameBuffer_ = chai::memory::LinearBuffer(
         numOfFrames * (numOfRegs * sizeof(chai::chsize_t) +
                        sizeof(chai::interpreter::Frame)));
-    chai::memory::LinearBuffer objectBuffer_ =
-        chai::memory::LinearBuffer(1024 * 256);
+    chai::memory::TracedByteAllocator objectsAlocator{1024 * 256};
     chai::memory::LinearBuffer primitivesBuffer =
         chai::memory::LinearBuffer(1024 * 256);
     chai::interpreter::Executor exec_{&codeManager_, frameBuffer_, primitivesBuffer,
-                                      objectBuffer_};
+                                      objectsAlocator};
 };
