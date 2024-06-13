@@ -708,7 +708,7 @@ TEST_F(ExecutorTest, AllocOneObject) {
     load<Ret>();
     update();
     exec_.run();
-    EXPECT_EQ(objectBuffer_.offset(),
+    EXPECT_EQ(objectsAlocator.allocated(),
               sizeof(ObjectHeader) + sizeof(chai::chsize_t));
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
@@ -732,7 +732,7 @@ TEST_F(ExecutorTest, AllocSeveralObject) {
     update();
     exec_.run();
 
-    EXPECT_EQ(objectBuffer_.offset(), N * (2 * bar_size + foo_size));
+    EXPECT_EQ(objectsAlocator.allocated(), N * (2 * bar_size + foo_size));
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
 
@@ -756,10 +756,10 @@ TEST_F(ExecutorTest, SetField1) {
     update();
     exec_.run();
 
-    EXPECT_EQ(objectBuffer_.offset(), bar_size);
+    EXPECT_EQ(objectsAlocator.allocated(), bar_size);
 
     EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
-                         (char *)objectBuffer_.currentPosition() - bar_size)}
+                         (char *)objectsAlocator.allocations().back().ptr)}
                   .getMember(0),
               val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
@@ -786,15 +786,14 @@ TEST_F(ExecutorTest, SetField2) {
     update();
     exec_.run();
 
-    EXPECT_EQ(objectBuffer_.offset(), 2 * bar_size);
+    EXPECT_EQ(objectsAlocator.allocated(), 2 * bar_size);
 
-    EXPECT_EQ(
-        Object{std::bit_cast<chai::chsize_t>(
-                   (char *)objectBuffer_.currentPosition() - 2 * bar_size)}
-            .getMember(0),
-        0);
     EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
-                         (char *)objectBuffer_.currentPosition() - bar_size)}
+                         (char *)objectsAlocator.allocations().front().ptr)}
+                  .getMember(0),
+              0);
+    EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
+                         (char *)objectsAlocator.allocations().back().ptr)}
                   .getMember(0),
               val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
@@ -825,14 +824,13 @@ TEST_F(ExecutorTest, GetField) {
     exec_.run();
 
     EXPECT_EQ(exec_.acc(), val);
-    EXPECT_EQ(objectBuffer_.offset(), 2 * cat_size);
-    EXPECT_EQ(
-        Object{std::bit_cast<chai::chsize_t>(
-                   (char *)objectBuffer_.currentPosition() - 2 * cat_size)}
-            .getMember(0),
-        0);
+    EXPECT_EQ(objectsAlocator.allocated(), 2 * cat_size);
     EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
-                         (char *)objectBuffer_.currentPosition() - cat_size)}
+                         (char *)objectsAlocator.allocations().front().ptr)}
+                  .getMember(0),
+              0);
+    EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
+                         (char *)objectsAlocator.allocations().back().ptr)}
                   .getMember(8),
               val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
@@ -851,16 +849,14 @@ TEST_F(ExecutorTest, NewRefArray) {
 
     chai::chsize_t object_array_size =
         len * sizeof(chai::chsize_t) + sizeof(ObjectHeader);
-    EXPECT_EQ(objectBuffer_.offset(), object_array_size);
+    EXPECT_EQ(objectsAlocator.allocated(), object_array_size);
     for (int i = 0; i < len; ++i) {
         EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
-                             (char *)objectBuffer_.currentPosition() -
-                             object_array_size)}
+                             (char *)objectsAlocator.allocations().back().ptr)}
                       .getMember(i * sizeof(chai::chsize_t)),
                   chai::CHAI_NULL);
     }
-    auto buff_start = static_cast<char *>(objectBuffer_.currentPosition()) -
-                      object_array_size;
+    auto buff_start = objectsAlocator.allocations().back().ptr;
     EXPECT_EQ(((ObjectHeader *)buff_start)->klassId_, OBJ_ARR_IMM);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
@@ -942,7 +938,8 @@ TEST_F(ExecutorTest, SetGetInObjectArray_2) {
     size_t size_of_bar = sizeof(ObjectHeader) + 1 * sizeof(chai::chsize_t);
     size_t size_of_each_arr =
         sizeof(ObjectHeader) + len * sizeof(chai::chsize_t);
-    EXPECT_EQ(objectBuffer_.offset(), size_of_bar + 2 * (size_of_each_arr));
+    EXPECT_EQ(objectsAlocator.allocated(),
+              size_of_bar + 2 * (size_of_each_arr));
     EXPECT_EQ(static_cast<int64_t>(exec_.acc()), val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }

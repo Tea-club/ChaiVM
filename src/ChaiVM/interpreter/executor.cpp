@@ -13,9 +13,11 @@ namespace chai::interpreter {
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
-                   memory::LinearBuffer &objectsBuffer)
+                   memory::LinearBuffer &primitivesBuffer,
+                   memory::TracedByteAllocator &objectsAllocator_)
     : codeManager_(manager), framesBuffer_(framesBuffer),
-      objectsBuffer_(objectsBuffer) {}
+      primitivesBuffer_(primitivesBuffer),
+      objectsAllocator_(objectsAllocator_) {}
 
 void Executor::init() {
     assert(currentFrame_ == nullptr); // No current frame
@@ -322,7 +324,7 @@ void Executor::call(Instruction ins) {
 }
 void Executor::newi64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<int64_t> allocator{objectsBuffer_};
+    memory::LinearAllocator<int64_t> allocator{primitivesBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) int64_t[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
@@ -347,7 +349,7 @@ void Executor::set_i64in_arr(Instruction ins) {
 
 void Executor::newf64array(Instruction ins) {
     auto n = static_cast<int64_t>(acc());
-    memory::LinearAllocator<double> allocator{objectsBuffer_};
+    memory::LinearAllocator<double> allocator{primitivesBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) double[n]();
     acc() = reinterpret_cast<chsize_t>(arr);
@@ -370,9 +372,9 @@ void Executor::set_f64in_arr(Instruction ins) {
 }
 void Executor::new_ref_arr(Instruction ins) {
     chsize_t len = acc();
-    memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
     chsize_t num_bytes = sizeof(ObjectHeader) + len * sizeof(chsize_t);
-    auto *object_arr = new (allocator.allocate(num_bytes)) uint8_t[num_bytes]();
+    auto *object_arr =
+        new (objectsAllocator_.allocate(num_bytes)) uint8_t[num_bytes]();
     auto *pheader = reinterpret_cast<ObjectHeader *>(object_arr);
     auto *members =
         reinterpret_cast<chsize_t *>(object_arr + sizeof(ObjectHeader));
@@ -439,8 +441,7 @@ void Executor::string_slice(Instruction ins) {
 void Executor::alloc_ref(Instruction ins) {
     const Klass &klass = codeManager_->getKlass(ins.immidiate);
     assert(klass.instanceSize() > 0);
-    memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
-    auto *object = new (allocator.allocate(klass.instanceSize()))
+    auto *object = new (objectsAllocator_.allocate(klass.instanceSize()))
         uint8_t[klass.instanceSize()]();
     auto *pheader = reinterpret_cast<ObjectHeader *>(object);
     auto *fields = reinterpret_cast<chsize_t *>(object + sizeof(*pheader));
