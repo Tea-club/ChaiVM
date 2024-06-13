@@ -83,231 +83,241 @@ instructions:
     description: "i64, divides acc by [imm]"
   -
     fixedvalue: 15
+    mnemonic: Modi
+    format: I
+    description: "i64, acc = acc % [imm]"
+  -
+    fixedvalue: 16
     mnemonic: Ldiaf
     format: I
     description: "f64, loads constant [i] to acc"
   -
-    fixedvalue: 16
+    fixedvalue: 17
     mnemonic: Addf
     format: R
     description: "f64, Adds R1 to acc"
   -
-    fixedvalue: 17
+    fixedvalue: 18
     mnemonic: Addif
     format: I
     description: "f64, Adds [imm] to acc"
   -
-    fixedvalue: 18
+    fixedvalue: 19
     mnemonic: Subf
     format: R
     description: "f64, sub R1 from acc"
   -
-    fixedvalue: 19
+    fixedvalue: 20
     mnemonic: Subif
     format: I
     description: "i64, sub [imm] from acc"
   -
-    fixedvalue: 20
+    fixedvalue: 21
     mnemonic: Mulf
     format: R
     description: "f64, mul acc by R1"
   -
-    fixedvalue: 21
+    fixedvalue: 22
     mnemonic: Mulif
     format: I
     description: "f64, mul acc by [imm]"
   -
-    fixedvalue: 22
+    fixedvalue: 23
     mnemonic: Divf
     format: R
     description: "f64, divides acc by R1"
   -
-    fixedvalue: 23
+    fixedvalue: 24
     mnemonic: Divif
     format: I
     description: "f64, divides acc by [imm]"
   -
-    fixedvalue: 24
+    fixedvalue: 25
     mnemonic: IcPrint
     format: N
     description: "Intrinsic. Prints value of acc"
   -
-    fixedvalue: 25
+    fixedvalue: 26
     mnemonic: IcScani
     format: N
     description: "Intrinsic. Scans i64 from stdin into acc"
   -
-    fixedvalue: 26
+    fixedvalue: 27
     mnemonic: IcScanf
     format: N
     description: "Intrinsic. Scans f64 from stdin into acc"
   -
-    fixedvalue: 27
+    fixedvalue: 28
     mnemonic: IcSqrt
     format: N
     description: "f64, Intrinsic. Calculates sqrt of acc."
   -
-    fixedvalue: 28
+    fixedvalue: 29
     mnemonic: IcSin
     format: N
     description: "f64, Intrinsic. Calculates sin of acc."
   -
-    fixedvalue: 29
+    fixedvalue: 30
     mnemonic: IcCos
     format: N
     description: "f64, Intrinsic. Calculates cos of acc."
   -
-    fixedvalue: 30
+    fixedvalue: 31
     mnemonic: If_icmpeq
     format: RI
     description: "i64, if acc == r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
-    fixedvalue: 31
+    fixedvalue: 32
     mnemonic: If_icmpne
     format: RI
     description: "i64, if acc != r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
-    fixedvalue: 32
+    fixedvalue: 33
     mnemonic: If_icmpgt
     format: RI
     description: "i64, if acc > r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
-    fixedvalue: 33
+    fixedvalue: 34
     mnemonic: If_icmpge
     format: RI
     description: "i64, if acc >= r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
-    fixedvalue: 34
+    fixedvalue: 35
     mnemonic: If_icmplt
     format: RI
     description: "i64, if acc < r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
-    fixedvalue: 35
+    fixedvalue: 36
     mnemonic: If_icmple
     format: RI
     description: "i64, if acc <= r1 then branch to instruction at offset(instructions) imm otherwise just next instr"
   -
-    fixedvalue: 36
+    fixedvalue: 37
     mnemonic: If_acmpeq
     format: RI
     description: "ref, if references are equal, branch to instruction at offset(instructions) imm"
   -
-    fixedvalue: 37
+    fixedvalue: 38
     mnemonic: If_acmpne
     format: RI
     description: "ref, if references are not equal, branch to instruction at offset(instructions) imm"
   -
-    fixedvalue: 38
+    fixedvalue: 39
+    mnemonic: If_null
+    format: I
+    description: "ref, if reference in acc is null, branch to instruction at offset(instructions) imm"
+  -
+    fixedvalue: 40
     mnemonic: Сmpgf
     format: R
     description: "f64 -> i64, compare acc with r1. Acc became 1 i64 if greater than r1, 0 if equal, otherwise -1"
   -
-    fixedvalue: 39
+    fixedvalue: 41
     mnemonic: Cmplf
     format: R
     description: "f64 -> i64, compare acc with r1. Acc became 1 i64 if less than r1, 0 if equal, otherwise -1"
   -
-    fixedvalue: 40
+    fixedvalue: 42
     mnemonic: Goto
     format: I
     description: "Goes to another instruction at branchoffset(instructions) imm"
   -
-    fixedvalue: 41
+    fixedvalue: 43
     mnemonic: Call
     format: I
     description: "Calls function [imm]. Imm is reference to function in constant pool named constant_func_name_and_type."
   -
-    fixedvalue: 42
+    fixedvalue: 44
     mnemonic: NewI64Array
     format: N
     description: "Allocates array of type i64 with number of elements from acc register. A reference to this new array is stored in acc."
   -
-    fixedvalue: 43
+    fixedvalue: 45
     mnemonic: GetI64FromArr
     format: R
     description: "Gets i64 from i64 array in acc and puts it to acc."
   -
-    fixedvalue: 44
+    fixedvalue: 46
     mnemonic: SetI64InArr
     format: RR
     description: "Sets i64 value to i64 array in acc and puts it to acc."
   -
-    fixedvalue: 45
+    fixedvalue: 47
     mnemonic: NewF64Array
     format: N
     description: "Allocates array of type f64 with number of elements from acc register. A reference to this new array is stored in acc."
   -
-    fixedvalue: 46
+    fixedvalue: 48
     mnemonic: GetF64FromArr
     format: R
     description: "Gets f64 from f64 array in acc and puts it to acc."
   -
-    fixedvalue: 47
+    fixedvalue: 49
     mnemonic: SetF64InArr
     format: RR
     description: "Sets f64 value to f64 array in acc and puts it to acc."
   -
-    fixedvalue: 48
+    fixedvalue: 50
     mnemonic: NewRefArray
     format: N
     description: "Allocates array of objects with number of elements from acc register. A reference to this new array is stored in acc. Value of every object is null."
   -
-    fixedvalue: 49
+    fixedvalue: 51
     mnemonic: GetRefFromArr
     format: R
     description: "Gets object by index in r1 from object array in acc and puts it to acc."
   -
-    fixedvalue: 50
+    fixedvalue: 52
     mnemonic: SetRefInArr
     format: RR
     description: "Sets ref value in r2 by index in r1 to object array in acc and puts it to acc."
   -
-    fixedvalue: 51
+    fixedvalue: 53
     mnemonic: StringPrint
     format: N
     description: "Prints String in acc"
   -
-    fixedvalue: 52
+    fixedvalue: 54
     mnemonic: StringConcat
     format: R
     description: "Create new String, concatenating String in acc and String in r1. Result in acc."
   -
-    fixedvalue: 53
+    fixedvalue: 55
     mnemonic: StringLen
     format: N
     description: "Puts len of String to acc"
   -
-    fixedvalue: 54
+    fixedvalue: 56
     mnemonic: StringSlice
     format: RR
     description: "Create new String slicing String placed in acc. r1 is start and r2 is finish of slicing"
   -
-    fixedvalue: 55
+    fixedvalue: 57
     mnemonic: AllocRef
     format: I
     description: "Ref, Creates object of klass [imm], leaves ref in acc"
   -
-    fixedvalue: 56
+    fixedvalue: 58
     mnemonic: MovRef
     format: RR
     description: "Ref, copies ref from ri to rj"
   -
-    fixedvalue: 57
+    fixedvalue: 59
     mnemonic: LdraRef
     format: R
     description: "Ref, copies ref of the R1 to acc"
   -
-    fixedvalue: 58
+    fixedvalue: 60
     mnemonic: StarRef
     format: R
     description: "Ref, copies ref of acc into register ri"
   -
-    fixedvalue: 59
+    fixedvalue: 61
     mnemonic: GetField
     format: I
     description: "Ref, load value of field to acc. imm is offset of field (starting from all fields) Value can be ref, array or String"
   -
-    fixedvalue: 60
+    fixedvalue: 62
     mnemonic: SetField
     format: RI
     description: "Ref, set value of register to field imm of object in acc. Value should be consistent to field signature. There are no checks in runtime."

@@ -10,6 +10,7 @@ namespace chai::interpreter {
 #define DO_NEXT_INS()                                                          \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
+    /*std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm = " << newIns.immidiate << std::endl;     */                                                                      \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
@@ -131,6 +132,11 @@ void Executor::divi(Instruction ins) {
     advancePc();
     DO_NEXT_INS()
 }
+void Executor::modi(Instruction ins) {
+    acc() = static_cast<chsize_t>(static_cast<int64_t>(acc()) % static_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
+    advancePc();
+    DO_NEXT_INS()
+}
 void Executor::ldiaf(Instruction ins) {
     double immd = std::bit_cast<double>(codeManager_->getCnst(ins.immidiate));
     acc() = std::bit_cast<chsize_t>(immd);
@@ -195,8 +201,7 @@ void Executor::divif(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::icprint(Instruction ins) {
-    assert(acc() <= 0xFF);
-    std::cout << acc();
+    std::cout << static_cast<int64_t>(acc()) << " ";
     advancePc();
     DO_NEXT_INS()
 }
@@ -290,6 +295,14 @@ void Executor::if_acmpne(Instruction ins) {
      * @todo #42:90min Implement the instruction with object ref
      *  when chai objects will be introduced.
      */
+    DO_NEXT_INS()
+}
+void Executor::if_null(Instruction ins) {
+    if (acc() == CHAI_NULL) {
+        pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
+    } else {
+        advancePc();
+    }
     DO_NEXT_INS()
 }
 void Executor::cmpgf(Instruction ins) {
