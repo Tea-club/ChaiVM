@@ -13,7 +13,6 @@ namespace chai::memory {
 
 template <class T> class LinearAllocator : IAllocator<T> {
 public:
-
     /**
      * Do not remove.
      */
