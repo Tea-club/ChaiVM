@@ -17,7 +17,8 @@ public:
     size_t size() const;
     size_t offset() const;
     void *currentPosition() const;
-    void shiftOffset(size_t n);
+    void allocate(size_t n);
+    void deallocate(size_t n);
 
 private:
     size_t size_ = 0;

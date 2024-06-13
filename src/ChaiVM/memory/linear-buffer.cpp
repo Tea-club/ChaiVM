@@ -17,6 +17,7 @@ LinearBuffer::~LinearBuffer() { delete[] buf_; }
 size_t LinearBuffer::size() const { return size_; }
 size_t LinearBuffer::offset() const { return offset_; }
 void *LinearBuffer::currentPosition() const { return buf_ + offset_; }
-void LinearBuffer::shiftOffset(size_t n) { offset_ += n; }
+void LinearBuffer::allocate(size_t n) { offset_ += n; }
+void LinearBuffer::deallocate(size_t n) { offset_ -= n; }
 
 } // namespace chai::memory

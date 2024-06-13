@@ -180,6 +180,12 @@ private:
                                 lex_.lineno());
         }
     }
+    /**
+     * @todo #104:60min Currently instructions that has type RI uses immediate
+     * dirrectly without constant pool (because it is offset). So it was decided
+     * to simplify logic of this function comparing to `processI`. It looks like
+     * nothing going to chang, but who knows.
+     */
     chai::bytecode_t processRI(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId regId = processReg();
         expectNextLexem(AsmLex::COMMA, "Expected coma");
@@ -187,22 +193,7 @@ private:
         if (lex_.currentLexem()->type == AsmLex::INTEGER) {
             auto val = static_cast<int64_t>(
                 dynamic_cast<AsmLex::Int *>(lex_.currentLexem().get())->value);
-            auto imm = chaiFile_.addConst(
-                std::make_unique<chai::utils::fileformat::ConstI64>(val));
-            return chai::utils::instr2RawRI(op, regId, imm);
-        } else if (lex_.currentLexem()->type == AsmLex::FLOAT) {
-            auto val =
-                dynamic_cast<AsmLex::Float *>(lex_.currentLexem().get())->value;
-            auto imm = chaiFile_.addConst(
-                std::make_unique<chai::utils::fileformat::ConstI64>(val));
-            return chai::utils::instr2RawRI(op, regId, imm);
-        } else if (lex_.currentLexem()->type == AsmLex::STRING) {
-            std::string str =
-                dynamic_cast<AsmLex::String *>(lex_.currentLexem().get())
-                    ->value;
-            auto imm = chaiFile_.addConst(
-                std::make_unique<chai::utils::fileformat::ConstRawStr>(str));
-            return chai::utils::instr2RawRI(op, regId, imm);
+            return chai::utils::instr2RawRI(op, regId, val);
         } else {
             throw AssembleError("Unknown instruction type in processRI",
                                 lex_.lineno());
