@@ -16,9 +16,9 @@ LinearBuffer::~LinearBuffer() { delete[] buf_; }
 
 size_t LinearBuffer::size() const { return size_; }
 size_t LinearBuffer::offset() const { return offset_; }
-void* LinearBuffer::currentPosition() const { return buf_ + offset_; }
-void* LinearBuffer::allocate(size_t n) {
-    void* res = buf_ + offset_;
+void *LinearBuffer::currentPosition() const { return buf_ + offset_; }
+void *LinearBuffer::allocate(size_t n) {
+    void *res = buf_ + offset_;
     offset_ += n;
     return res;
 }
