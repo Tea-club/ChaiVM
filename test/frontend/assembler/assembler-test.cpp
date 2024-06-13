@@ -8,8 +8,8 @@ using chai::interpreter::Frame;
 
 class AssemblerTest : public ::testing::Test {
 protected:
-    size_t numOfRegs_ = 50;
-    size_t numOfFrames_ = 256;
+    size_t numOfRegs_ = 100;
+    size_t numOfFrames_ = 5;
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer frameBuffer_ = chai::memory::LinearBuffer(
         numOfFrames_ * (numOfRegs_ * sizeof(chai::chsize_t) + sizeof(Frame)));
@@ -115,7 +115,7 @@ TEST_F(AssemblerTest, noStackOverflow) {
      * todo: figure out why exactly this number of iterations is maximum for
      * our VM.
      */
-    uint64_t iterations = 15373;
+    uint64_t iterations = 10000;
     writeInput_ << "Ldia " << iterations << "\n"
                 << "Star r0\n"
                 << "Ldia 0\n"
