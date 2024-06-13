@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <memory_resource>
 
 #include "ChaiVM/utils/non-copyable.hpp"
 
@@ -17,7 +18,7 @@ public:
     size_t size() const;
     size_t offset() const;
     void *currentPosition() const;
-    void allocate(size_t n);
+    void *allocate(size_t n);
     void deallocate(size_t n);
 
 private:

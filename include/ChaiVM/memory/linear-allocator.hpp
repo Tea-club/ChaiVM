@@ -24,9 +24,7 @@ public:
         if (n > (buffer_.size() - buffer_.offset()) / sizeof(T)) {
             throw std::bad_array_new_length();
         }
-        void *current = buffer_.currentPosition();
-        buffer_.allocate(n * sizeof(T));
-        return reinterpret_cast<T *>(current);
+        return reinterpret_cast<T *>(buffer_.allocate(n * sizeof(T)));
     }
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"

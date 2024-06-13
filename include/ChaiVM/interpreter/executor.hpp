@@ -3,6 +3,7 @@
 #include <bit>
 
 #include "ChaiVM/interpreter/code-manager/code-manager.hpp"
+#include "ChaiVM/memory/traced-allocator.hpp"
 #include "decoder.hpp"
 #include "frame.hpp"
 #include "objects.hpp"
@@ -14,7 +15,8 @@ public:
     using Handler = void (Executor::*)(Instruction);
 
     Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
-             memory::LinearBuffer &objectsBuffer);
+             memory::LinearBuffer &primitivesBuffer,
+             memory::TracedByteAllocator &objectsAllocator_);
 
     /**
      * Loads the first frame (public static void main).
@@ -169,7 +171,8 @@ private:
     chsize_t acc_;
     CodeManager *codeManager_;
     memory::LinearBuffer &framesBuffer_;
-    memory::LinearBuffer &objectsBuffer_;
+    memory::LinearBuffer &primitivesBuffer_;
+    memory::TracedByteAllocator &objectsAllocator_;
     Frame *currentFrame_ = nullptr;
 };
 
