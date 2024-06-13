@@ -285,7 +285,7 @@ instructions:
     fixedvalue: 55
     mnemonic: AllocRef
     format: I
-    description: "Ref, Creates object of klass imm, leaves ref in acc"
+    description: "Ref, Creates object of klass [imm], leaves ref in acc"
   -
     fixedvalue: 56
     mnemonic: MovRef
