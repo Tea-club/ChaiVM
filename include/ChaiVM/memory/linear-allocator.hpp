@@ -28,7 +28,6 @@ public:
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
     void deallocate(T *p, std::size_t n) override {
-        assert(buffer_.offset() < 1400);
         if (n > buffer_.offset() / sizeof(T)) {
             throw std::runtime_error("invalid deallocation size");
         }
