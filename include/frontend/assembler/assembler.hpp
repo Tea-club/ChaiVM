@@ -181,10 +181,10 @@ private:
         }
     }
     /**
-     * @todo #104:60min Currently only conditional jump instructions are of type
-     * RI. So it was decided to simplify logic of obtaining immediate from
-     * instruction for this function to be able to process only jump
-     * instructions. It looks like nothing going to change, but who knows.
+     * @todo #104:60min Currently instructions that has type RI uses immediate
+     * dirrectly without constant pool (because it is offset). So it was decided
+     * to simplify logic of this function comparing to `processI`. It looks like
+     * nothing going to chang, but who knows.
      */
     chai::bytecode_t processRI(chai::interpreter::Operation op) {
         chai::interpreter::RegisterId regId = processReg();
