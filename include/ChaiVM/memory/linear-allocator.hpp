@@ -1,9 +1,9 @@
 #pragma once
 
+#include <cassert>
 #include <cstdlib>
 #include <new>
 #include <numeric>
-#include <cassert>
 
 #include "ChaiVM/memory/allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
