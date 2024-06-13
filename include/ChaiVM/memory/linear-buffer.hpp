@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <memory_resource>
 
 #include "ChaiVM/utils/non-copyable.hpp"
 
