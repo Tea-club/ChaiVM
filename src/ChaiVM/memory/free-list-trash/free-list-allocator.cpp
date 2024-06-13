@@ -1,4 +1,5 @@
 #include <numeric>
+#include <cstdlib>
 
 #include "ChaiVM/memory/free-list-trash/free-list-allocator.hpp"
 
