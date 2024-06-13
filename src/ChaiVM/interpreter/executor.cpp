@@ -371,14 +371,15 @@ void Executor::set_f64in_arr(Instruction ins) {
 void Executor::new_ref_arr(Instruction ins) {
     chsize_t len = acc();
     memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
-    chsize_t num_bytes = sizeof(ObjectHeader) + len * sizeof(chsize_t);
+    chsize_t num_bytes = ObjectArray::sizeOfObjectArray(len);
     auto *object_arr = new (allocator.allocate(num_bytes)) uint8_t[num_bytes]();
     auto *pheader = reinterpret_cast<ObjectHeader *>(object_arr);
     auto *members =
         reinterpret_cast<chsize_t *>(object_arr + sizeof(ObjectHeader));
     pheader->size_ = num_bytes;
     pheader->klassId_ = OBJ_ARR_IMM;
-    for (int i = 0; i < len; ++i) {
+    members[0] = len;
+    for (int i = 1; i < len; ++i) {
         members[i] = CHAI_NULL;
     }
     acc() = std::bit_cast<chsize_t>(object_arr);
@@ -387,20 +388,16 @@ void Executor::new_ref_arr(Instruction ins) {
 }
 void Executor::get_ref_from_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    Object object{acc()};
-    if (i >= object.countMembers()) {
-        throw IndexOutOfBoundary("index " + std::to_string(i) +
-                                 " is greater than array length " +
-                                 std::to_string(object.countMembers()));
-    }
-    acc() = object.getMember(i * sizeof(chsize_t));
+    ObjectArray array{acc()};
+    acc() = array[i];
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::set_ref_in_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     chsize_t new_ref = (*currentFrame_)[ins.r2];
-    Object{acc()}.setMember(i * sizeof(chsize_t), new_ref);
+    ObjectArray array{acc()};
+    array[i] = new_ref;
     advancePc();
     DO_NEXT_INS();
 }
@@ -446,6 +443,7 @@ void Executor::alloc_ref(Instruction ins) {
     auto *fields = reinterpret_cast<chsize_t *>(object + sizeof(*pheader));
     pheader->size_ = klass.instanceSize();
     pheader->klassId_ = ins.immidiate;
+    pheader->klassId_ = ins.immidiate;
     for (int i = 0; i < klass.nFields(); ++i) {
         assert(fields[i] == 0);
     }
@@ -486,13 +484,6 @@ InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)
     : runtime_error(msg) {}
 const char *InvalidInstruction::what() const noexcept {
-    return runtime_error::what();
-}
-
-IndexOutOfBoundary::IndexOutOfBoundary(const char *msg) : runtime_error(msg) {}
-IndexOutOfBoundary::IndexOutOfBoundary(const std::string &msg)
-    : runtime_error(msg) {}
-const char *IndexOutOfBoundary::what() const noexcept {
     return runtime_error::what();
 }
 

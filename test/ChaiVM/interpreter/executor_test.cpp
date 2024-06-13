@@ -849,14 +849,12 @@ TEST_F(ExecutorTest, NewRefArray) {
     update();
     exec_.run();
 
-    chai::chsize_t object_array_size =
-        len * sizeof(chai::chsize_t) + sizeof(ObjectHeader);
+    chai::chsize_t object_array_size = ObjectArray::sizeOfObjectArray(len);
     EXPECT_EQ(objectBuffer_.offset(), object_array_size);
     for (int i = 0; i < len; ++i) {
-        EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
-                             (char *)objectBuffer_.currentPosition() -
-                             object_array_size)}
-                      .getMember(i * sizeof(chai::chsize_t)),
+        EXPECT_EQ(ObjectArray{std::bit_cast<chai::chsize_t>(
+                      (char *)objectBuffer_.currentPosition() -
+                      object_array_size)}[i],
                   chai::CHAI_NULL);
     }
     auto buff_start = static_cast<char *>(objectBuffer_.currentPosition()) -
@@ -940,8 +938,7 @@ TEST_F(ExecutorTest, SetGetInObjectArray_2) {
     exec_.run();
 
     size_t size_of_bar = sizeof(ObjectHeader) + 1 * sizeof(chai::chsize_t);
-    size_t size_of_each_arr =
-        sizeof(ObjectHeader) + len * sizeof(chai::chsize_t);
+    size_t size_of_each_arr = ObjectArray::sizeOfObjectArray(len);
     EXPECT_EQ(objectBuffer_.offset(), size_of_bar + 2 * (size_of_each_arr));
     EXPECT_EQ(static_cast<int64_t>(exec_.acc()), val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
