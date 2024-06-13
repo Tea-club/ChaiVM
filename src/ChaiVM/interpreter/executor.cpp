@@ -10,7 +10,8 @@ namespace chai::interpreter {
 #define DO_NEXT_INS()                                                          \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
-    /*std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm = " << newIns.immidiate << std::endl;     */                                                                      \
+    /*std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm = "  \
+     * << newIns.immidiate << std::endl;   */                                  \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
@@ -133,7 +134,16 @@ void Executor::divi(Instruction ins) {
     DO_NEXT_INS()
 }
 void Executor::modi(Instruction ins) {
-    acc() = static_cast<chsize_t>(static_cast<int64_t>(acc()) % static_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
+    acc() = static_cast<chsize_t>(
+        static_cast<int64_t>(acc()) %
+        static_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
+    advancePc();
+    DO_NEXT_INS()
+}
+void Executor::mod(Instruction ins) {
+    acc() =
+        static_cast<chsize_t>(static_cast<int64_t>(acc()) %
+                              static_cast<int64_t>((*currentFrame_)[ins.r1]));
     advancePc();
     DO_NEXT_INS()
 }

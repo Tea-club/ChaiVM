@@ -38,7 +38,10 @@ ObjectArray::ObjectArray(chsize_t ref) : Object(ref) {}
 chsize_t ObjectArray::length() const { return Object::countMembers() - 1; }
 
 chai::chsize_t &ObjectArray::operator[](int64_t i) & {
-    assert(i >= 0);
+    if (i < 0) {
+        std::cout << "i < 0" << std::endl;
+        i += length();
+    }
     if (i >= length()) {
         throw IndexOutOfBoundary("index " + std::to_string(i) +
                                  " is greater than array length " +

@@ -49,6 +49,7 @@ private:
     void div(Instruction ins);
     void divi(Instruction ins);
     void modi(Instruction ins);
+    void mod(Instruction ins);
     void ldiaf(Instruction ins);
     void addf(Instruction ins);
     void addif(Instruction ins);
@@ -114,6 +115,7 @@ private:
         &Executor::div,
         &Executor::divi,
         &Executor::modi,
+        &Executor::mod,
         &Executor::ldiaf,
         &Executor::addf,
         &Executor::addif,
