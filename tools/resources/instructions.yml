@@ -255,12 +255,12 @@ instructions:
     fixedvalue: 49
     mnemonic: GetRefFromArr
     format: R
-    description: "Gets object from object array in acc and puts it to acc."
+    description: "Gets object by index in r1 from object array in acc and puts it to acc."
   -
     fixedvalue: 50
     mnemonic: SetRefInArr
     format: RR
-    description: "Sets ref value to object array in acc and puts it to acc."
+    description: "Sets ref value in r2 by index in r1 to object array in acc and puts it to acc."
   -
     fixedvalue: 51
     mnemonic: StringPrint
@@ -285,7 +285,7 @@ instructions:
     fixedvalue: 55
     mnemonic: AllocRef
     format: I
-    description: "Ref, Creates object of klass imm, leaves ref in acc"
+    description: "Ref, Creates object of klass [imm], leaves ref in acc"
   -
     fixedvalue: 56
     mnemonic: MovRef

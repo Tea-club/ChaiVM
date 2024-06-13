@@ -6,20 +6,24 @@
 namespace chai::interpreter {
 
 Object::Object(ObjectHeader *header, chsize_t *fields)
-    : header_(header), fields_(fields) {}
+    : header_(header), members_(fields) {}
 
 Object::Object(chsize_t ref)
     : header_(std::bit_cast<ObjectHeader *>(ref)),
-      fields_(std::bit_cast<chsize_t *>(header_ + 1)) {}
+      members_(std::bit_cast<chsize_t *>(header_ + 1)) {}
 
-chsize_t Object::getField(Immidiate offset) const {
-    assert(offset % 8 == 0);
-    return fields_[offset / 8];
+chsize_t Object::countMembers() const {
+    return (header_->size_ - sizeof(ObjectHeader)) / sizeof(chsize_t);
 }
 
-void Object::setField(Immidiate offset, chsize_t value) const {
-    assert(offset % 8 == 0);
-    fields_[offset / 8] = value;
+chsize_t Object::getMember(Immidiate offset) const {
+    assert(offset % sizeof(chsize_t) == 0);
+    return members_[offset / sizeof(chsize_t)];
+}
+
+void Object::setMember(Immidiate offset, chsize_t value) const {
+    assert(offset % sizeof(chsize_t) == 0);
+    members_[offset / sizeof(chsize_t)] = value;
 }
 
 } // namespace chai::interpreter

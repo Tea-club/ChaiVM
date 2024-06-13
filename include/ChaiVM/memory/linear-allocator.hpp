@@ -13,6 +13,9 @@ namespace chai::memory {
 
 template <class T> class LinearAllocator : IAllocator<T> {
 public:
+    /**
+     * Do not remove.
+     */
     using value_type = T;
 
     explicit LinearAllocator(LinearBuffer &buffer) : buffer_(buffer) {}

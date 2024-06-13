@@ -760,7 +760,7 @@ TEST_F(ExecutorTest, SetField1) {
 
     EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
                          (char *)objectBuffer_.currentPosition() - bar_size)}
-                  .getField(0),
+                  .getMember(0),
               val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
@@ -791,11 +791,11 @@ TEST_F(ExecutorTest, SetField2) {
     EXPECT_EQ(
         Object{std::bit_cast<chai::chsize_t>(
                    (char *)objectBuffer_.currentPosition() - 2 * bar_size)}
-            .getField(0),
+            .getMember(0),
         0);
     EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
                          (char *)objectBuffer_.currentPosition() - bar_size)}
-                  .getField(0),
+                  .getMember(0),
               val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
 }
@@ -829,11 +829,132 @@ TEST_F(ExecutorTest, GetField) {
     EXPECT_EQ(
         Object{std::bit_cast<chai::chsize_t>(
                    (char *)objectBuffer_.currentPosition() - 2 * cat_size)}
-            .getField(0),
+            .getMember(0),
         0);
     EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
                          (char *)objectBuffer_.currentPosition() - cat_size)}
-                  .getField(8),
+                  .getMember(8),
               val);
     EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+/*
+ * Object arr[] = new Object[len];
+ */
+TEST_F(ExecutorTest, NewRefArray) {
+    constexpr auto len = static_cast<int64_t>(50);
+    loadWithConst(Ldia, len);
+    load<NewRefArray>();
+    load<Ret>();
+    update();
+    exec_.run();
+
+    chai::chsize_t object_array_size =
+        len * sizeof(chai::chsize_t) + sizeof(ObjectHeader);
+    EXPECT_EQ(objectBuffer_.offset(), object_array_size);
+    for (int i = 0; i < len; ++i) {
+        EXPECT_EQ(Object{std::bit_cast<chai::chsize_t>(
+                             (char *)objectBuffer_.currentPosition() -
+                             object_array_size)}
+                      .getMember(i * sizeof(chai::chsize_t)),
+                  chai::CHAI_NULL);
+    }
+    auto buff_start = static_cast<char *>(objectBuffer_.currentPosition()) -
+                      object_array_size;
+    EXPECT_EQ(((ObjectHeader *)buff_start)->klassId_, OBJ_ARR_IMM);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+/*
+ * Bar bar = new Bar();
+ * bar.num = val;
+ * Bar arr[] = new Bar[len];
+ * arr[index] = bar;
+ * return arr[index].num
+ */
+TEST_F(ExecutorTest, SetGetInObjectArray_1) {
+    auto bar_klass = chaiFile_.registerKlass("Bar");
+    chaiFile_.addField(bar_klass, "bar.num", 0U, FieldTag::I64);
+    chai::chsize_t val = 125;
+    Immidiate imm_val = chaiFile_.addConst(std::make_unique<ConstI64>(val));
+
+    constexpr auto index = static_cast<int64_t>(25);
+    loadWithConst(Ldia, index);
+    load<Star>(R1);
+    load<Ldia>(imm_val);
+    load<Star>(R3);
+    load<AllocRef>(bar_klass);
+    load<SetField>(R3, 0);
+    load<StarRef>(R2);
+
+    int len = 200;
+    Immidiate imm_len = chaiFile_.addConst(std::make_unique<ConstI64>(len));
+    load<Ldia>(imm_len);
+    load<NewRefArray>();
+    load<SetRefInArr>(R1, R2);
+    load<GetRefFromArr>(R1);
+    load<GetField>(0);
+    load<Ret>();
+    update();
+    exec_.run();
+
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), val);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+/*
+ * Bar arr1[] = new Bar[len];
+ * Bar bar = new Bar();
+ * bar.num = val;
+ * Bar arr2[] = new Bar[len];
+ * arr2[index] = bar;
+ * return arr[index].num
+ */
+TEST_F(ExecutorTest, SetGetInObjectArray_2) {
+    auto bar_klass = chaiFile_.registerKlass("Bar");
+    chaiFile_.addField(bar_klass, "bar.num", 0U, FieldTag::I64);
+
+    int len = 42;
+    Immidiate imm_len = chaiFile_.addConst(std::make_unique<ConstI64>(len));
+    load<Ldia>(imm_len);
+    load<NewRefArray>();
+
+    chai::chsize_t val = 125;
+    Immidiate imm_val = chaiFile_.addConst(std::make_unique<ConstI64>(val));
+    constexpr auto index = static_cast<int64_t>(25);
+    loadWithConst(Ldia, index);
+    load<Star>(R1);
+    load<Ldia>(imm_val);
+    load<Star>(R3);
+    load<AllocRef>(bar_klass);
+    load<SetField>(R3, 0);
+    load<StarRef>(R2);
+
+    load<Ldia>(imm_len);
+    load<NewRefArray>();
+    load<SetRefInArr>(R1, R2);
+    load<GetRefFromArr>(R1);
+    load<GetField>(0);
+    load<Ret>();
+    update();
+    exec_.run();
+
+    size_t size_of_bar = sizeof(ObjectHeader) + 1 * sizeof(chai::chsize_t);
+    size_t size_of_each_arr =
+        sizeof(ObjectHeader) + len * sizeof(chai::chsize_t);
+    EXPECT_EQ(objectBuffer_.offset(), size_of_bar + 2 * (size_of_each_arr));
+    EXPECT_EQ(static_cast<int64_t>(exec_.acc()), val);
+    EXPECT_EQ(exec_.getCurrentFrame(), nullptr);
+}
+
+TEST_F(ExecutorTest, GetOutOfBoundary) {
+    int len = 20;
+    Immidiate imm_len = chaiFile_.addConst(std::make_unique<ConstI64>(len));
+    load<Ldia>(imm_len);
+    load<Star>(R1);
+    load<NewRefArray>();
+    load<GetRefFromArr>(R1);
+    load<Ret>();
+    update();
+    EXPECT_THROW(exec_.run(), IndexOutOfBoundary);
 }

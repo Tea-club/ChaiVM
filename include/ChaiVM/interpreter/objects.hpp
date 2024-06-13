@@ -7,9 +7,22 @@
 
 namespace chai::interpreter {
 
-// @todo #97:90min Add allocator here.
+/**
+ * Immidiate for klass of object array. Not elegant decision.
+ * @todo #100:60min Figure out how to designate such a class.
+ */
+const Immidiate OBJ_ARR_IMM = UINT16_MAX - 1;
+
 struct ObjectHeader {
+
+    /**
+     * Size of object. Array of objects is an object too.
+     */
     chsize_t size_;
+
+    /**
+     * Number of klass in "klass pool".
+     */
     Immidiate klassId_;
 };
 
@@ -23,6 +36,7 @@ class Object {
 
 public:
     explicit Object(ObjectHeader *header, chsize_t *fields);
+
     /**
      * Ctor.
      * Create object from ref to object.
@@ -30,13 +44,35 @@ public:
      */
     explicit Object(chsize_t ref);
 
-    chsize_t getField(Immidiate offset) const;
+    /**
+     * Get count of members.
+     */
+    chsize_t countMembers() const;
 
-    void setField(Immidiate offset, chsize_t value) const;
+    /**
+     * Get member.
+     * @param offset Offset starting from {@link members_} (i.e. without
+     * header).
+     * @return Value of member.
+     */
+    chsize_t getMember(Immidiate offset) const;
+
+    /**
+     * Set member.
+     * @param offset Offset starting from {@link members_} (i.e. without
+     * header).
+     * @param value Value to be set.
+     */
+    void setMember(Immidiate offset, chsize_t value) const;
 
 private:
     ObjectHeader *header_;
-    chsize_t *fields_;
+
+    /**
+     * In case of ordinary object this is array of fields.
+     * In case of object array this is array of refs.
+     */
+    chsize_t *members_;
 };
 
 } // namespace chai::interpreter

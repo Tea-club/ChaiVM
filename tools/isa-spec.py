@@ -11,6 +11,8 @@ def main() -> int:
     instrs = full["instructions"]
     tpl = """There is ChaiVM's accumulator(acc) based ISA.
 
+Notation: `imm` is raw value, `[imm]` is value from constant pool by number imm.
+
 | Operation | Format | Description |
 |:---------:|:------:|:------------|
 {% for n, item in enumerate(items, 1) %}
