@@ -24,19 +24,14 @@ public:
         if (n > (buffer_.size() - buffer_.offset()) / sizeof(T)) {
             throw std::bad_array_new_length();
         }
-        void *current = buffer_.currentPosition();
-        buffer_.allocate(n * sizeof(T));
-        return reinterpret_cast<T *>(current);
+        return reinterpret_cast<T *>(buffer_.allocate(n * sizeof(T)));
     }
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
     void deallocate(T *p, std::size_t n) override {
         if (n > buffer_.offset() / sizeof(T)) {
             throw std::runtime_error("invalid deallocation size");
         }
-        buffer_.deallocate(n * sizeof(T));
+        buffer_.deallocate(p, n * sizeof(T));
     }
-#pragma GCC diagnostic pop
 
 private:
     LinearBuffer &buffer_;

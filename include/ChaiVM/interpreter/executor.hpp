@@ -3,6 +3,7 @@
 #include <bit>
 
 #include "ChaiVM/interpreter/code-manager/code-manager.hpp"
+#include "ChaiVM/memory/traced-allocator.hpp"
 #include "decoder.hpp"
 #include "frame.hpp"
 #include "objects.hpp"
