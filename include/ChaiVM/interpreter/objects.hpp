@@ -13,11 +13,6 @@ namespace chai::interpreter {
  */
 const Immidiate OBJ_ARR_IMM = UINT16_MAX - 1;
 
-/**
- * Null object ref.
- */
-const chsize_t CHAI_NULL = 0;
-
 struct ObjectHeader {
 
     /**

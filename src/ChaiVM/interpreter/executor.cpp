@@ -370,7 +370,6 @@ void Executor::set_f64in_arr(Instruction ins) {
 }
 void Executor::new_ref_arr(Instruction ins) {
     chsize_t len = acc();
-    std::cout << "new_ref_arr with len =  " << len << std::endl;
     memory::LinearAllocator<uint8_t> allocator{objectsBuffer_};
     chsize_t num_bytes = sizeof(ObjectHeader) + len * sizeof(chsize_t);
     auto *object_arr = new (allocator.allocate(num_bytes)) uint8_t[num_bytes]();
