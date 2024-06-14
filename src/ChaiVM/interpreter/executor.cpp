@@ -8,10 +8,10 @@
 namespace chai::interpreter {
 
 #define DO_NEXT_INS()                                                          \
+    triggerGC();                                                               \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
-    /*std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm = "  \
-     * << newIns.immidiate << std::endl;   */                                  \
+    std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm = " << newIns.immidiate << std::endl;                                       \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
@@ -579,6 +579,12 @@ memory::TracedByteAllocator &interpreter::Executor::getObjectAllocator() {
 }
 const GarbageCollector &interpreter::Executor::getGC() const {
     return gc_;
+}
+void interpreter::Executor::triggerGC() {
+    if (static_cast<double>(objectsAllocator_.allocated()) >
+        static_cast<double>(objectsAllocator_.size()) * 0.9) {
+        gc_.collect();
+    }
 }
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}

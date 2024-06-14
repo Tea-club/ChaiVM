@@ -173,6 +173,8 @@ private:
         &Executor::set_field,
     };
 
+    void triggerGC();
+
 private:
     chsize_t acc_;
     bool isAccRef_ = false;

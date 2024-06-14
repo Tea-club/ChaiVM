@@ -16,7 +16,7 @@ struct AllocationInfo final {
 class TracedByteAllocator final {
 public:
     TracedByteAllocator(size_t size)
-        : allocator_(size, FreeListAllocator::PlacementPolicy::FIND_FIRST) {
+        : size_(size), allocator_(size, FreeListAllocator::PlacementPolicy::FIND_FIRST) {
         allocator_.Init();
     }
 
@@ -38,12 +38,13 @@ public:
         // allocations_ are changed by GC
     }
 
-    auto &allocated() noexcept { return allocated_; }
-    auto const &allocated() const noexcept { return allocated_; }
-    auto &allocations() noexcept { return allocations_; }
-    const auto &allocations() const noexcept { return allocations_; }
+    size_t &allocated() { return allocated_; }
+    size_t const &allocated() const noexcept { return allocated_; }
+    auto &allocations() { return allocations_; }
+    size_t size() { return size_; }
 
 private:
+    size_t size_ = 0;
     size_t allocated_ = 0;
     std::list<AllocationInfo> allocations_;
     FreeListAllocator allocator_;
