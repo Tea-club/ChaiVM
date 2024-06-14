@@ -97,4 +97,5 @@ void GarbageCollector::sweep() {
             iter++;
         }
     }
+    roots_ = std::vector<Object>{};
 }

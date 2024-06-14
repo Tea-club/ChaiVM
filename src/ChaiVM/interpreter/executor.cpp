@@ -582,7 +582,7 @@ const GarbageCollector &interpreter::Executor::getGC() const {
 }
 void interpreter::Executor::triggerGC() {
     if (static_cast<double>(objectsAllocator_.allocated()) >
-        static_cast<double>(objectsAllocator_.size()) * 0.9) {
+        static_cast<double>(objectsAllocator_.size()) * 0.4) {
         gc_.collect();
     }
 }

@@ -89,7 +89,7 @@ private:
 protected:
     size_t numOfRegs = 50;
     size_t numOfFrames = 256;
-    size_t objBufSize = 1000;
+    size_t objBufSize = 300;
     chai::utils::fileformat::ChaiFile chaiFile_;
     chai::interpreter::CodeManager codeManager_;
     chai::memory::LinearBuffer frameBuffer_ = chai::memory::LinearBuffer(
@@ -157,7 +157,7 @@ TEST_F(GarbageCollectorTest, CollectRoots) {
     chaiFile_.addField(bar_klass, "bar.num2", 0U, FieldTag::I64);
     chaiFile_.addField(bar_klass, "bar.num3", 0U, FieldTag::I64);
     chaiFile_.addField(bar_klass, "bar.num4", 0U, FieldTag::I64);
-    constexpr int64_t threshold = 1000;
+    constexpr int64_t threshold = 4000;
     //Immidiate zero_imm = chaiFile_.addConst(std::make_unique<ConstI64>(0));
     Immidiate one_imm = chaiFile_.addConst(std::make_unique<ConstI64>(1));
     Immidiate threshold_imm = chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
