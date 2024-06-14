@@ -18,6 +18,7 @@ Notation: `imm` is raw value, `[imm]` is value from constant pool by number imm.
 | Muli | I | i64, mul acc by [imm] |
 | Div | R | i64, divides acc by R1 |
 | Divi | I | i64, divides acc by [imm] |
+| Modi | I | i64, acc = acc % [imm] |
 | Ldiaf | I | f64, loads constant [i] to acc |
 | Addf | R | f64, Adds R1 to acc |
 | Addif | I | f64, Adds [imm] to acc |
@@ -41,6 +42,7 @@ Notation: `imm` is raw value, `[imm]` is value from constant pool by number imm.
 | If_icmple | RI | i64, if acc <= r1 then branch to instruction at offset(instructions) imm otherwise just next instr |
 | If_acmpeq | RI | ref, if references are equal, branch to instruction at offset(instructions) imm |
 | If_acmpne | RI | ref, if references are not equal, branch to instruction at offset(instructions) imm |
+| If_null | I | ref, if reference in acc is null, branch to instruction at offset(instructions) imm |
 | Сmpgf | R | f64 -> i64, compare acc with r1. Acc became 1 i64 if greater than r1, 0 if equal, otherwise -1 |
 | Cmplf | R | f64 -> i64, compare acc with r1. Acc became 1 i64 if less than r1, 0 if equal, otherwise -1 |
 | Goto | I | Goes to another instruction at branchoffset(instructions) imm |
