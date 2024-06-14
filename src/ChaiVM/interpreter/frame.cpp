@@ -7,7 +7,7 @@ namespace chai::interpreter {
 Frame::Frame(Frame *prev, const Function &func, memory::LinearBuffer &buffer)
     : func_(func), prev_(prev), regsize_(func.numRegs),
       registers_(func.numRegs, 0, memory::LinearAllocator<chsize_t>{buffer}),
-      isRegRef_(func.numRegs, false) {}
+      isRegRef_(0) {}
 
 void Frame::passArgs() {
     assert(prev_ != nullptr);

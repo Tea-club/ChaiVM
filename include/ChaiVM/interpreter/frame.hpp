@@ -3,6 +3,7 @@
 #include "ChaiVM/interpreter/code-manager/func-struct.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
+#include <bitset>
 
 namespace chai::interpreter {
 
@@ -37,7 +38,7 @@ private:
     size_t regsize_;
     std::vector<chsize_t, memory::LinearAllocator<chsize_t>> registers_;
     // @todo #111:60min use custom allocator here
-    std::vector<bool> isRegRef_;
+    std::bitset<256> isRegRef_;
 };
 
 } // namespace chai::interpreter
