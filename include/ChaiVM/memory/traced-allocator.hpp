@@ -41,6 +41,7 @@ public:
     auto &allocated() noexcept { return allocated_; }
     auto const &allocated() const noexcept { return allocated_; }
     auto &allocations() noexcept { return allocations_; }
+    const auto &allocations() const noexcept { return allocations_; }
 
 private:
     size_t allocated_ = 0;
