@@ -18,7 +18,8 @@ public:
     const chsize_t &operator[](size_t n) const &;
     size_t size() const;
 
-    bool isRegisterReference(size_t reg_id) const;
+    bool isRegisterReference(RegisterId reg_id) const;
+    void setRegisterIsRef(RegisterId reg_id);
 
     /**
      * Get state.

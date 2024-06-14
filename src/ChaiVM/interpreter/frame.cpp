@@ -30,9 +30,14 @@ const chsize_t &Frame::operator[](size_t n) const & {
 }
 size_t Frame::size() const { return regsize_; }
 
-bool Frame::isRegisterReference(size_t reg_id) const {
+bool Frame::isRegisterReference(RegisterId reg_id) const {
     assert(reg_id < regsize_);
     return isRegRef_[reg_id];
+}
+
+void Frame::setRegisterIsRef(chai::interpreter::RegisterId reg_id) {
+    assert(reg_id < regsize_);
+    isRegRef_[reg_id] = true;
 }
 
 /**
