@@ -61,8 +61,95 @@ function main() : void {
     foo(N, M)
 }
  */
-class SpecificBarFooExecutorTest : public ExecutorTest {
+class SpecificBarFooExecutorTest : public ::testing::Test{
+protected:
+    static constexpr chai::interpreter::RegisterId R0 = 0;
+    static constexpr chai::interpreter::RegisterId R1 = 1;
+    static constexpr chai::interpreter::RegisterId R2 = 2;
+    static constexpr chai::interpreter::RegisterId R3 = 3;
+    static constexpr chai::interpreter::RegisterId R4 = 4;
+    static constexpr chai::interpreter::RegisterId R5 = 5;
+    static constexpr chai::interpreter::RegisterId R6 = 6;
+    static constexpr chai::interpreter::RegisterId R7 = 7;
+    static constexpr chai::interpreter::RegisterId R8 = 8;
+    static constexpr chai::interpreter::RegisterId R9 = 9;
+    static constexpr chai::interpreter::RegisterId R10 = 10;
+    static constexpr chai::interpreter::RegisterId R11 = 11;
+    std::filesystem::path path_;
 
+    /**
+     * These methods loads the operation in template parameter with the
+     * corresponding parameters.
+     * @param op Operation.
+     * @return Number of added instruction among all instructions.
+     */
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                            chai::interpreter::R,
+        chai::interpreter::Immidiate>::type
+    load(chai::interpreter::RegisterId reg1) {
+        return loadRR(op, reg1, 0);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                            chai::interpreter::RR,
+        chai::interpreter::Immidiate>::type
+    load(chai::interpreter::RegisterId reg1,
+         chai::interpreter::RegisterId reg2) {
+        return loadRR(op, reg1, reg2);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                            chai::interpreter::RI,
+        chai::interpreter::Immidiate>::type
+    load(chai::interpreter::RegisterId reg1, chai::interpreter::Immidiate imm) {
+        return loadRI(op, reg1, imm);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                            chai::interpreter::I,
+        chai::interpreter::Immidiate>::type
+    load(chai::interpreter::Immidiate imm) {
+        return loadI(op, imm);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                            chai::interpreter::N,
+        chai::interpreter::Immidiate>::type
+    load() {
+        return loadN(op);
+    }
+
+    void update();
+
+    void SetUp() override;
+
+    void TearDown() override;
+
+private:
+    chai::interpreter::Immidiate loadRR(chai::interpreter::Operation op,
+                                        chai::interpreter::RegisterId reg1,
+                                        chai::interpreter::RegisterId reg2 = 0);
+    chai::interpreter::Immidiate loadRI(chai::interpreter::Operation op,
+                                        chai::interpreter::RegisterId reg1,
+                                        chai::interpreter::Immidiate imm);
+    chai::interpreter::Immidiate loadI(chai::interpreter::Operation op,
+                                       chai::interpreter::Immidiate imm);
+    chai::interpreter::Immidiate loadN(chai::interpreter::Operation op);
+
+protected:
+    size_t numOfRegs = 50;
+    size_t numOfFrames = 256;
+    chai::utils::fileformat::ChaiFile chaiFile_;
+    chai::interpreter::CodeManager codeManager_;
+    chai::memory::LinearBuffer frameBuffer_ = chai::memory::LinearBuffer(
+        numOfFrames * (numOfRegs * sizeof(chai::chsize_t) +
+                       sizeof(chai::interpreter::Frame)));
+    chai::memory::TracedByteAllocator objectsAlocator{1024 * 256};
+    chai::memory::LinearBuffer primitivesBuffer =
+        chai::memory::LinearBuffer(1024 * 256);
+    chai::interpreter::Executor exec_{&codeManager_, frameBuffer_,
+                                      primitivesBuffer, objectsAlocator};
 protected:
     static constexpr chai::chsize_t N = 400;
     static constexpr chai::chsize_t M = 100;
@@ -220,6 +307,40 @@ protected:
             1, 12);
     }
 };
+
+Immidiate SpecificBarFooExecutorTest::loadRR(chai::interpreter::Operation op,
+                               chai::interpreter::RegisterId reg1,
+                               chai::interpreter::RegisterId reg2) {
+    return chaiFile_.addInstr(chai::utils::instr2RawRR(op, reg1, reg2));
+}
+
+Immidiate SpecificBarFooExecutorTest::loadRI(chai::interpreter::Operation op,
+                               chai::interpreter::RegisterId reg1,
+                               chai::interpreter::Immidiate imm) {
+    return chaiFile_.addInstr(chai::utils::instr2RawRI(op, reg1, imm));
+}
+
+Immidiate SpecificBarFooExecutorTest::loadI(chai::interpreter::Operation op,
+                              chai::interpreter::Immidiate imm) {
+    return chaiFile_.addInstr(chai::utils::instr2RawI(op, imm));
+}
+
+Immidiate SpecificBarFooExecutorTest::loadN(chai::interpreter::Operation op) {
+    return chaiFile_.addInstr(chai::utils::instr2RawN(op));
+}
+
+void SpecificBarFooExecutorTest::update() {
+    chaiFile_.toFile(path_);
+    codeManager_.load(path_);
+}
+
+void SpecificBarFooExecutorTest::SetUp() {
+    path_ = std::string{"test_"}.append(std::string{
+        testing::UnitTest::GetInstance()->current_test_info()->name()});
+    std::remove(path_.c_str());
+}
+
+void SpecificBarFooExecutorTest::TearDown() { std::remove(path_.c_str()); }
 
 TEST_F(SpecificBarFooExecutorTest, DumpCall_1) {
     initKlasses();
