@@ -851,7 +851,7 @@ TEST_F(ExecutorTest, NewRefArray) {
     EXPECT_EQ(objectsAlocator.allocated(), object_array_size);
     for (int i = 0; i < len; ++i) {
         EXPECT_EQ(ObjectArray{std::bit_cast<chai::chsize_t>(
-                             (char *)objectsAlocator.allocations().back().ptr)}[i],
+                      (char *)objectsAlocator.allocations().back().ptr)}[i],
                   chai::CHAI_NULL);
     }
     auto buff_start = objectsAlocator.allocations().back().ptr;
