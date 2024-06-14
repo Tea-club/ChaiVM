@@ -202,7 +202,7 @@ protected:
                 // start cycle
                 instr2Raw<Ldra>(ITER), instr2Raw<IcPrint>(),
                 instr2Raw<AllocRef>(foo_klass_), instr2Raw<SetField>(ITER, 0),
-                instr2Raw<Star>(O1), instr2Raw<Ldra>(ITER),
+                instr2Raw<StarRef>(O1), instr2Raw<Ldra>(ITER),
                 instr2Raw<Modi>(three_imm), instr2Raw<If_icmpne>(R0, +7),
                 instr2Raw<Ldra>(ITER), instr2Raw<Mod>(R11),
                 instr2Raw<Subi>(one_imm), instr2Raw<Star>(R5),
