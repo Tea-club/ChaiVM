@@ -24,18 +24,15 @@ void GarbageCollector::collectRoots() {
         frame = frame->back();
     }
     if (exec_.isAccRef()) {
-        chsize_t ref = exec_.acc();
+        chsize_t ref = exec_.getAcc();
         if (ref != CHAI_NULL) {
-            roots_.push_back(Object(exec_.acc()));
+            roots_.push_back(Object(exec_.getAcc()));
         }
     }
 }
 void GarbageCollector::mark() {
     for (auto &root : roots_) {
-        if (root.isMarked()) {
-            std::cout << "balls explosion. shouldn't be marked." << std::endl;
-            continue;
-        }
+//        assert(!root.isMarked());
         if (root.klassId() == OBJ_ARR_IMM) {
             markObjectArrays(root);
         } else {
@@ -44,9 +41,7 @@ void GarbageCollector::mark() {
     }
 }
 void GarbageCollector::markObjects(Object obj) {
-    if (obj.isMarked()) {
-        std::cout << "balls explosion. shouldn't be marked." << std::endl;
-    }
+//    assert(!obj.isMarked());
     obj.mark();
     std::vector<Field> obj_fields = exec_.getCodeManager()->getKlass(obj.klassId()).fields_;
     for (size_t i = 0; i < obj_fields.size(); i++) {
@@ -61,9 +56,7 @@ void GarbageCollector::markObjects(Object obj) {
 }
 
 void GarbageCollector::markObjectArrays(Object obj) {
-    if (obj.isMarked()) {
-        std::cout << "balls explosion. shouldn't be marked." << std::endl;
-    }
+//    assert(!obj.isMarked());
     obj.mark();
     ObjectArray arr{obj};
     for (int64_t i = 0; i < arr.length(); ++i) {
