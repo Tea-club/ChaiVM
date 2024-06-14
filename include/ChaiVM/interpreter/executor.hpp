@@ -4,6 +4,7 @@
 
 #include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "ChaiVM/memory/traced-allocator.hpp"
+#include "ChaiVM/memory/garbage-collector.hpp"
 #include "decoder.hpp"
 #include "frame.hpp"
 #include "objects.hpp"
@@ -27,6 +28,8 @@ public:
 
     chsize_t &acc();
     chsize_t acc() const;
+
+    bool isAccRef() const;
 
     Frame const *getCurrentFrame() const;
 
@@ -163,11 +166,13 @@ private:
 
 private:
     chsize_t acc_;
+    bool isAccRef_ = false;
     CodeManager *codeManager_;
     memory::LinearBuffer &framesBuffer_;
     memory::LinearBuffer &primitivesBuffer_;
     memory::TracedByteAllocator &objectsAllocator_;
     Frame *currentFrame_ = nullptr;
+    memory::GarbageCollector gc_{*this};
 };
 
 inline void Executor::advancePc() { pc() += sizeof(bytecode_t); }
