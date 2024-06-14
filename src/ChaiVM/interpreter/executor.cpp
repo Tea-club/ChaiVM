@@ -507,6 +507,12 @@ void Executor::set_field(Instruction ins) {
 const CodeManager* interpreter::Executor::getCodeManager() const {
     return codeManager_;
 }
+memory::TracedByteAllocator &interpreter::Executor::getObjectAllocator() {
+    return objectsAllocator_;
+}
+const GarbageCollector &interpreter::Executor::getGC() const {
+    return gc_;
+}
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)
