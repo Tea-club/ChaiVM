@@ -4,9 +4,9 @@
 
 #include "ChaiVM/interpreter/code-manager/code-manager.hpp"
 #include "ChaiVM/memory/traced-allocator.hpp"
-#include "ChaiVM/memory/garbage-collector.hpp"
 #include "decoder.hpp"
 #include "frame.hpp"
+#include "garbage-collector.hpp"
 #include "objects.hpp"
 
 namespace chai::interpreter {
@@ -178,7 +178,7 @@ private:
     memory::LinearBuffer &primitivesBuffer_;
     memory::TracedByteAllocator &objectsAllocator_;
     Frame *currentFrame_ = nullptr;
-    memory::GarbageCollector gc_{*this};
+    GarbageCollector gc_{*this};
 };
 
 inline void Executor::advancePc() { pc() += sizeof(bytecode_t); }

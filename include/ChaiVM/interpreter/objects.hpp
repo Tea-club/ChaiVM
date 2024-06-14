@@ -3,7 +3,6 @@
 #include "ChaiVM/interpreter/code-manager/klass.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
-#include "executor.hpp"
 #include <cassert>
 
 namespace chai::interpreter {

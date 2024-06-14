@@ -4,24 +4,25 @@
 
 // forward declaration for executor due to cyclic dependency
 namespace chai::interpreter {
-    class Executor;
+class Executor;
 }
 
-namespace chai::memory {
+namespace chai::interpreter {
 
 using chai::interpreter::Executor;
 
 class GarbageCollector {
 public:
-    GarbageCollector(Executor& exec) : exec_(exec) {}
+    GarbageCollector(Executor &exec) : exec_(exec) {}
 
     void collect();
+
 private:
     void collectRoots();
     void mark();
 
-    std::vector<interpreter::Object*> roots_{};
-    Executor& exec_;
+    std::vector<interpreter::Object> roots_{};
+    Executor &exec_;
 };
 
-}  // namespace chai::memory
+} // namespace chai::interpreter
