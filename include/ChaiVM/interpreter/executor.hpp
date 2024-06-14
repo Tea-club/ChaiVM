@@ -32,6 +32,7 @@ public:
     bool isAccRef() const;
 
     Frame const *getCurrentFrame() const;
+    const CodeManager* getCodeManager() const;
 
 private:
     chsize_t &pc();

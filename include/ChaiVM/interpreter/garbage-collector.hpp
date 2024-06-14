@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ChaiVM/interpreter/objects.hpp"
+#include <unordered_set>
 
 // forward declaration for executor due to cyclic dependency
 namespace chai::interpreter {
@@ -20,8 +21,12 @@ public:
 private:
     void collectRoots();
     void mark();
+    void markObjects(Object obj);
+    void markObjectArrays(Object arr);
+    void sweep();
 
     std::vector<interpreter::Object> roots_{};
+    std::unordered_set<chsize_t> markedRefs_{};
     Executor &exec_;
 };
 
