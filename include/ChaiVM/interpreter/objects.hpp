@@ -3,6 +3,7 @@
 #include "ChaiVM/interpreter/code-manager/klass.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
+#include "executor.hpp"
 #include <cassert>
 
 namespace chai::interpreter {
@@ -55,7 +56,7 @@ public:
      * header).
      * @return Value of member.
      */
-    chsize_t getMember(Immidiate offset) const;
+    const chsize_t &getMember(Immidiate offset) const;
 
     /**
      * Set member.
@@ -65,7 +66,7 @@ public:
      */
     void setMember(Immidiate offset, chsize_t value) const;
 
-private:
+protected:
     ObjectHeader *header_;
 
     /**
@@ -73,6 +74,41 @@ private:
      * In case of object array this is array of refs.
      */
     chsize_t *members_;
+};
+
+class IndexOutOfBoundary : public std::runtime_error {
+public:
+    explicit IndexOutOfBoundary(char const *msg);
+    IndexOutOfBoundary(const std::string &msg);
+    const char *what() const noexcept override;
+};
+
+/**
+ * Convenient way to use array of objects object.
+ * We consider size as the first member of object.
+ */
+class ObjectArray final : private Object {
+
+public:
+    /**
+     * Ctor.
+     * Create object from ref to object.
+     * @param ref Ref to object (usually contains in register).
+     */
+    explicit ObjectArray(chsize_t ref);
+
+    chsize_t length() const;
+
+    chai::chsize_t &operator[](int64_t i) &;
+
+    const chsize_t &operator[](int64_t i) const &;
+
+    /**
+     * Calculate size (in bytes) of object array.
+     * @param len Array length/
+     * @return size in bytes.
+     */
+    static chsize_t sizeOfObjectArray(int64_t len);
 };
 
 } // namespace chai::interpreter

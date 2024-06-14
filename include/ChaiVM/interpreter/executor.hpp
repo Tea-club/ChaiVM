@@ -53,6 +53,8 @@ private:
     void muli(Instruction ins);
     void div(Instruction ins);
     void divi(Instruction ins);
+    void modi(Instruction ins);
+    void mod(Instruction ins);
     void ldiaf(Instruction ins);
     void addf(Instruction ins);
     void addif(Instruction ins);
@@ -76,6 +78,7 @@ private:
     void if_icmple(Instruction ins);
     void if_acmpeq(Instruction ins);
     void if_acmpne(Instruction ins);
+    void if_null(Instruction ins);
     void cmpgf(Instruction ins);
     void cmplf(Instruction ins);
     void g0t0(Instruction ins);
@@ -116,6 +119,8 @@ private:
         &Executor::muli,
         &Executor::div,
         &Executor::divi,
+        &Executor::modi,
+        &Executor::mod,
         &Executor::ldiaf,
         &Executor::addf,
         &Executor::addif,
@@ -139,6 +144,7 @@ private:
         &Executor::if_icmple,
         &Executor::if_acmpeq,
         &Executor::if_acmpne,
+        &Executor::if_null,
         &Executor::cmpgf,
         &Executor::cmplf,
         &Executor::g0t0,
@@ -188,10 +194,4 @@ public:
     const char *what() const noexcept override;
 };
 
-class IndexOutOfBoundary : public std::runtime_error {
-public:
-    explicit IndexOutOfBoundary(char const *msg);
-    IndexOutOfBoundary(const std::string &msg);
-    const char *what() const noexcept override;
-};
 } // namespace chai::interpreter
