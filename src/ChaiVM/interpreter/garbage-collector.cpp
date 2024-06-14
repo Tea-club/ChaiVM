@@ -13,8 +13,8 @@ void GarbageCollector::collectRoots() {
                 // todo: balls explosion alert!
                 roots_.push_back(Object(frame->operator[](i)));
             }
-            frame = frame->back();
         }
+        frame = frame->back();
     }
     if (exec_.isAccRef()) {
         roots_.push_back(Object(exec_.acc()));
