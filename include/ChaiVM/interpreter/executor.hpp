@@ -27,12 +27,12 @@ public:
     void run();
 
     chsize_t &acc();
-    chsize_t acc() const;
+    chsize_t getAcc() const;
 
     bool isAccRef() const;
 
     Frame const *getCurrentFrame() const;
-    const CodeManager* getCodeManager() const;
+    const CodeManager *getCodeManager() const;
 
 private:
     chsize_t &pc();

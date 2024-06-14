@@ -801,7 +801,7 @@ TEST_F(ExecutorTest, SetField2) {
 
 /**
  * Here we create 2 Cat objects, modify value of the second and save its value
- * in acc.
+ * in getAcc.
  */
 TEST_F(ExecutorTest, GetField) {
     auto cat_klass = chaiFile_.registerKlass("Cat");

@@ -25,6 +25,11 @@ public:
 
     chsize_t nFields() const;
     chsize_t instanceSize() const;
+
+    inline bool fieldIsObject(chsize_t offset) const {
+        assert(offset % sizeof(chsize_t) == 0);
+        return fields_[offset / sizeof(chsize_t)].isObject_;
+    }
 };
 
 } // namespace chai::interpreter
