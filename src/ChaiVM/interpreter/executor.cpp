@@ -549,6 +549,9 @@ void Executor::set_field(Instruction ins) {
     advancePc();
     DO_NEXT_INS()
 }
+const CodeManager* interpreter::Executor::getCodeManager() const {
+    return codeManager_;
+}
 
 InvalidInstruction::InvalidInstruction(const char *msg) : runtime_error(msg) {}
 InvalidInstruction::InvalidInstruction(const std::string &msg)

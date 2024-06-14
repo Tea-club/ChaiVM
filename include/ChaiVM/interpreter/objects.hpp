@@ -24,6 +24,11 @@ struct ObjectHeader {
      * Number of klass in "klass pool".
      */
     Immidiate klassId_;
+
+    /**
+     * Flag that object still has references
+     */
+    bool isMarked_;
 };
 
 /**
@@ -65,6 +70,11 @@ public:
      */
     void setMember(Immidiate offset, chsize_t value) const;
 
+    bool isMarked() const;
+    void mark();
+    void unmark();
+    Immidiate klassId() const;
+
 protected:
     ObjectHeader *header_;
 
@@ -95,6 +105,13 @@ public:
      * @param ref Ref to object (usually contains in register).
      */
     explicit ObjectArray(chsize_t ref);
+
+    /**
+     * Ctor.
+     * Create object array from object.
+     * @param obj The object
+     */
+    explicit ObjectArray(Object obj);
 
     chsize_t length() const;
 

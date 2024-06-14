@@ -25,6 +25,10 @@ void Object::setMember(Immidiate offset, chsize_t value) const {
     assert(offset % sizeof(chsize_t) == 0);
     members_[offset / sizeof(chsize_t)] = value;
 }
+bool Object::isMarked() const { return header_->isMarked_; }
+void Object::unmark() { header_->isMarked_ = false; }
+void Object::mark() { header_->isMarked_ = true; }
+Immidiate Object::klassId() const { return header_->klassId_; }
 
 IndexOutOfBoundary::IndexOutOfBoundary(const char *msg) : runtime_error(msg) {}
 IndexOutOfBoundary::IndexOutOfBoundary(const std::string &msg)
@@ -34,6 +38,7 @@ const char *IndexOutOfBoundary::what() const noexcept {
 }
 
 ObjectArray::ObjectArray(chsize_t ref) : Object(ref) {}
+ObjectArray::ObjectArray(Object obj) : Object(obj) {}
 
 chsize_t ObjectArray::length() const { return Object::countMembers() - 1; }
 
