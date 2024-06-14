@@ -52,7 +52,7 @@ void GarbageCollector::markObjects(Object obj) {
     for (size_t i = 0; i < obj_fields.size(); i++) {
         if (obj_fields[i].isObject_) {
             // @todo #111:60min check if member references to array
-            chsize_t member_ref = obj.getMember(i);
+            chsize_t member_ref = obj.getMember(i * sizeof(chsize_t));
             if (member_ref != CHAI_NULL) {
                 markObjects(Object{member_ref});
             }
