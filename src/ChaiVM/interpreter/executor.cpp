@@ -48,7 +48,7 @@ chsize_t &Executor::acc() {
     isAccRef_ = false;
     return acc_;
 }
-chsize_t Executor::acc() const { return acc_; }
+chsize_t Executor::getAcc() const { return acc_; }
 bool Executor::isAccRef() const { return isAccRef_; }
 
 Frame const *Executor::getCurrentFrame() const { return this->currentFrame_; }
@@ -92,7 +92,7 @@ void Executor::ldra(Instruction ins) {
 }
 void Executor::star(Instruction ins) {
     assert(isAccRef() == false);
-    (*currentFrame_)[ins.r1] = acc();
+    (*currentFrame_)[ins.r1] = getAcc();
     advancePc();
     DO_NEXT_INS()
 }
@@ -135,7 +135,7 @@ void Executor::muli(Instruction ins) {
 void Executor::div(Instruction ins) {
     assert(isAccRef() == false);
     acc() =
-        static_cast<chsize_t>(std::bit_cast<int64_t>(acc()) /
+        static_cast<chsize_t>(std::bit_cast<int64_t>(getAcc()) /
                               static_cast<int64_t>((*currentFrame_)[ins.r1]));
     advancePc();
     DO_NEXT_INS()
@@ -143,7 +143,7 @@ void Executor::div(Instruction ins) {
 void Executor::divi(Instruction ins) {
     assert(isAccRef() == false);
     acc() = std::bit_cast<chsize_t>(
-        static_cast<int64_t>(acc()) /
+        static_cast<int64_t>(getAcc()) /
         static_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
     advancePc();
     DO_NEXT_INS()
@@ -151,7 +151,7 @@ void Executor::divi(Instruction ins) {
 void Executor::modi(Instruction ins) {
     assert(isAccRef() == false);
     acc() = static_cast<chsize_t>(
-        static_cast<int64_t>(acc()) %
+        static_cast<int64_t>(getAcc()) %
         static_cast<int64_t>(codeManager_->getCnst(ins.immidiate)));
     advancePc();
     DO_NEXT_INS()
@@ -159,7 +159,7 @@ void Executor::modi(Instruction ins) {
 void Executor::mod(Instruction ins) {
     assert(isAccRef() == false);
     acc() =
-        static_cast<chsize_t>(static_cast<int64_t>(acc()) %
+        static_cast<chsize_t>(static_cast<int64_t>(getAcc()) %
                               static_cast<int64_t>((*currentFrame_)[ins.r1]));
     advancePc();
     DO_NEXT_INS()
@@ -174,7 +174,7 @@ void Executor::ldiaf(Instruction ins) {
 void Executor::addf(Instruction ins) {
     assert(isAccRef() == false);
     double res = std::bit_cast<double>((*currentFrame_)[ins.r1]) +
-                 std::bit_cast<double>(acc());
+                 std::bit_cast<double>(getAcc());
     acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
@@ -182,14 +182,14 @@ void Executor::addf(Instruction ins) {
 void Executor::addif(Instruction ins) {
     assert(isAccRef() == false);
     double res = std::bit_cast<double>(codeManager_->getCnst(ins.immidiate)) +
-                 std::bit_cast<double>(acc());
+                 std::bit_cast<double>(getAcc());
     acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::subf(Instruction ins) {
     assert(isAccRef() == false);
-    double res = std::bit_cast<double>(acc()) -
+    double res = std::bit_cast<double>(getAcc()) -
                  std::bit_cast<double>((*currentFrame_)[ins.r1]);
     acc() = std::bit_cast<chsize_t>(res);
     advancePc();
@@ -197,7 +197,7 @@ void Executor::subf(Instruction ins) {
 }
 void Executor::subif(Instruction ins) {
     assert(isAccRef() == false);
-    double res = std::bit_cast<double>(acc()) -
+    double res = std::bit_cast<double>(getAcc()) -
                  std::bit_cast<double>(codeManager_->getCnst(ins.immidiate));
     acc() = std::bit_cast<chsize_t>(res);
     advancePc();
@@ -206,7 +206,7 @@ void Executor::subif(Instruction ins) {
 void Executor::mulf(Instruction ins) {
     assert(isAccRef() == false);
     double res = std::bit_cast<double>((*currentFrame_)[ins.r1]) *
-                 std::bit_cast<double>(acc());
+                 std::bit_cast<double>(getAcc());
     acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
@@ -214,14 +214,14 @@ void Executor::mulf(Instruction ins) {
 void Executor::mulif(Instruction ins) {
     assert(isAccRef() == false);
     double res = std::bit_cast<double>(codeManager_->getCnst(ins.immidiate)) *
-                 std::bit_cast<double>(acc());
+                 std::bit_cast<double>(getAcc());
     acc() = std::bit_cast<chsize_t>(res);
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::divf(Instruction ins) {
     assert(isAccRef() == false);
-    double res = std::bit_cast<double>(acc()) /
+    double res = std::bit_cast<double>(getAcc()) /
                  std::bit_cast<double>((*currentFrame_)[ins.r1]);
     acc() = std::bit_cast<chsize_t>(res);
     advancePc();
@@ -229,7 +229,7 @@ void Executor::divf(Instruction ins) {
 }
 void Executor::divif(Instruction ins) {
     assert(isAccRef() == false);
-    double res = std::bit_cast<double>(acc()) /
+    double res = std::bit_cast<double>(getAcc()) /
                  std::bit_cast<double>(codeManager_->getCnst(ins.immidiate));
     acc() = std::bit_cast<chsize_t>(res);
     advancePc();
@@ -237,7 +237,7 @@ void Executor::divif(Instruction ins) {
 }
 void Executor::icprint(Instruction ins) {
     assert(isAccRef() == false);
-    std::cout << static_cast<int64_t>(acc()) << " ";
+    std::cout << static_cast<int64_t>(getAcc()) << " ";
     advancePc();
     DO_NEXT_INS()
 }
@@ -257,26 +257,26 @@ void Executor::icscanf(Instruction ins) {
 }
 void Executor::icsqrt(Instruction ins) {
     assert(isAccRef() == false);
-    acc() = std::bit_cast<chsize_t>(std::sqrt(std::bit_cast<double>(acc())));
+    acc() = std::bit_cast<chsize_t>(std::sqrt(std::bit_cast<double>(getAcc())));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::icsin(Instruction ins) {
     assert(isAccRef() == false);
-    acc() = std::bit_cast<chsize_t>(std::sin(std::bit_cast<double>(acc())));
+    acc() = std::bit_cast<chsize_t>(std::sin(std::bit_cast<double>(getAcc())));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::iccos(Instruction ins) {
     assert(isAccRef() == false);
-    acc() = std::bit_cast<chsize_t>(std::cos(std::bit_cast<double>(acc())));
+    acc() = std::bit_cast<chsize_t>(std::cos(std::bit_cast<double>(getAcc())));
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::if_icmpeq(Instruction ins) {
     assert(isAccRef() == false);
     static_assert(sizeof(Immidiate) == sizeof(int16_t));
-    if (acc() == (*currentFrame_)[ins.r1]) {
+    if (getAcc() == (*currentFrame_)[ins.r1]) {
         pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -285,7 +285,7 @@ void Executor::if_icmpeq(Instruction ins) {
 }
 void Executor::if_icmpne(Instruction ins) {
     assert(isAccRef() == false);
-    if (acc() != (*currentFrame_)[ins.r1]) {
+    if (getAcc() != (*currentFrame_)[ins.r1]) {
         pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -294,7 +294,7 @@ void Executor::if_icmpne(Instruction ins) {
 }
 void Executor::if_icmpgt(Instruction ins) {
     assert(isAccRef() == false);
-    if (acc() > (*currentFrame_)[ins.r1]) {
+    if (getAcc() > (*currentFrame_)[ins.r1]) {
         pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -303,7 +303,7 @@ void Executor::if_icmpgt(Instruction ins) {
 }
 void Executor::if_icmpge(Instruction ins) {
     assert(isAccRef() == false);
-    if (acc() >= (*currentFrame_)[ins.r1]) {
+    if (getAcc() >= (*currentFrame_)[ins.r1]) {
         pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -312,7 +312,7 @@ void Executor::if_icmpge(Instruction ins) {
 }
 void Executor::if_icmplt(Instruction ins) {
     assert(isAccRef() == false);
-    if (acc() < (*currentFrame_)[ins.r1]) {
+    if (getAcc() < (*currentFrame_)[ins.r1]) {
         pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -321,7 +321,7 @@ void Executor::if_icmplt(Instruction ins) {
 }
 void Executor::if_icmple(Instruction ins) {
     assert(isAccRef() == false);
-    if (acc() <= (*currentFrame_)[ins.r1]) {
+    if (getAcc() <= (*currentFrame_)[ins.r1]) {
         pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -346,7 +346,7 @@ void Executor::if_acmpne(Instruction ins) {
 }
 void Executor::if_null(Instruction ins) {
     assert(isAccRef() == true);
-    if (acc() == CHAI_NULL) {
+    if (getAcc() == CHAI_NULL) {
         pc() += sizeof(bytecode_t) * static_cast<int16_t>(ins.immidiate);
     } else {
         advancePc();
@@ -355,7 +355,7 @@ void Executor::if_null(Instruction ins) {
 }
 void Executor::cmpgf(Instruction ins) {
     assert(isAccRef() == false);
-    double acc_f64 = std::bit_cast<double>(acc());
+    double acc_f64 = std::bit_cast<double>(getAcc());
     double r1_f64 = std::bit_cast<double>((*currentFrame_)[ins.r1]);
     acc() = (acc_f64 >= r1_f64) ? static_cast<size_t>(acc_f64 != r1_f64)
                                 : static_cast<size_t>(-1);
@@ -364,7 +364,7 @@ void Executor::cmpgf(Instruction ins) {
 }
 void Executor::cmplf(Instruction ins) {
     assert(isAccRef() == false);
-    double acc_f64 = std::bit_cast<double>(acc());
+    double acc_f64 = std::bit_cast<double>(getAcc());
     double r1_f64 = std::bit_cast<double>((*currentFrame_)[ins.r1]);
     acc() = acc() = (acc_f64 <= r1_f64) ? static_cast<size_t>(acc_f64 != r1_f64)
                                         : static_cast<size_t>(-1);
@@ -385,7 +385,7 @@ void Executor::call(Instruction ins) {
 }
 void Executor::newi64array(Instruction ins) {
     assert(isAccRef() == false);
-    auto n = static_cast<int64_t>(acc());
+    auto n = static_cast<int64_t>(getAcc());
     memory::LinearAllocator<int64_t> allocator{primitivesBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) int64_t[n]();
@@ -395,7 +395,7 @@ void Executor::newi64array(Instruction ins) {
 }
 void Executor::get_i64from_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    auto *arr = reinterpret_cast<int64_t *>(acc());
+    auto *arr = reinterpret_cast<int64_t *>(getAcc());
     acc() = arr[i];
     advancePc();
     DO_NEXT_INS();
@@ -403,14 +403,14 @@ void Executor::get_i64from_arr(Instruction ins) {
 
 void Executor::set_i64in_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    auto *arr = reinterpret_cast<int64_t *>(acc());
+    auto *arr = reinterpret_cast<int64_t *>(getAcc());
     arr[i] = static_cast<int64_t>((*currentFrame_)[ins.r2]);
     advancePc();
     DO_NEXT_INS();
 }
 
 void Executor::newf64array(Instruction ins) {
-    auto n = static_cast<int64_t>(acc());
+    auto n = static_cast<int64_t>(getAcc());
     memory::LinearAllocator<double> allocator{primitivesBuffer_};
     assert(n >= 0);
     auto *arr = new (allocator.allocate(n)) double[n]();
@@ -420,21 +420,21 @@ void Executor::newf64array(Instruction ins) {
 }
 void Executor::get_f64from_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    auto *arr = reinterpret_cast<double *>(acc());
+    auto *arr = reinterpret_cast<double *>(getAcc());
     acc() = std::bit_cast<int64_t>(arr[i]);
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::set_f64in_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    auto *arr = reinterpret_cast<double *>(acc());
+    auto *arr = reinterpret_cast<double *>(getAcc());
     arr[i] = std::bit_cast<double>((*currentFrame_)[ins.r2]);
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::new_ref_arr(Instruction ins) {
     assert(isAccRef() == false);
-    chsize_t len = acc();
+    chsize_t len = getAcc();
     chsize_t num_bytes = ObjectArray::sizeOfObjectArray(len);
     auto *object_arr =
         new (objectsAllocator_.allocate(num_bytes)) uint8_t[num_bytes]();
@@ -448,35 +448,40 @@ void Executor::new_ref_arr(Instruction ins) {
         members[i] = CHAI_NULL;
     }
     acc() = std::bit_cast<chsize_t>(object_arr);
+    isAccRef_ = true;
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::get_ref_from_arr(Instruction ins) {
     assert(isAccRef() == true);
+    assert(currentFrame_->isRegisterReference(ins.r1) == false);
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    ObjectArray array{acc()};
+    ObjectArray array{getAcc()};
     acc() = array[i];
+    isAccRef_ = true;
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::set_ref_in_arr(Instruction ins) {
     assert(isAccRef() == true);
+    assert(currentFrame_->isRegisterReference(ins.r1) == false);
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
+    assert(currentFrame_->isRegisterReference(ins.r2) == true);
     chsize_t new_ref = (*currentFrame_)[ins.r2];
-    ObjectArray array{acc()};
+    ObjectArray array{getAcc()};
     array[i] = new_ref;
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::string_print(Instruction ins) {
-    const std::string &str = codeManager_->getStringByStringPoolPos(acc());
+    const std::string &str = codeManager_->getStringByStringPoolPos(getAcc());
     std::cout << str << std::endl;
     advancePc();
     DO_NEXT_INS();
 }
 
 void Executor::string_concat(Instruction ins) {
-    const std::string &str1 = codeManager_->getStringByStringPoolPos(acc());
+    const std::string &str1 = codeManager_->getStringByStringPoolPos(getAcc());
     const std::string &str2 =
         codeManager_->getStringByStringPoolPos((*currentFrame_)[ins.r1]);
     std::string concated = str1 + str2;
@@ -487,12 +492,12 @@ void Executor::string_concat(Instruction ins) {
 }
 
 void Executor::string_len(Instruction ins) {
-    acc() = codeManager_->getStringByStringPoolPos(acc()).size();
+    acc() = codeManager_->getStringByStringPoolPos(getAcc()).size();
     advancePc();
     DO_NEXT_INS();
 }
 void Executor::string_slice(Instruction ins) {
-    const std::string &str = codeManager_->getStringByStringPoolPos(acc());
+    const std::string &str = codeManager_->getStringByStringPoolPos(getAcc());
     std::cout << "string_slice" << std::endl;
     acc() = codeManager_->getCnst(codeManager_->addCnstString(
         str.substr((*currentFrame_)[ins.r1],
@@ -514,6 +519,7 @@ void Executor::alloc_ref(Instruction ins) {
         assert(fields[i] == 0);
     }
     acc() = std::bit_cast<chsize_t>(object);
+    isAccRef_ = true;
     advancePc();
     DO_NEXT_INS()
 }
@@ -523,33 +529,49 @@ void Executor::mov_ref(Instruction ins) {
 }
 void Executor::ldra_ref(Instruction ins) {
     acc() = (*currentFrame_)[ins.r1];
+    assert(currentFrame_->isRegisterReference(ins.r1) == true);
     isAccRef_ = true;
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::star_ref(Instruction ins) {
     assert(isAccRef() == true);
-    (*currentFrame_)[ins.r1] = acc();
+    (*currentFrame_)[ins.r1] = getAcc();
+    currentFrame_->setRegisterIsRef(ins.r1, true);
     advancePc();
+    assert(isAccRef() == true);
     DO_NEXT_INS()
 }
 void Executor::get_field(Instruction ins) {
-    assert(isAccRef() == true);
+    assert(isAccRef_ == true);
     Immidiate offset = ins.immidiate;
-    Object object{acc()};
+    Object object{getAcc()};
     acc() = object.getMember(offset);
+    if ((object.klassId() != OBJ_ARR_IMM) &&
+        (codeManager_->getKlass(object.klassId())).fieldIsObject(offset)) {
+        isAccRef_ = true;
+    }
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::set_field(Instruction ins) {
     assert(isAccRef() == true);
     Immidiate offset = ins.immidiate;
-    Object object{acc()};
+    Object object{getAcc()};
     object.setMember(offset, (*currentFrame_)[ins.r1]);
+    //    if ((codeManager_->getKlass(object.klassId())).fieldIsObject(offset))
+    //    {
+    //        assert(currentFrame_->isRegisterReference(r1) == true);
+    //    } else {
+    //        assert(currentFrame_->isRegisterReference(r1) == false);
+    //    }
+    assert((codeManager_->getKlass(object.klassId())).fieldIsObject(offset) ==
+           currentFrame_->isRegisterReference(ins.r1));
+    assert(isAccRef() == true);
     advancePc();
     DO_NEXT_INS()
 }
-const CodeManager* interpreter::Executor::getCodeManager() const {
+const CodeManager *interpreter::Executor::getCodeManager() const {
     return codeManager_;
 }
 

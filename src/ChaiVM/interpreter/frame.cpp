@@ -35,9 +35,9 @@ bool Frame::isRegisterReference(RegisterId reg_id) const {
     return isRegRef_[reg_id];
 }
 
-void Frame::setRegisterIsRef(chai::interpreter::RegisterId reg_id) {
+void Frame::setRegisterIsRef(chai::interpreter::RegisterId reg_id, bool val) {
     assert(reg_id < regsize_);
-    isRegRef_[reg_id] = true;
+    isRegRef_[reg_id] = val;
 }
 
 /**

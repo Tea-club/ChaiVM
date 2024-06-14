@@ -19,7 +19,7 @@ public:
     size_t size() const;
 
     bool isRegisterReference(RegisterId reg_id) const;
-    void setRegisterIsRef(RegisterId reg_id);
+    void setRegisterIsRef(RegisterId reg_id, bool val);
 
     /**
      * Get state.

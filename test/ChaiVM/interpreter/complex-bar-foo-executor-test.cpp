@@ -89,19 +89,19 @@ protected:
     /**
      * Init dump function.
      *
-     * arr = acc()
-     * R2 = acc()     // arr
+     * arr = getAcc()
+     * R2 = getAcc()     // arr
      * R1 = arr.len
      * ITER = 0
      * start_         // start loop
      * print ITER
-     * acc() = new Foo()
-     * acc() = R2 [i]
+     * getAcc() = new Foo()
+     * getAcc() = R2 [i]
      * // if-else block
-     * ifnull acc (+9)
-     * acc = acc.getField(8)
-     * ifnull acc (+4)
-     * acc = acc.getField(0)
+     * ifnull getAcc (+9)
+     * acc = getAcc.getField(8)
+     * ifnull getAcc (+4)
+     * acc = getAcc.getField(0)
      * ic_print
      * Ret
      * Ldia ("Foo.Bar:null")
@@ -111,8 +111,8 @@ protected:
      * StringPrint
      * Ret
      * // if-else block
-     * acc() = ITER
-     * acc()++
+     * getAcc() = ITER
+     * getAcc()++
      * if_icmplt R1 -100 (go to start)
      * Ret
      *
@@ -153,7 +153,7 @@ protected:
     /**
      * Init foo() function.
      *
-     * input: acc() = N, R11 = M
+     * input: getAcc() = N, R11 = M
      * R10 = N                         // R10 = N, R11 = M
      * Ldra r11
      * NewRefArray Foo
@@ -162,24 +162,24 @@ protected:
      * OUTER = new Foo                  // OUTER == R8
      * ITER = 1                         // ITER = R7
      * start_                           // start loop
-     * acc = O1 = new Foo               // O1 = R6
+     * getAcc = O1 = new Foo               // O1 = R6
      * setField(ITER, 0); Star O1
-     * acc = ITER; MODI three
+     * getAcc = ITER; MODI three
      * if_icmpne R0 (offset second_if_)
      * R5 = i % M - 1
      * R9[R5] = O1
      * second_if_:
-     * acc = O2 = new Bar               // O2 = R4
+     * getAcc = O2 = new Bar               // O2 = R4
      * setfield (ITER, 0)
      * Star O2
      * ldra ITER
      * MODI five
      * if_cmpne R0 +3
-     * acc = O1; SetField(O2, 8)
+     * getAcc = O1; SetField(O2, 8)
      * StarRef O1
      * LdraRef R9
      * Call dump
-     * acc = ITER; acc++; Star ITER
+     * getAcc = ITER; acc++; Star ITER
      * if_icmple R1 -100 (go to start)
      * Ret
      */
@@ -212,10 +212,11 @@ protected:
                 instr2Raw<StarRef>(O2), instr2Raw<Ldra>(ITER),
                 instr2Raw<Modi>(five_imm), instr2Raw<If_icmpne>(R0, +3),
                 instr2Raw<LdraRef>(O1), instr2Raw<SetField>(O2, 8),
-                instr2Raw<StarRef>(O1), instr2Raw<LdraRef>(R9),
-                instr2Raw<Call>(dump_), instr2Raw<Ldra>(ITER),
-                instr2Raw<Addi>(one_imm), instr2Raw<Star>(ITER),
-                instr2Raw<If_icmple>(R10, -28), instr2Raw<Ret>()},
+                instr2Raw<LdraRef>(O1), instr2Raw<StarRef>(OUTER),
+                instr2Raw<LdraRef>(R9), instr2Raw<Call>(dump_),
+                instr2Raw<Ldra>(ITER), instr2Raw<Addi>(one_imm),
+                instr2Raw<Star>(ITER), instr2Raw<If_icmple>(R10, -28),
+                instr2Raw<Ret>()},
             1, 12);
     }
 };

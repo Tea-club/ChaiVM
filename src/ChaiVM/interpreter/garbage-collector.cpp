@@ -47,8 +47,6 @@ void GarbageCollector::markObjects(Object obj) {
         std::cout << "balls explosion. shouldn't be marked." << std::endl;
     }
 }
-void GarbageCollector::markObjectArrays(Object /*unused*/) {
-
-}
+void GarbageCollector::markObjectArrays(Object /*unused*/) {}
 
 void GarbageCollector::sweep() {}
