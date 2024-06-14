@@ -11,7 +11,7 @@ namespace chai::interpreter {
     triggerGC();                                                               \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
-    std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm = " << newIns.immidiate << std::endl;                                       \
+/*    std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm = " << newIns.immidiate << std::endl; */                                      \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
