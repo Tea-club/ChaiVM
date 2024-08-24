@@ -6,7 +6,7 @@ import os
 
 def main() -> int:
     if len(sys.argv) != 3:
-        raise RuntimeError('Should be 2 args, received ' + str(len(sys.argv)))
+        raise RuntimeError('Should be 3 args, received ' + str(len(sys.argv)))
     with open(sys.argv[2]) as file:
         full = yaml.safe_load(file)
     instructions = full["instructions"]
