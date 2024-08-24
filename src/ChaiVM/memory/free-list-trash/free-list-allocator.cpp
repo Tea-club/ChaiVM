@@ -39,7 +39,7 @@ void *FreeListAllocator::Allocate(const std::size_t size,
     Node *affectedNode, *previousNode;
     this->Find(size, alignment, padding, previousNode, affectedNode);
     if (affectedNode == nullptr) {
-        throw std::bad_alloc();
+        return nullptr;
     }
 
     const std::size_t alignmentPadding = padding - allocationHeaderSize;

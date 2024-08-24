@@ -49,6 +49,7 @@ chsize_t &Executor::acc() {
     return acc_;
 }
 chsize_t Executor::getAcc() const { return acc_; }
+
 bool Executor::isAccRef() const { return isAccRef_; }
 
 Frame const *Executor::getCurrentFrame() const { return this->currentFrame_; }

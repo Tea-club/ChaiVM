@@ -29,6 +29,10 @@ public:
     chsize_t &acc();
     chsize_t getAcc() const;
 
+    /**
+     * Checks if reference is stored in accumulator.
+     * @return true if accumulator stores reference, false otherwise.
+     */
     bool isAccRef() const;
 
     Frame const *getCurrentFrame() const;

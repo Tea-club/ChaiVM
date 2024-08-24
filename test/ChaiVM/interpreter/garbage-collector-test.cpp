@@ -158,17 +158,14 @@ TEST_F(GarbageCollectorTest, CollectRoots) {
     chaiFile_.addField(bar_klass, "bar.num3", 0U, FieldTag::I64);
     chaiFile_.addField(bar_klass, "bar.num4", 0U, FieldTag::I64);
     constexpr int64_t threshold = 4000;
-    //Immidiate zero_imm = chaiFile_.addConst(std::make_unique<ConstI64>(0));
     Immidiate one_imm = chaiFile_.addConst(std::make_unique<ConstI64>(1));
     Immidiate threshold_imm = chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
 
-    load<Ldia>(one_imm);
-    load<Star>(R1);
     load<Ldia>(threshold_imm);
     load<Star>(R10);
     load<AllocRef>(bar_klass);
     load<Ldra>(R2);
-    load<Add>(R1);
+    load<Addi>(one_imm);
     load<Star>(R2);
     load<If_icmplt>(R10, static_cast<Immidiate>(-4));
     load<Ret>();
@@ -177,26 +174,29 @@ TEST_F(GarbageCollectorTest, CollectRoots) {
     EXPECT_EQ(exec_.acc(), threshold);
 }
 
+TEST_F(GarbageCollectorTest, SingleArray) {
+    Immidiate array_size = chaiFile_.addConst(std::make_unique<ConstI64>(30));
+
+    load<Ldia>(array_size);
+    load<NewRefArray>();
+    load<StarRef>(R11);
+    load<Ret>();
+    update();
+    EXPECT_NO_THROW(exec_.run());
+}
+
 TEST_F(GarbageCollectorTest, ArrayAllocation) {
-    auto bar_klass = chaiFile_.registerKlass("Bar");
-    chaiFile_.addField(bar_klass, "bar.num1", 0U, FieldTag::I64);
-    chaiFile_.addField(bar_klass, "bar.num2", 0U, FieldTag::I64);
-    chaiFile_.addField(bar_klass, "bar.num3", 0U, FieldTag::I64);
-    chaiFile_.addField(bar_klass, "bar.num4", 0U, FieldTag::I64);
-    constexpr int64_t threshold = 1000;
-    //Immidiate zero_imm = chaiFile_.addConst(std::make_unique<ConstI64>(0));
+    constexpr int64_t threshold = 4000;
     Immidiate one_imm = chaiFile_.addConst(std::make_unique<ConstI64>(1));
-    Immidiate hundred_imm = chaiFile_.addConst(std::make_unique<ConstI64>(30));
+    Immidiate array_size = chaiFile_.addConst(std::make_unique<ConstI64>(30));
     Immidiate threshold_imm = chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
 
-    load<Ldia>(one_imm);
-    load<Star>(R1);
     load<Ldia>(threshold_imm);
     load<Star>(R10);
-    load<Ldia>(hundred_imm);
+    load<Ldia>(array_size);
     load<NewRefArray>();
     load<Ldra>(R2);
-    load<Add>(R1);
+    load<Addi>(one_imm);
     load<Star>(R2);
     load<If_icmplt>(R10, static_cast<Immidiate>(-5));
     load<Ret>();
@@ -211,19 +211,19 @@ TEST_F(GarbageCollectorTest, ArrayWithObjectsAllocation) {
     chaiFile_.addField(bar_klass, "bar.num2", 0U, FieldTag::I64);
     chaiFile_.addField(bar_klass, "bar.num3", 0U, FieldTag::I64);
     chaiFile_.addField(bar_klass, "bar.num4", 0U, FieldTag::I64);
-    constexpr int64_t threshold = 30;
+    constexpr int64_t threshold = 1000;
     Immidiate one_imm = chaiFile_.addConst(std::make_unique<ConstI64>(1));
+    Immidiate array_size = chaiFile_.addConst(std::make_unique<ConstI64>(20));
     Immidiate threshold_imm = chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
 
-    load<Ldia>(one_imm);
-    load<Star>(R1);
+    load<Ldia>(array_size);
+    load<NewRefArray>();
+    load<StarRef>(R11);
     load<Ldia>(threshold_imm);
     load<Star>(R10);
-    load<NewRefArray>();
-    load<Star>(R11);
     load<AllocRef>(bar_klass);
     load<Ldra>(R2);
-    load<Add>(R1);
+    load<Addi>(one_imm);
     load<Star>(R2);
     load<If_icmplt>(R10, static_cast<Immidiate>(-4));
     load<Ret>();

@@ -1,11 +1,21 @@
 #pragma once
 
 #include <list>
+#include <exception>
 
 #include "ChaiVM/memory/free-list-trash/free-list-allocator.hpp"
 #include "ChaiVM/types.hpp"
 
 namespace chai::memory {
+
+class out_of_memory_exception final : public std::bad_alloc {
+public:
+    const char* what() const noexcept {
+        return msg;
+    }
+private:
+    static constexpr const char* msg = "VM is out of memory";
+};
 
 struct AllocationInfo final {
     void *ptr = nullptr;
@@ -27,7 +37,7 @@ public:
             allocations_.push_back(AllocationInfo{out, bytes, false});
             allocated_ += bytes;
         } else {
-            throw std::bad_alloc();
+            throw out_of_memory_exception();
         }
 
         return out;

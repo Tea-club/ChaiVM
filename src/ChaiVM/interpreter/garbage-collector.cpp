@@ -16,7 +16,7 @@ void GarbageCollector::collectRoots() {
             if (frame->isRegisterReference(i)) {
                 chsize_t ref = frame->operator[](i);
                 if (ref != CHAI_NULL) {
-                    // todo: balls explosion alert!
+                    // @todo #111:60min check if we already collected this root object.
                     roots_.push_back(Object(ref));
                 }
             }
@@ -26,13 +26,15 @@ void GarbageCollector::collectRoots() {
     if (exec_.isAccRef()) {
         chsize_t ref = exec_.getAcc();
         if (ref != CHAI_NULL) {
+            // @todo #111:60min check if we already collected this root object.
             roots_.push_back(Object(exec_.getAcc()));
         }
     }
 }
 void GarbageCollector::mark() {
     for (auto &root : roots_) {
-//        assert(!root.isMarked());
+        // @todo #111:60min multiple roots can refer to the similar object, so this assert will fail even in correct situations.
+        // assert(!root.isMarked());
         if (root.klassId() == OBJ_ARR_IMM) {
             markObjectArrays(root);
         } else {
