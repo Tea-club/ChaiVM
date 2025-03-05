@@ -3,8 +3,8 @@
 #include <list>
 #include <exception>
 
-#include "ChaiVM/memory/free-list-trash/free-list-allocator.hpp"
 #include "ChaiVM/types.hpp"
+#include "A5/FreeListAllocator.h"
 
 namespace chai::memory {
 
@@ -26,8 +26,7 @@ struct AllocationInfo final {
 class TracedByteAllocator final {
 public:
     TracedByteAllocator(size_t size)
-        : size_(size), allocator_(size, FreeListAllocator::PlacementPolicy::FIND_FIRST) {
-        allocator_.Init();
+        : size_(size), allocator_(size, A5::FreeListAllocator::SearchMethod::FIRST) {
     }
 
     void *allocate(size_t bytes) {
@@ -43,7 +42,7 @@ public:
         return out;
     }
     void deallocate(void *p, size_t bytes) {
-        allocator_.Free(p);
+        allocator_.Deallocate(p);
         allocated_ -= bytes;
         // allocations_ are changed by GC
     }
@@ -57,7 +56,7 @@ private:
     size_t size_ = 0;
     size_t allocated_ = 0;
     std::list<AllocationInfo> allocations_;
-    FreeListAllocator allocator_;
+    A5::FreeListAllocator allocator_;
 };
 
 } // namespace chai::memory

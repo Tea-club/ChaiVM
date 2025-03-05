@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 project(ChaiVM)
 set(CMAKE_CXX_STANDARD 20)
 
-set(COMPILER_WARNINGS "-Wall -Wextra -Wpedantic -Werror -Wno-missing-field-initializers -Wno-sign-compare")
+set(COMPILER_WARNINGS "-Wall -Wextra -Wpedantic -Werror -Wno-missing-field-initializers -Wno-sign-compare -Wno-unused-parameter")
 set(CMAKE_C_FLAGS ${COMPILER_WARNINGS})
 set(CMAKE_C_FLAGS_DEBUG "-foptimize-sibling-calls -O0 -g ${COMPILER_WARNINGS}")
 set(CMAKE_C_FLAGS_RELEASE "-O2 ${COMPILER_WARNINGS}")
@@ -30,6 +30,9 @@ add_library(chai_include INTERFACE)
 add_dependencies(chai_include gen_operations_header)
 target_include_directories(chai_include INTERFACE
     include
+)
+target_link_libraries(chai_include INTERFACE
+    A5
 )
 
 add_executable(ChaiVM src/main.cpp)

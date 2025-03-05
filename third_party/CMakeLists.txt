@@ -1,4 +1,4 @@
-set(DIRS googletest)
+set(DIRS googletest A5)
 
 foreach(DIR ${DIRS})
     add_subdirectory(${DIR})
