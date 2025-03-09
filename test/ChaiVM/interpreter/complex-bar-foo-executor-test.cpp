@@ -413,11 +413,27 @@ TEST_F(SpecificBarFooExecutorTest, DumpCall_2) {
 }
 
 TEST_F(SpecificBarFooExecutorTest, FooCall_1) {
+    // For some reason tail-call optimization don't work in some functions.
+    // For example: alloc_ref, get_field, set_field. All this functions has such code at the beginning:
+    /*
+   0x555555579c80 <_ZN4chai11interpreter8Executor9get_fieldENS0_11InstructionE>:        push   %r15
+   0x555555579c82 <_ZN4chai11interpreter8Executor9get_fieldENS0_11InstructionE+2>:      push   %r14
+   0x555555579c84 <_ZN4chai11interpreter8Executor9get_fieldENS0_11InstructionE+4>:      push   %r12
+   0x555555579c86 <_ZN4chai11interpreter8Executor9get_fieldENS0_11InstructionE+6>:      push   %rbx
+   0x555555579c87 <_ZN4chai11interpreter8Executor9get_fieldENS0_11InstructionE+7>:      sub    $0x18,%rsp
+    */
+    // So we are allocating space on stack here, hence receiving stackoverflow as a consequence.
+    //
+    // You can check tests like ExecutorTest_If_icmplt_cycle_Test::TestBody(), that runs huge cycles without
+    // stackoverflow. This is because these tests don't use mentioned functions.
+    // To fix a bug it may be necessary to find out how these functions (alloc_ref, get_field, set_field) differs from
+    // others.
+
     initKlasses();
     initDump();
     initFoo();
 
-    Immidiate n_imm = chaiFile_.addConst(std::make_unique<ConstI64>(100));
+    Immidiate n_imm = chaiFile_.addConst(std::make_unique<ConstI64>(10000));
     Immidiate m_imm = chaiFile_.addConst(std::make_unique<ConstI64>(10));
     load<Ldia>(m_imm);
     load<Star>(99);
