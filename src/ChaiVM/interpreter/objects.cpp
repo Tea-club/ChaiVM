@@ -44,7 +44,6 @@ chsize_t ObjectArray::length() const { return Object::countMembers() - 1; }
 
 chai::chsize_t &ObjectArray::operator[](int64_t i) & {
     if (i < 0) {
-        std::cout << "i < 0" << std::endl;
         i += length();
     }
     if (i >= length()) {

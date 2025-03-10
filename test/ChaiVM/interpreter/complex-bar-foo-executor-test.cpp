@@ -413,8 +413,8 @@ TEST_F(SpecificBarFooExecutorTest, DumpCall_2) {
 }
 
 TEST_F(SpecificBarFooExecutorTest, FooCall_1) {
-    // For some reason tail-call optimization don't work in some functions.
-    // For example: alloc_ref, get_field, set_field. All this functions has such code at the beginning:
+    // 1. For some reason tail-call optimization don't work in some functions.
+    // For example: get_field, set_field, get_ref_from_arr, set_ref_in_arr. All this functions has such code at the beginning:
     /*
    0x555555579c80 <_ZN4chai11interpreter8Executor9get_fieldENS0_11InstructionE>:        push   %r15
    0x555555579c82 <_ZN4chai11interpreter8Executor9get_fieldENS0_11InstructionE+2>:      push   %r14
@@ -428,6 +428,27 @@ TEST_F(SpecificBarFooExecutorTest, FooCall_1) {
     // stackoverflow. This is because these tests don't use mentioned functions.
     // To fix a bug it may be necessary to find out how these functions (alloc_ref, get_field, set_field) differs from
     // others.
+    //
+    // 2. It turned out, that construction of "Object" or "ObjectArray" objects leads compiler to not optimize these
+    // functions.
+    // For example, rewriting function "get_field" like this:
+    /*
+    void Executor::get_field(Instruction ins) {
+        assert(isAccRef_ == true);
+        Immidiate offset = ins.immidiate;
+        ObjectHeader *header = std::bit_cast<ObjectHeader *>(getAcc());
+        chsize_t *members = std::bit_cast<chsize_t *>(header + 1);
+        assert(offset % sizeof(chsize_t) == 0);
+        acc() = members[offset / sizeof(chsize_t)];
+        if ((header->klassId_ != OBJ_ARR_IMM) &&
+            (codeManager_->getKlass(header->klassId_)).fieldIsObject(offset)) {
+            isAccRef_ = true;
+        }
+        advancePc();
+        DO_NEXT_INS()
+    }
+    */
+    // will turn on optimizations for this function. Reasons of this are not known now.
 
     initKlasses();
     initDump();

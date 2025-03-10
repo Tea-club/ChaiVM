@@ -4,10 +4,10 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(COMPILER_WARNINGS "-Wall -Wextra -Wpedantic -Werror -Wno-missing-field-initializers -Wno-sign-compare -Wno-unused-parameter")
 set(CMAKE_C_FLAGS ${COMPILER_WARNINGS})
-set(CMAKE_C_FLAGS_DEBUG "-foptimize-sibling-calls -O0 -g ${COMPILER_WARNINGS}")
+set(CMAKE_C_FLAGS_DEBUG "-O2 -g ${COMPILER_WARNINGS}")
 set(CMAKE_C_FLAGS_RELEASE "-O2 ${COMPILER_WARNINGS}")
 set(CMAKE_CXX_FLAGS ${COMPILER_WARNINGS})
-set(CMAKE_CXX_FLAGS_DEBUG "-foptimize-sibling-calls -O0 -g ${COMPILER_WARNINGS}")
+set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g ${COMPILER_WARNINGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 ${COMPILER_WARNINGS}")
 
 add_subdirectory(third_party)
