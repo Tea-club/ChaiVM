@@ -41,7 +41,7 @@ class Object {
 
 public:
     explicit inline Object(ObjectHeader *header, chsize_t *fields)
-    : header_(header), members_(fields) {}
+        : header_(header), members_(fields) {}
 
     /**
      * Ctor.
@@ -49,8 +49,8 @@ public:
      * @param ref Ref to object (usually contains in register).
      */
     explicit inline Object(chsize_t ref)
-    : header_(std::bit_cast<ObjectHeader *>(ref)),
-      members_(std::bit_cast<chsize_t *>(header_ + 1)) {}
+        : header_(std::bit_cast<ObjectHeader *>(ref)),
+          members_(std::bit_cast<chsize_t *>(header_ + 1)) {}
 
     /**
      * Get count of members.
@@ -99,11 +99,8 @@ protected:
 class IndexOutOfBoundary : public std::runtime_error {
 public:
     explicit IndexOutOfBoundary(const char *msg) : runtime_error(msg) {}
-    IndexOutOfBoundary(const std::string &msg)
-    : runtime_error(msg) {}
-    const char *what() const noexcept override {
-        return runtime_error::what();
-    }
+    IndexOutOfBoundary(const std::string &msg) : runtime_error(msg) {}
+    const char *what() const noexcept override { return runtime_error::what(); }
 };
 
 /**

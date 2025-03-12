@@ -11,7 +11,8 @@ namespace chai::interpreter {
     triggerGC();                                                               \
     Instruction newIns =                                                       \
         decoder::parse(currentFrame_->func_.code[pc() / sizeof(bytecode_t)]);  \
-/*    std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm = " << newIns.immidiate << std::endl; */                                      \
+    /*    std::cout << "Next inst: " << OP_TO_STR[newIns.operation] << ", imm  \
+     * = " << newIns.immidiate << std::endl; */                                \
     (this->*HANDLER_ARR[newIns.operation])(newIns);
 
 Executor::Executor(CodeManager *manager, memory::LinearBuffer &framesBuffer,
@@ -550,7 +551,7 @@ void Executor::get_field(Instruction ins) {
     if ((object.klassId() != OBJ_ARR_IMM) &&
         (codeManager_->getKlass(object.klassId())).fieldIsObject(offset)) {
         isAccRef_ = true;
-        }
+    }
     advancePc();
     DO_NEXT_INS()
 }
@@ -577,9 +578,7 @@ const CodeManager *interpreter::Executor::getCodeManager() const {
 memory::TracedByteAllocator &interpreter::Executor::getObjectAllocator() {
     return objectsAllocator_;
 }
-const GarbageCollector &interpreter::Executor::getGC() const {
-    return gc_;
-}
+const GarbageCollector &interpreter::Executor::getGC() const { return gc_; }
 void interpreter::Executor::triggerGC() {
     if (static_cast<double>(objectsAllocator_.allocated()) >
         static_cast<double>(objectsAllocator_.size()) * 0.6) {

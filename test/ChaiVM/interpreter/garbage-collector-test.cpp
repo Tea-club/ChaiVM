@@ -65,6 +65,7 @@ protected:
     }
 
     // @todo #54:60min do something to add this functionality to load Immediate
+    // (todo duplication)
     void loadWithConst(chai::interpreter::Operation op, int64_t data);
 
     void loadWithConst(chai::interpreter::Operation op, double data);
@@ -105,19 +106,19 @@ protected:
 using chai::interpreter::Immidiate;
 
 Immidiate GarbageCollectorTest::loadRR(chai::interpreter::Operation op,
-                               chai::interpreter::RegisterId reg1,
-                               chai::interpreter::RegisterId reg2) {
+                                       chai::interpreter::RegisterId reg1,
+                                       chai::interpreter::RegisterId reg2) {
     return chaiFile_.addInstr(chai::utils::instr2RawRR(op, reg1, reg2));
 }
 
 Immidiate GarbageCollectorTest::loadRI(chai::interpreter::Operation op,
-                               chai::interpreter::RegisterId reg1,
-                               chai::interpreter::Immidiate imm) {
+                                       chai::interpreter::RegisterId reg1,
+                                       chai::interpreter::Immidiate imm) {
     return chaiFile_.addInstr(chai::utils::instr2RawRI(op, reg1, imm));
 }
 
 Immidiate GarbageCollectorTest::loadI(chai::interpreter::Operation op,
-                              chai::interpreter::Immidiate imm) {
+                                      chai::interpreter::Immidiate imm) {
     return chaiFile_.addInstr(chai::utils::instr2RawI(op, imm));
 }
 
@@ -126,11 +127,12 @@ Immidiate GarbageCollectorTest::loadN(chai::interpreter::Operation op) {
 }
 
 void GarbageCollectorTest::loadWithConst(chai::interpreter::Operation op,
-                                 int64_t data) {
+                                         int64_t data) {
     chaiFile_.addWithConst(op, data);
 }
 
-void GarbageCollectorTest::loadWithConst(chai::interpreter::Operation op, double data) {
+void GarbageCollectorTest::loadWithConst(chai::interpreter::Operation op,
+                                         double data) {
     chaiFile_.addWithConst(op, data);
 }
 
@@ -159,7 +161,8 @@ TEST_F(GarbageCollectorTest, CollectRoots) {
     chaiFile_.addField(bar_klass, "bar.num4", 0U, FieldTag::I64);
     constexpr int64_t threshold = 4000;
     Immidiate one_imm = chaiFile_.addConst(std::make_unique<ConstI64>(1));
-    Immidiate threshold_imm = chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
+    Immidiate threshold_imm =
+        chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
 
     load<Ldia>(threshold_imm);
     load<Star>(R10);
@@ -189,7 +192,8 @@ TEST_F(GarbageCollectorTest, ArrayAllocation) {
     constexpr int64_t threshold = 4000;
     Immidiate one_imm = chaiFile_.addConst(std::make_unique<ConstI64>(1));
     Immidiate array_size = chaiFile_.addConst(std::make_unique<ConstI64>(30));
-    Immidiate threshold_imm = chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
+    Immidiate threshold_imm =
+        chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
 
     load<Ldia>(threshold_imm);
     load<Star>(R10);
@@ -214,7 +218,8 @@ TEST_F(GarbageCollectorTest, ArrayWithObjectsAllocation) {
     constexpr int64_t threshold = 1000;
     Immidiate one_imm = chaiFile_.addConst(std::make_unique<ConstI64>(1));
     Immidiate array_size = chaiFile_.addConst(std::make_unique<ConstI64>(20));
-    Immidiate threshold_imm = chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
+    Immidiate threshold_imm =
+        chaiFile_.addConst(std::make_unique<ConstI64>(threshold));
 
     load<Ldia>(array_size);
     load<NewRefArray>();

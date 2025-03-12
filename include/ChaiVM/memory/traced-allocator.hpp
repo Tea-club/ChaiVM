@@ -1,20 +1,19 @@
 #pragma once
 
-#include <list>
 #include <exception>
+#include <list>
 
-#include "ChaiVM/types.hpp"
 #include "A5/FreeListAllocator.h"
+#include "ChaiVM/types.hpp"
 
 namespace chai::memory {
 
 class out_of_memory_exception final : public std::bad_alloc {
 public:
-    const char* what() const noexcept {
-        return msg;
-    }
+    const char *what() const noexcept { return msg; }
+
 private:
-    static constexpr const char* msg = "VM is out of memory";
+    static constexpr const char *msg = "VM is out of memory";
 };
 
 struct AllocationInfo final {
@@ -26,8 +25,8 @@ struct AllocationInfo final {
 class TracedByteAllocator final {
 public:
     TracedByteAllocator(size_t size)
-        : size_(size), allocator_(size, A5::FreeListAllocator::SearchMethod::FIRST) {
-    }
+        : size_(size),
+          allocator_(size, A5::FreeListAllocator::SearchMethod::FIRST) {}
 
     void *allocate(size_t bytes) {
         void *out = allocator_.Allocate(bytes, sizeof(chai::chsize_t));

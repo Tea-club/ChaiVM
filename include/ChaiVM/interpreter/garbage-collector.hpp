@@ -18,6 +18,7 @@ public:
 
     void collect();
     const std::vector<interpreter::Object> &getRoots() const;
+
 private:
     void collectRoots();
     void mark();

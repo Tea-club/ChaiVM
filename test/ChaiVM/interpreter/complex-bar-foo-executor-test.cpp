@@ -61,7 +61,7 @@ function main() : void {
     foo(N, M)
 }
  */
-class SpecificBarFooExecutorTest : public ::testing::Test{
+class SpecificBarFooExecutorTest : public ::testing::Test {
 protected:
     static constexpr chai::interpreter::RegisterId R0 = 0;
     static constexpr chai::interpreter::RegisterId R1 = 1;
@@ -85,37 +85,37 @@ protected:
      */
     template <chai::interpreter::Operation op>
     typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
-                            chai::interpreter::R,
-        chai::interpreter::Immidiate>::type
+                                chai::interpreter::R,
+                            chai::interpreter::Immidiate>::type
     load(chai::interpreter::RegisterId reg1) {
         return loadRR(op, reg1, 0);
     }
     template <chai::interpreter::Operation op>
     typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
-                            chai::interpreter::RR,
-        chai::interpreter::Immidiate>::type
+                                chai::interpreter::RR,
+                            chai::interpreter::Immidiate>::type
     load(chai::interpreter::RegisterId reg1,
          chai::interpreter::RegisterId reg2) {
         return loadRR(op, reg1, reg2);
     }
     template <chai::interpreter::Operation op>
     typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
-                            chai::interpreter::RI,
-        chai::interpreter::Immidiate>::type
+                                chai::interpreter::RI,
+                            chai::interpreter::Immidiate>::type
     load(chai::interpreter::RegisterId reg1, chai::interpreter::Immidiate imm) {
         return loadRI(op, reg1, imm);
     }
     template <chai::interpreter::Operation op>
     typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
-                            chai::interpreter::I,
-        chai::interpreter::Immidiate>::type
+                                chai::interpreter::I,
+                            chai::interpreter::Immidiate>::type
     load(chai::interpreter::Immidiate imm) {
         return loadI(op, imm);
     }
     template <chai::interpreter::Operation op>
     typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
-                            chai::interpreter::N,
-        chai::interpreter::Immidiate>::type
+                                chai::interpreter::N,
+                            chai::interpreter::Immidiate>::type
     load() {
         return loadN(op);
     }
@@ -150,6 +150,7 @@ protected:
         chai::memory::LinearBuffer(1024 * 256);
     chai::interpreter::Executor exec_{&codeManager_, frameBuffer_,
                                       primitivesBuffer, objectsAlocator};
+
 protected:
     static constexpr chai::chsize_t N = 400;
     static constexpr chai::chsize_t M = 100;
@@ -308,20 +309,21 @@ protected:
     }
 };
 
-Immidiate SpecificBarFooExecutorTest::loadRR(chai::interpreter::Operation op,
-                               chai::interpreter::RegisterId reg1,
-                               chai::interpreter::RegisterId reg2) {
+Immidiate
+SpecificBarFooExecutorTest::loadRR(chai::interpreter::Operation op,
+                                   chai::interpreter::RegisterId reg1,
+                                   chai::interpreter::RegisterId reg2) {
     return chaiFile_.addInstr(chai::utils::instr2RawRR(op, reg1, reg2));
 }
 
 Immidiate SpecificBarFooExecutorTest::loadRI(chai::interpreter::Operation op,
-                               chai::interpreter::RegisterId reg1,
-                               chai::interpreter::Immidiate imm) {
+                                             chai::interpreter::RegisterId reg1,
+                                             chai::interpreter::Immidiate imm) {
     return chaiFile_.addInstr(chai::utils::instr2RawRI(op, reg1, imm));
 }
 
 Immidiate SpecificBarFooExecutorTest::loadI(chai::interpreter::Operation op,
-                              chai::interpreter::Immidiate imm) {
+                                            chai::interpreter::Immidiate imm) {
     return chaiFile_.addInstr(chai::utils::instr2RawI(op, imm));
 }
 

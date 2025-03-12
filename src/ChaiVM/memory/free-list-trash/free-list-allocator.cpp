@@ -70,9 +70,8 @@ void *FreeListAllocator::Allocate(const std::size_t size,
 
 #ifdef _DEBUG
     std::cout
-        << "A"
-        << "\t@H " << (void *)headerAddress << "\tD@ " << (void *)dataAddress
-        << "\tS "
+        << "A" << "\t@H " << (void *)headerAddress << "\tD@ "
+        << (void *)dataAddress << "\tS "
         << ((FreeListAllocator::AllocationHeader *)headerAddress)->blockSize
         << "\tAP " << alignmentPadding << "\tP " << padding << "\tM " << m_used
         << "\tR " << rest << std::endl;
@@ -171,9 +170,9 @@ void FreeListAllocator::Free(void *ptr) {
     Coalescence(itPrev, freeNode);
 
 #ifdef _DEBUG
-    std::cout << "F"
-              << "\t@ptr " << ptr << "\tH@ " << (void *)freeNode << "\tS "
-              << freeNode->data.blockSize << "\tM " << m_used << std::endl;
+    std::cout << "F" << "\t@ptr " << ptr << "\tH@ " << (void *)freeNode
+              << "\tS " << freeNode->data.blockSize << "\tM " << m_used
+              << std::endl;
 #endif
 }
 

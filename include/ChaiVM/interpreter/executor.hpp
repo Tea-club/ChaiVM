@@ -36,9 +36,9 @@ public:
     bool isAccRef() const;
 
     Frame const *getCurrentFrame() const;
-    const CodeManager* getCodeManager() const;
-    memory::TracedByteAllocator& getObjectAllocator();
-    const GarbageCollector& getGC() const;
+    const CodeManager *getCodeManager() const;
+    memory::TracedByteAllocator &getObjectAllocator();
+    const GarbageCollector &getGC() const;
 
 private:
     chsize_t &pc();
