@@ -457,16 +457,8 @@ void Executor::get_ref_from_arr(Instruction ins) {
     assert(isAccRef() == true);
     assert(currentFrame_->isRegisterReference(ins.r1) == false);
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
-    ObjectHeader *header = std::bit_cast<ObjectHeader *>(getAcc());
-    chsize_t *members = std::bit_cast<chsize_t *>(header + 1);
-    chsize_t length = (header->size_ - sizeof(ObjectHeader)) / sizeof(chsize_t) - 1;
-    assert(i >= 0);
-    if (i >= length) {
-        throw IndexOutOfBoundary("index " + std::to_string(i) +
-                                 " is greater than array length " +
-                                 std::to_string(length));
-    }
-    acc() = members[i + 1];
+    ObjectArray array{getAcc()};
+    acc() = array[i];
     isAccRef_ = true;
     advancePc();
     DO_NEXT_INS();
@@ -477,18 +469,8 @@ void Executor::set_ref_in_arr(Instruction ins) {
     auto i = static_cast<int64_t>((*currentFrame_)[ins.r1]);
     assert(currentFrame_->isRegisterReference(ins.r2) == true);
     chsize_t new_ref = (*currentFrame_)[ins.r2];
-    ObjectHeader *header = std::bit_cast<ObjectHeader *>(getAcc());
-    chsize_t *members = std::bit_cast<chsize_t *>(header + 1);
-    chsize_t length = (header->size_ - sizeof(ObjectHeader)) / sizeof(chsize_t) - 1;
-    if (i < 0) {
-        i += length;
-    }
-    if (i >= length) {
-        throw IndexOutOfBoundary("index " + std::to_string(i) +
-                                 " is greater than array length " +
-                                 std::to_string(length));
-    }
-    members[i + 1] = new_ref;
+    ObjectArray array{getAcc()};
+    array[i] = new_ref;
     advancePc();
     DO_NEXT_INS();
 }
@@ -563,31 +545,27 @@ void Executor::star_ref(Instruction ins) {
 void Executor::get_field(Instruction ins) {
     assert(isAccRef_ == true);
     Immidiate offset = ins.immidiate;
-    ObjectHeader *header = std::bit_cast<ObjectHeader *>(getAcc());
-    chsize_t *members = std::bit_cast<chsize_t *>(header + 1);
-    assert(offset % sizeof(chsize_t) == 0);
-    acc() = members[offset / sizeof(chsize_t)];
-    if ((header->klassId_ != OBJ_ARR_IMM) &&
-        (codeManager_->getKlass(header->klassId_)).fieldIsObject(offset)) {
+    const Object object{getAcc()};
+    acc() = object.getMember(offset);
+    if ((object.klassId() != OBJ_ARR_IMM) &&
+        (codeManager_->getKlass(object.klassId())).fieldIsObject(offset)) {
         isAccRef_ = true;
-    }
+        }
     advancePc();
     DO_NEXT_INS()
 }
 void Executor::set_field(Instruction ins) {
     assert(isAccRef() == true);
     Immidiate offset = ins.immidiate;
-    ObjectHeader *header = std::bit_cast<ObjectHeader *>(getAcc());
-    chsize_t *members = std::bit_cast<chsize_t *>(header + 1);
-    assert(offset % sizeof(chsize_t) == 0);
-    members[offset / sizeof(chsize_t)] = (*currentFrame_)[ins.r1];
+    const Object object{getAcc()};
+    object.setMember(offset, (*currentFrame_)[ins.r1]);
     //    if ((codeManager_->getKlass(object.klassId())).fieldIsObject(offset))
     //    {
     //        assert(currentFrame_->isRegisterReference(r1) == true);
     //    } else {
     //        assert(currentFrame_->isRegisterReference(r1) == false);
     //    }
-    assert((codeManager_->getKlass(header->klassId_)).fieldIsObject(offset) ==
+    assert((codeManager_->getKlass(object.klassId())).fieldIsObject(offset) ==
            currentFrame_->isRegisterReference(ins.r1));
     assert(isAccRef() == true);
     advancePc();
