@@ -6,7 +6,8 @@ namespace chai::interpreter {
 
 Frame::Frame(Frame *prev, const Function &func, memory::LinearBuffer &buffer)
     : func_(func), prev_(prev), regsize_(func.numRegs),
-      registers_(func.numRegs, 0, memory::LinearAllocator<chsize_t>{buffer}) {}
+      registers_(func.numRegs, 0, memory::LinearAllocator<chsize_t>{buffer}),
+      isRegRef_(0) {}
 
 void Frame::passArgs() {
     assert(prev_ != nullptr);
@@ -27,12 +28,23 @@ const chsize_t &Frame::operator[](size_t n) const & {
     assert(n < regsize_);
     return registers_[n];
 }
+size_t Frame::size() const { return regsize_; }
+
+bool Frame::isRegisterReference(RegisterId reg_id) const {
+    assert(reg_id < regsize_);
+    return isRegRef_[reg_id];
+}
+
+void Frame::setRegisterIsRef(chai::interpreter::RegisterId reg_id, bool val) {
+    assert(reg_id < regsize_);
+    isRegRef_[reg_id] = val;
+}
 
 /**
  * Get state.
  * @return
  */
-std::vector<chsize_t> Frame::copyState() {
+std::vector<chsize_t> Frame::copyState() const {
     std::vector<chsize_t> ret{registers_.size()};
     for (auto item : registers_) {
         ret.push_back(item);
@@ -41,5 +53,6 @@ std::vector<chsize_t> Frame::copyState() {
 }
 
 Frame *Frame::back() { return prev_; }
+const Frame *Frame::back() const { return prev_; }
 
 } // namespace chai::interpreter

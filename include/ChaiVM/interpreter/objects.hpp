@@ -3,7 +3,6 @@
 #include "ChaiVM/interpreter/code-manager/klass.hpp"
 #include "ChaiVM/memory/linear-allocator.hpp"
 #include "ChaiVM/memory/linear-buffer.hpp"
-#include "executor.hpp"
 #include <cassert>
 
 namespace chai::interpreter {
@@ -25,6 +24,11 @@ struct ObjectHeader {
      * Number of klass in "klass pool".
      */
     Immidiate klassId_;
+
+    /**
+     * Flag that object still has references
+     */
+    bool isMarked_;
 };
 
 /**
@@ -36,19 +40,24 @@ struct ObjectHeader {
 class Object {
 
 public:
-    explicit Object(ObjectHeader *header, chsize_t *fields);
+    explicit inline Object(ObjectHeader *header, chsize_t *fields)
+        : header_(header), members_(fields) {}
 
     /**
      * Ctor.
      * Create object from ref to object.
      * @param ref Ref to object (usually contains in register).
      */
-    explicit Object(chsize_t ref);
+    explicit inline Object(chsize_t ref)
+        : header_(std::bit_cast<ObjectHeader *>(ref)),
+          members_(std::bit_cast<chsize_t *>(header_ + 1)) {}
 
     /**
      * Get count of members.
      */
-    chsize_t countMembers() const;
+    chsize_t countMembers() const {
+        return (header_->size_ - sizeof(ObjectHeader)) / sizeof(chsize_t);
+    }
 
     /**
      * Get member.
@@ -56,7 +65,10 @@ public:
      * header).
      * @return Value of member.
      */
-    const chsize_t &getMember(Immidiate offset) const;
+    const chsize_t &getMember(Immidiate offset) const {
+        assert(offset % sizeof(chsize_t) == 0);
+        return members_[offset / sizeof(chsize_t)];
+    }
 
     /**
      * Set member.
@@ -64,7 +76,15 @@ public:
      * header).
      * @param value Value to be set.
      */
-    void setMember(Immidiate offset, chsize_t value) const;
+    void setMember(Immidiate offset, chsize_t value) const {
+        assert(offset % sizeof(chsize_t) == 0);
+        members_[offset / sizeof(chsize_t)] = value;
+    }
+
+    bool isMarked() const { return header_->isMarked_; }
+    void mark() { header_->isMarked_ = true; }
+    void unmark() { header_->isMarked_ = false; }
+    Immidiate klassId() const { return header_->klassId_; }
 
 protected:
     ObjectHeader *header_;
@@ -78,9 +98,9 @@ protected:
 
 class IndexOutOfBoundary : public std::runtime_error {
 public:
-    explicit IndexOutOfBoundary(char const *msg);
-    IndexOutOfBoundary(const std::string &msg);
-    const char *what() const noexcept override;
+    explicit IndexOutOfBoundary(const char *msg) : runtime_error(msg) {}
+    IndexOutOfBoundary(const std::string &msg) : runtime_error(msg) {}
+    const char *what() const noexcept override { return runtime_error::what(); }
 };
 
 /**
@@ -95,20 +115,47 @@ public:
      * Create object from ref to object.
      * @param ref Ref to object (usually contains in register).
      */
-    explicit ObjectArray(chsize_t ref);
+    explicit ObjectArray(chsize_t ref) : Object(ref) {}
 
-    chsize_t length() const;
+    /**
+     * Ctor.
+     * Create object array from object.
+     * @param obj The object
+     */
+    explicit ObjectArray(Object obj) : Object(obj) {}
 
-    chai::chsize_t &operator[](int64_t i) &;
+    chsize_t length() const { return Object::countMembers() - 1; }
 
-    const chsize_t &operator[](int64_t i) const &;
+    chai::chsize_t &operator[](int64_t i) & {
+        if (i < 0) {
+            i += length();
+        }
+        if (i >= length()) {
+            throw IndexOutOfBoundary("index " + std::to_string(i) +
+                                     " is greater than array length " +
+                                     std::to_string(length()));
+        }
+        return Object::members_[i + 1];
+    }
+
+    const chsize_t &operator[](int64_t i) const & {
+        assert(i >= 0);
+        if (i >= length()) {
+            throw IndexOutOfBoundary("index " + std::to_string(i) +
+                                     " is greater than array length " +
+                                     std::to_string(length()));
+        }
+        return Object::members_[i + 1];
+    }
 
     /**
      * Calculate size (in bytes) of object array.
      * @param len Array length/
      * @return size in bytes.
      */
-    static chsize_t sizeOfObjectArray(int64_t len);
+    static chsize_t sizeOfObjectArray(int64_t len) {
+        return sizeof(ObjectHeader) + (1 + len) * sizeof(chsize_t);
+    }
 };
 
 } // namespace chai::interpreter

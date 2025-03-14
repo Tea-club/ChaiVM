@@ -6,6 +6,7 @@
 #include "ChaiVM/memory/traced-allocator.hpp"
 #include "decoder.hpp"
 #include "frame.hpp"
+#include "garbage-collector.hpp"
 #include "objects.hpp"
 
 namespace chai::interpreter {
@@ -26,9 +27,18 @@ public:
     void run();
 
     chsize_t &acc();
-    chsize_t acc() const;
+    chsize_t getAcc() const;
+
+    /**
+     * Checks if reference is stored in accumulator.
+     * @return true if accumulator stores reference, false otherwise.
+     */
+    bool isAccRef() const;
 
     Frame const *getCurrentFrame() const;
+    const CodeManager *getCodeManager() const;
+    memory::TracedByteAllocator &getObjectAllocator();
+    const GarbageCollector &getGC() const;
 
 private:
     chsize_t &pc();
@@ -167,13 +177,17 @@ private:
         &Executor::set_field,
     };
 
+    void triggerGC();
+
 private:
     chsize_t acc_;
+    bool isAccRef_ = false;
     CodeManager *codeManager_;
     memory::LinearBuffer &framesBuffer_;
     memory::LinearBuffer &primitivesBuffer_;
     memory::TracedByteAllocator &objectsAllocator_;
     Frame *currentFrame_ = nullptr;
+    GarbageCollector gc_{*this};
 };
 
 inline void Executor::advancePc() { pc() += sizeof(bytecode_t); }

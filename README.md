@@ -18,7 +18,7 @@ fn main 8 0 {
   Star r3
   Ldra r3
   Mul r2
-  Printc acc
+  Printc getAcc
   Mov 0 r0
   Ret
 }

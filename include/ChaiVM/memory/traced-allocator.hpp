@@ -1,11 +1,20 @@
 #pragma once
 
+#include <exception>
 #include <list>
 
-#include "ChaiVM/memory/free-list-trash/free-list-allocator.hpp"
+#include "A5/FreeListAllocator.h"
 #include "ChaiVM/types.hpp"
 
 namespace chai::memory {
+
+class out_of_memory_exception final : public std::bad_alloc {
+public:
+    const char *what() const noexcept { return msg; }
+
+private:
+    static constexpr const char *msg = "VM is out of memory";
+};
 
 struct AllocationInfo final {
     void *ptr = nullptr;
@@ -16,9 +25,8 @@ struct AllocationInfo final {
 class TracedByteAllocator final {
 public:
     TracedByteAllocator(size_t size)
-        : allocator_(size, FreeListAllocator::PlacementPolicy::FIND_FIRST) {
-        allocator_.Init();
-    }
+        : size_(size),
+          allocator_(size, A5::FreeListAllocator::SearchMethod::FIRST) {}
 
     void *allocate(size_t bytes) {
         void *out = allocator_.Allocate(bytes, sizeof(chai::chsize_t));
@@ -27,25 +35,27 @@ public:
             allocations_.push_back(AllocationInfo{out, bytes, false});
             allocated_ += bytes;
         } else {
-            throw std::bad_alloc();
+            throw out_of_memory_exception();
         }
 
         return out;
     }
     void deallocate(void *p, size_t bytes) {
-        allocator_.Free(p);
+        allocator_.Deallocate(p);
         allocated_ -= bytes;
         // allocations_ are changed by GC
     }
 
-    auto &allocated() noexcept { return allocated_; }
-    auto const &allocated() const noexcept { return allocated_; }
-    auto &allocations() noexcept { return allocations_; }
+    size_t &allocated() { return allocated_; }
+    size_t const &allocated() const noexcept { return allocated_; }
+    auto &allocations() { return allocations_; }
+    size_t size() { return size_; }
 
 private:
+    size_t size_ = 0;
     size_t allocated_ = 0;
     std::list<AllocationInfo> allocations_;
-    FreeListAllocator allocator_;
+    A5::FreeListAllocator allocator_;
 };
 
 } // namespace chai::memory

@@ -61,7 +61,95 @@ function main() : void {
     foo(N, M)
 }
  */
-class SpecificBarFooExecutorTest : public ExecutorTest {
+class SpecificBarFooExecutorTest : public ::testing::Test {
+protected:
+    static constexpr chai::interpreter::RegisterId R0 = 0;
+    static constexpr chai::interpreter::RegisterId R1 = 1;
+    static constexpr chai::interpreter::RegisterId R2 = 2;
+    static constexpr chai::interpreter::RegisterId R3 = 3;
+    static constexpr chai::interpreter::RegisterId R4 = 4;
+    static constexpr chai::interpreter::RegisterId R5 = 5;
+    static constexpr chai::interpreter::RegisterId R6 = 6;
+    static constexpr chai::interpreter::RegisterId R7 = 7;
+    static constexpr chai::interpreter::RegisterId R8 = 8;
+    static constexpr chai::interpreter::RegisterId R9 = 9;
+    static constexpr chai::interpreter::RegisterId R10 = 10;
+    static constexpr chai::interpreter::RegisterId R11 = 11;
+    std::filesystem::path path_;
+
+    /**
+     * These methods loads the operation in template parameter with the
+     * corresponding parameters.
+     * @param op Operation.
+     * @return Number of added instruction among all instructions.
+     */
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::R,
+                            chai::interpreter::Immidiate>::type
+    load(chai::interpreter::RegisterId reg1) {
+        return loadRR(op, reg1, 0);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::RR,
+                            chai::interpreter::Immidiate>::type
+    load(chai::interpreter::RegisterId reg1,
+         chai::interpreter::RegisterId reg2) {
+        return loadRR(op, reg1, reg2);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::RI,
+                            chai::interpreter::Immidiate>::type
+    load(chai::interpreter::RegisterId reg1, chai::interpreter::Immidiate imm) {
+        return loadRI(op, reg1, imm);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::I,
+                            chai::interpreter::Immidiate>::type
+    load(chai::interpreter::Immidiate imm) {
+        return loadI(op, imm);
+    }
+    template <chai::interpreter::Operation op>
+    typename std::enable_if<chai::interpreter::OP_TO_FORMAT[op] ==
+                                chai::interpreter::N,
+                            chai::interpreter::Immidiate>::type
+    load() {
+        return loadN(op);
+    }
+
+    void update();
+
+    void SetUp() override;
+
+    void TearDown() override;
+
+private:
+    chai::interpreter::Immidiate loadRR(chai::interpreter::Operation op,
+                                        chai::interpreter::RegisterId reg1,
+                                        chai::interpreter::RegisterId reg2 = 0);
+    chai::interpreter::Immidiate loadRI(chai::interpreter::Operation op,
+                                        chai::interpreter::RegisterId reg1,
+                                        chai::interpreter::Immidiate imm);
+    chai::interpreter::Immidiate loadI(chai::interpreter::Operation op,
+                                       chai::interpreter::Immidiate imm);
+    chai::interpreter::Immidiate loadN(chai::interpreter::Operation op);
+
+protected:
+    size_t numOfRegs = 50;
+    size_t numOfFrames = 256;
+    chai::utils::fileformat::ChaiFile chaiFile_;
+    chai::interpreter::CodeManager codeManager_;
+    chai::memory::LinearBuffer frameBuffer_ = chai::memory::LinearBuffer(
+        numOfFrames * (numOfRegs * sizeof(chai::chsize_t) +
+                       sizeof(chai::interpreter::Frame)));
+    chai::memory::TracedByteAllocator objectsAlocator{10000};
+    chai::memory::LinearBuffer primitivesBuffer =
+        chai::memory::LinearBuffer(1024 * 256);
+    chai::interpreter::Executor exec_{&codeManager_, frameBuffer_,
+                                      primitivesBuffer, objectsAlocator};
 
 protected:
     static constexpr chai::chsize_t N = 400;
@@ -89,19 +177,19 @@ protected:
     /**
      * Init dump function.
      *
-     * arr = acc()
-     * R2 = acc()     // arr
+     * arr = getAcc()
+     * R2 = getAcc()     // arr
      * R1 = arr.len
      * ITER = 0
      * start_         // start loop
      * print ITER
-     * acc() = new Foo()
-     * acc() = R2 [i]
+     * getAcc() = new Foo()
+     * getAcc() = R2 [i]
      * // if-else block
-     * ifnull acc (+9)
-     * acc = acc.getField(8)
-     * ifnull acc (+4)
-     * acc = acc.getField(0)
+     * ifnull getAcc (+9)
+     * acc = getAcc.getField(8)
+     * ifnull getAcc (+4)
+     * acc = getAcc.getField(0)
      * ic_print
      * Ret
      * Ldia ("Foo.Bar:null")
@@ -111,8 +199,8 @@ protected:
      * StringPrint
      * Ret
      * // if-else block
-     * acc() = ITER
-     * acc()++
+     * getAcc() = ITER
+     * getAcc()++
      * if_icmplt R1 -100 (go to start)
      * Ret
      *
@@ -153,7 +241,7 @@ protected:
     /**
      * Init foo() function.
      *
-     * input: acc() = N, R11 = M
+     * input: getAcc() = N, R11 = M
      * R10 = N                         // R10 = N, R11 = M
      * Ldra r11
      * NewRefArray Foo
@@ -162,24 +250,24 @@ protected:
      * OUTER = new Foo                  // OUTER == R8
      * ITER = 1                         // ITER = R7
      * start_                           // start loop
-     * acc = O1 = new Foo               // O1 = R6
+     * getAcc = O1 = new Foo               // O1 = R6
      * setField(ITER, 0); Star O1
-     * acc = ITER; MODI three
+     * getAcc = ITER; MODI three
      * if_icmpne R0 (offset second_if_)
      * R5 = i % M - 1
      * R9[R5] = O1
      * second_if_:
-     * acc = O2 = new Bar               // O2 = R4
+     * getAcc = O2 = new Bar               // O2 = R4
      * setfield (ITER, 0)
      * Star O2
      * ldra ITER
      * MODI five
      * if_cmpne R0 +3
-     * acc = O1; SetField(O2, 8)
+     * getAcc = O1; SetField(O2, 8)
      * StarRef O1
      * LdraRef R9
      * Call dump
-     * acc = ITER; acc++; Star ITER
+     * getAcc = ITER; acc++; Star ITER
      * if_icmple R1 -100 (go to start)
      * Ret
      */
@@ -202,7 +290,7 @@ protected:
                 // start cycle
                 instr2Raw<Ldra>(ITER), instr2Raw<IcPrint>(),
                 instr2Raw<AllocRef>(foo_klass_), instr2Raw<SetField>(ITER, 0),
-                instr2Raw<Star>(O1), instr2Raw<Ldra>(ITER),
+                instr2Raw<StarRef>(O1), instr2Raw<Ldra>(ITER),
                 instr2Raw<Modi>(three_imm), instr2Raw<If_icmpne>(R0, +7),
                 instr2Raw<Ldra>(ITER), instr2Raw<Mod>(R11),
                 instr2Raw<Subi>(one_imm), instr2Raw<Star>(R5),
@@ -212,13 +300,49 @@ protected:
                 instr2Raw<StarRef>(O2), instr2Raw<Ldra>(ITER),
                 instr2Raw<Modi>(five_imm), instr2Raw<If_icmpne>(R0, +3),
                 instr2Raw<LdraRef>(O1), instr2Raw<SetField>(O2, 8),
-                instr2Raw<StarRef>(O1), instr2Raw<LdraRef>(R9),
-                instr2Raw<Call>(dump_), instr2Raw<Ldra>(ITER),
-                instr2Raw<Addi>(one_imm), instr2Raw<Star>(ITER),
-                instr2Raw<If_icmple>(R10, -28), instr2Raw<Ret>()},
+                instr2Raw<LdraRef>(O1), instr2Raw<StarRef>(OUTER),
+                instr2Raw<LdraRef>(R9), instr2Raw<Call>(dump_),
+                instr2Raw<Ldra>(ITER), instr2Raw<Addi>(one_imm),
+                instr2Raw<Star>(ITER), instr2Raw<If_icmple>(R10, -28),
+                instr2Raw<Ret>()},
             1, 12);
     }
 };
+
+Immidiate
+SpecificBarFooExecutorTest::loadRR(chai::interpreter::Operation op,
+                                   chai::interpreter::RegisterId reg1,
+                                   chai::interpreter::RegisterId reg2) {
+    return chaiFile_.addInstr(chai::utils::instr2RawRR(op, reg1, reg2));
+}
+
+Immidiate SpecificBarFooExecutorTest::loadRI(chai::interpreter::Operation op,
+                                             chai::interpreter::RegisterId reg1,
+                                             chai::interpreter::Immidiate imm) {
+    return chaiFile_.addInstr(chai::utils::instr2RawRI(op, reg1, imm));
+}
+
+Immidiate SpecificBarFooExecutorTest::loadI(chai::interpreter::Operation op,
+                                            chai::interpreter::Immidiate imm) {
+    return chaiFile_.addInstr(chai::utils::instr2RawI(op, imm));
+}
+
+Immidiate SpecificBarFooExecutorTest::loadN(chai::interpreter::Operation op) {
+    return chaiFile_.addInstr(chai::utils::instr2RawN(op));
+}
+
+void SpecificBarFooExecutorTest::update() {
+    chaiFile_.toFile(path_);
+    codeManager_.load(path_);
+}
+
+void SpecificBarFooExecutorTest::SetUp() {
+    path_ = std::string{"test_"}.append(std::string{
+        testing::UnitTest::GetInstance()->current_test_info()->name()});
+    std::remove(path_.c_str());
+}
+
+void SpecificBarFooExecutorTest::TearDown() { std::remove(path_.c_str()); }
 
 TEST_F(SpecificBarFooExecutorTest, DumpCall_1) {
     initKlasses();
@@ -295,7 +419,7 @@ TEST_F(SpecificBarFooExecutorTest, FooCall_1) {
     initDump();
     initFoo();
 
-    Immidiate n_imm = chaiFile_.addConst(std::make_unique<ConstI64>(100));
+    Immidiate n_imm = chaiFile_.addConst(std::make_unique<ConstI64>(10000));
     Immidiate m_imm = chaiFile_.addConst(std::make_unique<ConstI64>(10));
     load<Ldia>(m_imm);
     load<Star>(99);
